@@ -25,10 +25,40 @@
 
 </div>
 
-<div><h2><a id="purposeClarifications">Additions to Statement of Purpose</a></h2>
 
-<p>[Repository Maintainers may include here any clarifications &mdash; any additional sections, subsections, and paragraphs that the Maintainer(s) wish to add as descriptive text, reflecting (sub-) project status, milestones, releases, modifications to statement of purpose, etc.  The project Maintainers will create and maintain this content on behalf of the participants.]</p>
-</div>
+### Requirements
+* Python 2.7.6+
+* ANTLR Python Runtime (4.5.3+)
+  * https://pypi.python.org/pypi/antlr4-python2-runtime (Python 2)
+  * https://pypi.python.org/pypi/antlr4-python3-runtime (Python 3)
+* python-dateutil (https://dateutil.readthedocs.io/en/stable/)
+* six (https://six.readthedocs.io/)
+* (For running tests) - pytest (http://pytest.org/latest/getting-started.html)
+
+### Installation
+
+To install pattern-matcher, first install all required dependencies, then run `python setup.py install` in the root of this repository.
+
+### Usage
+
+Run the `pattern_matcher.py` script in this repository, and follow directions. For example:
+
+```bash
+$ python pattern_matcher.py
+
+Enter a CybOX pattern:
+file-object:hashes.sha-256 = 'aec070645fe53ee3b3763059376134f058cc337247c978add178b6ccdfb0019f'
+
+Enter the name of json file containing a CybOX object or container:
+test\0pass.json
+
+PASS: file-object:hashes.sha-256 = 'aec070645fe53ee3b3763059376134f058cc337247c978add178b6ccdfb0019f'
+```
+
+### Testing
+
+To run the automated tests, execute `py.test` from inside the `test` directory.
+
 
 <div>
 <h2><a id="maintainers">Maintainers</a></h2>
