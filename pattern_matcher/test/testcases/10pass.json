@@ -1,0 +1,12 @@
+[
+  {
+    "type": "cybox-container",
+    "spec_version": "3.0",
+    "objects": {
+      "file-object--1": {
+        "type": "file-object",
+        "size": 641028
+      }
+    }
+  }
+]

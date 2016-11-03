@@ -1,0 +1,17 @@
+{
+  "type": "file-object",
+  "id": "file-object--1",
+  "hashes": {"md5": "ae645fe53ee3b3763059376134f058cc"},
+  "mime-type": "application/x-pdf",
+  "extended_properties": {
+    "ntfs-file-extension": {
+      "alternate_data_streams": [
+        {
+          "type": "alternate-data-stream",
+          "name": "second.stream",
+          "size": 25536
+        }
+      ]
+    }
+  }
+}

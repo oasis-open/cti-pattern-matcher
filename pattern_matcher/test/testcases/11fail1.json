@@ -1,0 +1,8 @@
+{
+  "type": "network-connection-object",
+  "id": "network-connection-object--1",
+  "extended_properties": [
+    {"test_payload": "dGVzdHRlc3R0ZXN0"},
+    {"test_payload": "test"}
+  ]
+}

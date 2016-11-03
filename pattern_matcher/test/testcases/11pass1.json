@@ -1,0 +1,15 @@
+[
+  {
+    "type": "cybox-container",
+    "spec_version": "3.0",
+    "objects": {
+      "network-connection-object--1": {
+        "type": "network-connection-object",
+        "extended_properties": [
+          {"source_payload": "test"},
+          {"source_payload": "dGVzdHRlc3R0ZXN0"}
+        ]
+      }
+    }
+  }
+]

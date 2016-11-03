@@ -1,0 +1,78 @@
+[
+  {
+    "type": "cybox-container",
+    "spec_version": "3.0",
+    "objects": {
+      "0": {
+        "type": "file-object",
+        "hashes": {
+          "md5": "1C19FC56AEF2048C1CD3A5E67B099350"
+        },
+        "extended_properties": {
+          "windows_pebinary": {
+            "pe_type": "exe",
+            "file_header": {
+              "machine": "\\x01\\x4c",
+              "number_of_sections": "\\x04",
+              "time_date_stamp": "\\x85\\x1c\\x31\\x63",
+              "pointer_to_symbol_table": "\\x74\\x72\\x61\\x44",
+              "number_of_symbols": "\\x45\\x50\\x68",
+              "size_of_optional_header": "\\xe0",
+              "characteristics": "\\x81\\x8f"
+            },
+            "optional_header": {
+              "magic": "\\x01\\x0b",
+              "major_linker_version": "\\x02",
+              "minor_linker_version": "\\x19",
+              "size_of_code": "\\x02\\x00",
+              "size_of_initialized_data": "\\x04\\x54\\x00",
+              "size_of_unitialized_data": "\\x00",
+              "address_of_entrypoint": "\\x20\\x00",
+              "base_of_code": "\\x10\\x00",
+              "base_of_data": "\\x20\\x00",
+              "image_base": "\\xde\\x00\\x00",
+              "section_alignment": "\\x10\\x00",
+              "file_alignment": "\\x10\\x00",
+              "major_operating_system_version": "\\x01",
+              "minor_operating_system_version": "\\x00",
+              "major_image_version": "\\x00",
+              "minor_image_version": "\\x00",
+              "major_subsystem_version": "\\x04",
+              "minor_subsystem_version": "\\x00",
+              "reserved1": "\\x00",
+              "size_of_image": "\\x04\\x90\\x00",
+              "size_of_headers": "\\x10\\x00",
+              "checksum": "\\x00",
+              "subsystem": "\\x03",
+              "dll_characteristics": "\\x00",
+              "size_of_stack_reserve": "\\x10\\x00\\x00",
+              "size_of_stack_commit": "\\x20\\x00",
+              "size_of_heap_reserve": "\\x10\\x00\\x00",
+              "size_of_heap_commit": "\\x10\\x00",
+              "loader_flags": "\\xab\\xdb\\xff\\xde",
+              "number_of_rva_and_sizes": "\\xdf\\xff\\xdd\\xde"
+            },
+            "sections": [
+              {
+                "name": "CODE",
+                "entropy": 0.061089
+              },
+              {
+                "name": "DATA",
+                "entropy": 7.980693
+              },
+              {
+                "name": "NicolasB",
+                "entropy": 0.607433
+              },
+              {
+                "name": ".idata",
+                "entropy": 0.607433
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+]

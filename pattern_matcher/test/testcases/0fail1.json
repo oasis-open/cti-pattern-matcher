@@ -1,0 +1,15 @@
+{
+  "type": "file-object",
+  "id": "file-object--1",
+  "extended_properties": {
+    "ntfs-file-extension": {
+      "alternate_data_streams": [
+        {
+          "type": "alternate-data-stream",
+          "name": "second.stream",
+          "size": 25536
+        }
+      ]
+    }
+  }
+}
