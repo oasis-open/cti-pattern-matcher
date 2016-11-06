@@ -29,13 +29,12 @@ comparisonExpression
 propTest
   : objectPath (EQ|NEQ) primitiveLiteral       # propTestEqual
   | objectPath (GT|LT|GE|LE) orderableLiteral  # propTestOrder
-  | objectPath IN setLiteral                   # propTestSet
-  | objectPath LIKE StringLiteral              # propTestLike
-  | objectPath MATCHES RegexLiteral            # propTestRegex
-  | objectPath INSUBNET StringLiteral          # propTestInSubnet
-  | objectPath CONTAINS StringLiteral          # propTestContains
+  | objectPath NOT? IN setLiteral              # propTestSet
+  | objectPath NOT? LIKE StringLiteral         # propTestLike
+  | objectPath NOT? MATCHES RegexLiteral       # propTestRegex
+  | objectPath NOT? INSUBNET StringLiteral     # propTestInSubnet
+  | objectPath NOT? CONTAINS StringLiteral     # propTestContains
   | LPAREN comparisonExpression RPAREN         # propTestParen
-  | NOT propTest                               # propTestNot
   ;
 
 startStopQualifier
