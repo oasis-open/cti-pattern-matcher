@@ -1559,9 +1559,9 @@ def match(pattern, containers, timestamps, verbose=False):
 
 
 def main():
-    '''
+    """
     Can be used as a command line tool to test pattern-matcher.
-    '''
+    """
 
     arg_parser = argparse.ArgumentParser(description="Match CybOX patterns to CybOX containers")
     arg_parser.add_argument("-p", "--patterns", required=True,
