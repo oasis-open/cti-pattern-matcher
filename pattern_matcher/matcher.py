@@ -272,14 +272,14 @@ def _step_filter_observations(observations, step):
     observations, attempting to take the given step on all of their cybox
     objects (or partial cybox object structures).
 
-    :return: a filtered observation list: it includes those for which at
+    :return: a filtered observation map: it includes those for which at
       least one contained cybox object was successfully stepped.  If none
       of an observation's cybox objects could be successfully stepped,
       the observation is dropped.
     """
 
-    filtered_obs_list = []
-    for obs_idx, cybox_obj_map in observations:
+    filtered_obs_map = {}
+    for obs_idx, cybox_obj_map in six.iteritems(observations):
         filtered_cybox_obj_map = {}
         for cybox_obj_id, cybox_objs in six.iteritems(cybox_obj_map):
             filtered_cybox_obj_list = _step_into_objs(cybox_objs, step)
@@ -288,9 +288,9 @@ def _step_filter_observations(observations, step):
                 filtered_cybox_obj_map[cybox_obj_id] = filtered_cybox_obj_list
 
         if len(filtered_cybox_obj_map) > 0:
-            filtered_obs_list.append((obs_idx, filtered_cybox_obj_map))
+            filtered_obs_map[obs_idx] = filtered_cybox_obj_map
 
-    return filtered_obs_list
+    return filtered_obs_map
 
 
 def _step_filter_observations_index_star(observations):
@@ -305,8 +305,8 @@ def _step_filter_observations_index_star(observations):
     See also _step_filter_observations().
     """
 
-    filtered_obs_list = []
-    for obs_idx, cybox_obj_map in observations:
+    filtered_obs_map = {}
+    for obs_idx, cybox_obj_map in six.iteritems(observations):
         filtered_cybox_obj_map = {}
         for cybox_obj_id, cybox_objs in six.iteritems(cybox_obj_map):
             stepped_cybox_objs = []
@@ -320,9 +320,9 @@ def _step_filter_observations_index_star(observations):
                 filtered_cybox_obj_map[cybox_obj_id] = stepped_cybox_objs
 
         if filtered_cybox_obj_map:
-            filtered_obs_list.append((obs_idx, filtered_cybox_obj_map))
+            filtered_obs_map[obs_idx] = filtered_cybox_obj_map
 
-    return filtered_obs_list
+    return filtered_obs_map
 
 
 def _get_first_terminal_descendant(ctx):
@@ -569,7 +569,7 @@ def _dereference_cybox_objs(cybox_objs, cybox_obj_references, ref_prop_name):
     return dereferenced_cybox_objs
 
 
-def _obs_list_prop_test(obs_list, predicate):
+def _obs_map_prop_test(obs_map, predicate):
     """
     Property tests always perform the same structural transformation of
     observation data on the stack.  There are several callbacks within the
@@ -581,28 +581,29 @@ def _obs_list_prop_test(obs_list, predicate):
     do it repeatedly in N different places.  It also gives a nice centralized
     place to document it.
 
-    Required structure for obs_list is the result of object path selection;
+    Required structure for obs_map is the result of object path selection;
     see MatcherListener.exitObjectPath() for details.
 
     The structure of the result of a property test is:
 
-    [ (obs_idx, {cybox_obj_id1, cybox_obj_id2, ...}),
-      (obs_idx, {cybox_obj_id1, cybox_obj_id2, ...}),
+    {
+      obs_idx: {cybox_obj_id1, cybox_obj_id2, ...}),
+      obs_idx: {cybox_obj_id1, cybox_obj_id2, ...}),
       etc...
-    ]
+    }
 
     I.e. for each observation, a set of cybox object IDs is associated, which
     are the "root" objects which caused the match.  The cybox object ID info
     is necessary to eliminate observation expression matches not rooted at the
     same cybox object.
 
-    :param obs_list: Observation data, as selected by an object path.
+    :param obs_map: Observation data, as selected by an object path.
     :param predicate: This encompasses the actual test to perform.  It must
         be a function of one parameter, which returns True or False.
     :return: The transformed and filtered data, according to predicate.
     """
-    passed_obs = []
-    for obs_idx, cybox_obj_map in obs_list:
+    passed_obs = {}
+    for obs_idx, cybox_obj_map in six.iteritems(obs_map):
         passed_cybox_obj_roots = set()
         for cybox_obj_id, values in six.iteritems(cybox_obj_map):
             for value in values:
@@ -611,7 +612,7 @@ def _obs_list_prop_test(obs_list, predicate):
                     break
 
         if passed_cybox_obj_roots:
-            passed_obs.append((obs_idx, passed_cybox_obj_roots))
+            passed_obs[obs_idx] = passed_cybox_obj_roots
 
     return passed_obs
 
@@ -794,7 +795,7 @@ class MatchListener(CyboxPatternListener):
 
         debug_label = "exitObservationExpression (simple)"
         obs_ids = self.__pop(debug_label)
-        obs_id_tuples = [(obs_id,) for obs_id, _ in obs_ids]
+        obs_id_tuples = [(obs_id,) for obs_id in obs_ids.keys()]
         self.__push(obs_id_tuples, debug_label)
 
     # Don't need to do anything for exitObservationExpressionCompound
@@ -911,18 +912,19 @@ class MatchListener(CyboxPatternListener):
 
     def exitComparisonExpression(self, ctx):
         """
-        Consumes zero or two lists of observation IDs produced by child
-          propTest's (see _obs_list_prop_test()) and/or
+        Consumes zero or two maps of observation IDs produced by child
+          propTest's (see _obs_map_prop_test()) and/or
           sub-comparison-expressions.
         Produces: if one propTest, this callback does nothing.  If two, the
-          top two lists are combined into a single list of observation IDs.
+          top two maps on the stack are combined into a single map of
+          observation IDs.
 
-          If the 'and' operator is used, the list has those IDs common to
+          If the 'and' operator is used, the map has those IDs common to
           both (intersection); their cybox object ID sets are also intersected.
           If this latter intersection is empty, the corresponding observation
           is dropped.
 
-          If 'or', the lists are merged (union); observation IDs which are
+          If 'or', the maps are merged (union); observation IDs which are
           shared between both operands have their cybox object ID sets
           unioned in the result.
         """
@@ -935,57 +937,40 @@ class MatchListener(CyboxPatternListener):
             obs2 = self.__pop(debug_label)
             obs1 = self.__pop(debug_label)
 
+            # In both cases below, the result is collected into obs1.
             if ctx.AND():
-                # Put observation IDs into sets; cybox object IDs are already in
-                # sets.
-                obs_ids1 = set(obs[0] for obs in obs1)
-                obs_ids2 = set(obs[0] for obs in obs2)
 
                 # We intersect the observation IDs and their corresponding
                 # cybox object ID sets.  If any of the cybox object ID set
                 # intersections is empty, we drop the observation from the
                 # result.
-                shared_obs_ids = obs_ids1 & obs_ids2
-
-                # First build up LHS cybox object ID sets
-                result_map = {}
-                for obs_id, cybox_obj_ids in obs1:
-                    if obs_id in shared_obs_ids:
-                        result_map[obs_id] = cybox_obj_ids
-
-                # Intersect the RHS cybox object ID sets.  Keep track
-                # of those intersections which are empty, as we go.
                 obs_ids_with_no_cybox_objs = []
-                for obs_id, cybox_obj_ids in obs2:
-                    if obs_id in result_map:
-                        result_map[obs_id] &= cybox_obj_ids
-                        if not result_map[obs_id]:
+                for obs_id, cybox_obj_ids in six.iteritems(obs1):
+                    if obs_id in obs2:
+                        obs1[obs_id] &= obs2[obs_id]
+                        if not obs1[obs_id]:
                             obs_ids_with_no_cybox_objs.append(obs_id)
+                    else:
+                        del obs1[obs_id]
 
                 # Now drop the ones with empty intersections (can't modify
                 # as we iterated above, so this needs to be a separate pass).
                 for obs_id in obs_ids_with_no_cybox_objs:
-                    del result_map[obs_id]
+                    del obs1[obs_id]
 
             elif ctx.OR():
                 # We union the observation IDs and their corresponding
                 # cybox object ID sets.
-
-                # Turn obs1 from a list into a dict for fast lookup of obs2's
-                # observation IDs.  We will accumulate the union in this dict.
-                result_map = dict(obs1)
-                for obs_id, cybox_obj_ids in obs2:
-                    if obs_id in result_map:
-                        result_map[obs_id] |= cybox_obj_ids
+                for obs_id, cybox_obj_ids in six.iteritems(obs2):
+                    if obs_id in obs1:
+                        obs1[obs_id] |= cybox_obj_ids
                     else:
-                        result_map[obs_id] = cybox_obj_ids
+                        obs1[obs_id] = cybox_obj_ids
 
             else:
                 raise UnsupportedOperatorError(op_str)
 
-            result = list(six.iteritems(result_map))
-
-            self.__push(result, debug_label)
+            self.__push(obs1, debug_label)
 
         elif num_operands != 0:
             # Just in case...
@@ -997,13 +982,13 @@ class MatchListener(CyboxPatternListener):
 
     def exitPropTestEqual(self, ctx):
         """
-        Consumes a list of (observation-idx, {...}) tuples
-          representing selected values from cybox objects in the indicated
-          container (grouped by index and root cybox object ID).  See
-          exitObjectPath().
-        Produces a list of 2-tuples representing those observations with
+        Consumes an observation data map, {obs_id: {...}, ...}, representing
+          selected values from cybox objects in each container
+          (grouped by observation index and root cybox object ID).
+          See exitObjectPath().
+        Produces a map representing those observations with
           cybox object values which pass the test, each with an associated
-          set of root cybox object IDs.  See _obs_list_prop_test().
+          set of root cybox object IDs.  See _obs_map_prop_test().
 
         It's okay if the operands are of different type and comparison is
         not supported: they will compare unequal.  (Note: this would include
@@ -1035,19 +1020,19 @@ class MatchListener(CyboxPatternListener):
 
             return result
 
-        passed_obs = _obs_list_prop_test(obs_values, equality_pred)
+        passed_obs = _obs_map_prop_test(obs_values, equality_pred)
 
         self.__push(passed_obs, debug_label)
 
     def exitPropTestOrder(self, ctx):
         """
-        Consumes a list of (observation-idx, {...}) tuples
-          representing selected values from cybox objects in the indicated
-          container (grouped by index and root cybox object ID).  See
-          exitObjectPath().
-        Produces a list of 2-tuples representing those observations with
+        Consumes an observation data map, {obs_id: {...}, ...}, representing
+          selected values from cybox objects in each container
+          (grouped by observation index and root cybox object ID).
+          See exitObjectPath().
+        Produces a map representing those observations with
           cybox object values which pass the test, each with an associated
-          set of root cybox object IDs.  See _obs_list_prop_test().
+          set of root cybox object IDs.  See _obs_map_prop_test().
 
         If operand types are not supported for order-comparison, current
         spec says the result must be False.  But this means that for two
@@ -1094,19 +1079,19 @@ class MatchListener(CyboxPatternListener):
 
             return result
 
-        passed_obs = _obs_list_prop_test(obs_values, order_pred)
+        passed_obs = _obs_map_prop_test(obs_values, order_pred)
 
         self.__push(passed_obs, debug_label)
 
     def exitPropTestSet(self, ctx):
         """
-        Consumes (1) a set object produced by exitSetLiteral(), and (2)
-          a list of (observation-idx, {...}) tuples representing selected
-          values from cybox objects in the indicated container (grouped by
-          index and root cybox object ID).  See exitObjectPath().
-        Produces a list of 2-tuples representing those observations with
+        Consumes (1) a set object from exitSetLiteral(), and (2) an observation
+           data map, {obs_id: {...}, ...}, representing selected values from
+           cybox objects in each container (grouped by observation index and
+           root cybox object ID).  See exitObjectPath().
+        Produces a map representing those observations with
           cybox object values which pass the test, each with an associated
-          set of root cybox object IDs.  See _obs_list_prop_test().
+          set of root cybox object IDs.  See _obs_map_prop_test().
         """
 
         debug_label = "exitPropTestSet{}".format(
@@ -1131,19 +1116,19 @@ class MatchListener(CyboxPatternListener):
 
             return result
 
-        passed_obs = _obs_list_prop_test(obs_values, set_pred)
+        passed_obs = _obs_map_prop_test(obs_values, set_pred)
 
         self.__push(passed_obs, debug_label)
 
     def exitPropTestLike(self, ctx):
         """
-        Consumes a list of (observation-idx, {...}) tuples
-          representing selected values from cybox objects in the indicated
-          container (grouped by index and root cybox object ID).  See
-          exitObjectPath().
-        Produces a list of 2-tuples representing those observations with
+        Consumes an observation data map, {obs_id: {...}, ...}, representing
+          selected values from cybox objects in each container
+          (grouped by observation index and root cybox object ID).
+          See exitObjectPath().
+        Produces a map representing those observations with
           cybox object values which pass the test, each with an associated
-          set of root cybox object IDs.  See _obs_list_prop_test().
+          set of root cybox object IDs.  See _obs_map_prop_test().
 
         Non-string values are treated as non-matching, and don't produce
         errors.
@@ -1172,19 +1157,19 @@ class MatchListener(CyboxPatternListener):
 
             return result
 
-        passed_obs = _obs_list_prop_test(obs_values, like_pred)
+        passed_obs = _obs_map_prop_test(obs_values, like_pred)
 
         self.__push(passed_obs, debug_label)
 
     def exitPropTestRegex(self, ctx):
         """
-        Consumes a list of (observation-idx, {...}) tuples
-          representing selected values from cybox objects in the indicated
-          container (grouped by index and root cybox object ID).  See
-          exitObjectPath().
-        Produces a list of 2-tuples representing those observations with
+        Consumes an observation data map, {obs_id: {...}, ...}, representing
+          selected values from cybox objects in each container
+          (grouped by observation index and root cybox object ID).
+          See exitObjectPath().
+        Produces a map representing those observations with
           cybox object values which pass the test, each with an associated
-          set of root cybox object IDs.  See _obs_list_prop_test().
+          set of root cybox object IDs.  See _obs_map_prop_test().
 
         Non-string values are treated as non-matching, and don't produce
         errors.
@@ -1212,19 +1197,19 @@ class MatchListener(CyboxPatternListener):
 
             return result
 
-        passed_obs = _obs_list_prop_test(obs_values, regex_pred)
+        passed_obs = _obs_map_prop_test(obs_values, regex_pred)
 
         self.__push(passed_obs, debug_label)
 
     def exitPropTestInSubnet(self, ctx):
         """
-        Consumes a list of (observation-idx, {...}) tuples
-          representing selected values from cybox objects in the indicated
-          container (grouped by index and root cybox object ID).  See
-          exitObjectPath().
-        Produces a list of 2-tuples representing those observations with
+        Consumes an observation data map, {obs_id: {...}, ...}, representing
+          selected values from cybox objects in each container
+          (grouped by observation index and root cybox object ID).
+          See exitObjectPath().
+        Produces a map representing those observations with
           cybox object values which pass the test, each with an associated
-          set of root cybox object IDs.  See _obs_list_prop_test().
+          set of root cybox object IDs.  See _obs_map_prop_test().
 
         Non-string values are treated as non-matching, and don't produce
         errors.
@@ -1247,19 +1232,19 @@ class MatchListener(CyboxPatternListener):
 
             return result
 
-        passed_obs = _obs_list_prop_test(obs_values, subnet_pred)
+        passed_obs = _obs_map_prop_test(obs_values, subnet_pred)
 
         self.__push(passed_obs, debug_label)
 
     def exitPropTestContains(self, ctx):
         """
-        Consumes a list of (observation-idx, {...}) tuples
-          representing selected values from cybox objects in the indicated
-          container (grouped by index and root cybox object ID).  See
-          exitObjectPath().
-        Produces a list of 2-tuples representing those observations with
+        Consumes an observation data map, {obs_id: {...}, ...}, representing
+          selected values from cybox objects in each container
+          (grouped by observation index and root cybox object ID).
+          See exitObjectPath().
+        Produces a map representing those observations with
           cybox object values which pass the test, each with an associated
-          set of root cybox object IDs.  See _obs_list_prop_test().
+          set of root cybox object IDs.  See _obs_map_prop_test().
 
         Non-string values are treated as non-matching, and don't produce
         errors.
@@ -1282,18 +1267,21 @@ class MatchListener(CyboxPatternListener):
 
             return result
 
-        passed_obs = _obs_list_prop_test(obs_values, contains_pred)
+        passed_obs = _obs_map_prop_test(obs_values, contains_pred)
 
         self.__push(passed_obs, debug_label)
 
     def exitObjectPath(self, ctx):
         """
         Consumes nothing from the stack
-        Produces a list of
-            (observation-idx, {
-                "cybox_obj_id1": [value, value, ...],
-                "cybox_obj_id2": [value, value, ...],
-            }) 2-tuples,
+        Produces a mapping:
+            {
+              observation-idx: {
+                  "cybox_obj_id1": [value, value, ...],
+                  "cybox_obj_id2": [value, value, ...],
+              },
+              etc...
+            }
           which are the values selected by the path, organized according to
           the the observations they belong to, and the "root" cybox objects
           which began a chain of dereferences (if any).  These will be used in
@@ -1312,11 +1300,11 @@ class MatchListener(CyboxPatternListener):
     def exitObjectType(self, ctx):
         """
         Consumes nothing from the stack.
-        Produces a list of (observation-idx, {...}) pairs representing those
+        Produces a map, {observation-idx: {...}, ...}, representing those
         cybox objects with the given type.  See exitObjectPath().
         """
         type_ = ctx.Identifier().getText()
-        results = []
+        results = {}
         for obs_idx, obs in enumerate(self.__observations):
 
             # Skip observations without objects
@@ -1329,11 +1317,11 @@ class MatchListener(CyboxPatternListener):
                     objects_from_this_obs[obj_id] = [obj]
 
             if len(objects_from_this_obs) > 0:
-                results.append((obs_idx, objects_from_this_obs))
+                results[obs_idx] = objects_from_this_obs
 
         self.__push(results, "exitObjectType ({})".format(type_))
 
-    def __dereference_objects(self, prop_name, obs_list):
+    def __dereference_objects(self, prop_name, obs_map):
         """
         If prop_name is a reference property, this "dereferences" it,
         substituting the referenced cybox object for the reference.  Reference
@@ -1347,10 +1335,10 @@ class MatchListener(CyboxPatternListener):
 
         :param prop_name: The property which was just stepped, i.e. the "key"
             in a key path step.
-        :param obs_list: The observation data after stepping, but before it
+        :param obs_map: The observation data after stepping, but before it
             has been pushed onto the stack.  This method acts as an additional
             "processing" step on that data.
-        :return: If prop_name is not a reference property, obs_list is
+        :return: If prop_name is not a reference property, obs_map is
             returned unchanged.  If it is a reference property, the
             dereferenced observation data is returned.
         """
@@ -1358,8 +1346,8 @@ class MatchListener(CyboxPatternListener):
         if prop_name.endswith("_ref"):
             # An object reference.  All top-level values should be
             # string cybox object IDs.
-            dereferenced_obs_list = []
-            for obs_idx, cybox_obj_map in obs_list:
+            dereferenced_obs_map = {}
+            for obs_idx, cybox_obj_map in six.iteritems(obs_map):
                 dereferenced_cybox_obj_map = {}
                 for cybox_obj_id, references in six.iteritems(cybox_obj_map):
                     dereferenced_cybox_objs = _dereference_cybox_objs(
@@ -1375,16 +1363,15 @@ class MatchListener(CyboxPatternListener):
                             dereferenced_cybox_objs
 
                 if len(dereferenced_cybox_obj_map) > 0:
-                    dereferenced_obs_list.append(
-                        (obs_idx, dereferenced_cybox_obj_map))
+                    dereferenced_obs_map[obs_idx] = dereferenced_cybox_obj_map
 
-            obs_list = dereferenced_obs_list
+            obs_map = dereferenced_obs_map
 
         elif prop_name.endswith("_refs"):
             # A list of object references.  All top-level values should
             # be lists (of cybox object references).
-            dereferenced_obs_list = []
-            for obs_idx, cybox_obj_map in obs_list:
+            dereferenced_obs_map = {}
+            for obs_idx, cybox_obj_map in six.iteritems(obs_map):
                 dereferenced_cybox_obj_map = {}
                 for cybox_obj_id, reference_lists in six.iteritems(cybox_obj_map):
                     dereferenced_cybox_obj_lists = []
@@ -1411,12 +1398,11 @@ class MatchListener(CyboxPatternListener):
                             dereferenced_cybox_obj_lists
 
                 if len(dereferenced_cybox_obj_map) > 0:
-                    dereferenced_obs_list.append((obs_idx,
-                                                  dereferenced_cybox_obj_map))
+                    dereferenced_obs_map[obs_idx] = dereferenced_cybox_obj_map
 
-            obs_list = dereferenced_obs_list
+            obs_map = dereferenced_obs_map
 
-        return obs_list
+        return obs_map
 
     def exitFirstPathComponent(self, ctx):
         """
@@ -1437,11 +1423,11 @@ class MatchListener(CyboxPatternListener):
         debug_label = "exitFirstPathComponent ({})".format(prop_name)
         obs_val = self.__pop(debug_label)
 
-        filtered_obs_list = _step_filter_observations(obs_val, prop_name)
-        dereferenced_obs_list = self.__dereference_objects(prop_name,
-                                                           filtered_obs_list)
+        filtered_obs_map = _step_filter_observations(obs_val, prop_name)
+        dereferenced_obs_map = self.__dereference_objects(prop_name,
+                                                           filtered_obs_map)
 
-        self.__push(dereferenced_obs_list, debug_label)
+        self.__push(dereferenced_obs_map, debug_label)
 
     def exitKeyPathStep(self, ctx):
         """
@@ -1451,11 +1437,11 @@ class MatchListener(CyboxPatternListener):
         debug_label = "exitKeyPathStep ({})".format(prop_name)
         obs_val = self.__pop(debug_label)
 
-        filtered_obs_list = _step_filter_observations(obs_val, prop_name)
-        dereferenced_obs_list = self.__dereference_objects(prop_name,
-                                                           filtered_obs_list)
+        filtered_obs_map = _step_filter_observations(obs_val, prop_name)
+        dereferenced_obs_map = self.__dereference_objects(prop_name,
+                                                           filtered_obs_map)
 
-        self.__push(dereferenced_obs_list, debug_label)
+        self.__push(dereferenced_obs_map, debug_label)
 
     def exitIndexPathStep(self, ctx):
         """
@@ -1469,20 +1455,20 @@ class MatchListener(CyboxPatternListener):
             debug_label = "exitIndexPathStep ({})".format(index)
             obs_val = self.__pop(debug_label)
 
-            filtered_obs_list = _step_filter_observations(obs_val, index)
+            filtered_obs_map = _step_filter_observations(obs_val, index)
 
         elif ctx.ASTERISK():
             # In this case, we step into all of the list elements.
             debug_label = "exitIndexPathStep (*)"
             obs_val = self.__pop(debug_label)
 
-            filtered_obs_list = _step_filter_observations_index_star(obs_val)
+            filtered_obs_map = _step_filter_observations_index_star(obs_val)
 
         else:
             # reallly shouldn't happen...
             raise MatcherInternalError("Unsupported index path step!")
 
-        self.__push(filtered_obs_list, debug_label)
+        self.__push(filtered_obs_map, debug_label)
 
     def exitSetLiteral(self, ctx):
         """
