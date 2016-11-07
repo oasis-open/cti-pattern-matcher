@@ -835,8 +835,7 @@ class MatchListener(CyboxPatternListener):
 
             for binding in bindings:
                 in_bounds = all(
-                    start_time <= self.__timestamps[obs_id]
-                    and self.__timestamps[obs_id] < stop_time
+                    start_time <= self.__timestamps[obs_id] < stop_time
                     for obs_id in binding
                 )
 
