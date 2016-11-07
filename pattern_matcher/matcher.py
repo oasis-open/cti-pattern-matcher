@@ -943,18 +943,18 @@ class MatchListener(CyboxPatternListener):
                 # cybox object ID sets.  If any of the cybox object ID set
                 # intersections is empty, we drop the observation from the
                 # result.
-                obs_ids_with_no_cybox_objs = []
+                obs_ids_to_drop = []
                 for obs_id, cybox_obj_ids in six.iteritems(obs1):
                     if obs_id in obs2:
                         obs1[obs_id] &= obs2[obs_id]
                         if not obs1[obs_id]:
-                            obs_ids_with_no_cybox_objs.append(obs_id)
+                            obs_ids_to_drop.append(obs_id)
                     else:
-                        del obs1[obs_id]
+                        obs_ids_to_drop.append(obs_id)
 
-                # Now drop the ones with empty intersections (can't modify
-                # as we iterated above, so this needs to be a separate pass).
-                for obs_id in obs_ids_with_no_cybox_objs:
+                # Now drop the ones we found (can't modify as we iterated
+                # above, so this needs to be a separate pass).
+                for obs_id in obs_ids_to_drop:
                     del obs1[obs_id]
 
             elif ctx.OR():
