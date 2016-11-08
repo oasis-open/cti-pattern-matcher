@@ -139,15 +139,6 @@ class CyboxPatternListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by CyboxPatternParser#propTestNot.
-    def enterPropTestNot(self, ctx):
-        pass
-
-    # Exit a parse tree produced by CyboxPatternParser#propTestNot.
-    def exitPropTestNot(self, ctx):
-        pass
-
-
     # Enter a parse tree produced by CyboxPatternParser#startStopQualifier.
     def enterStartStopQualifier(self, ctx):
         pass

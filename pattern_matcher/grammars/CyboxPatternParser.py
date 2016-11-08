@@ -7,70 +7,79 @@ from io import StringIO
 def serializedATN():
     with StringIO() as buf:
         buf.write(u"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3")
-        buf.write(u"9\u00af\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t")
+        buf.write(u"9\u00bc\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t")
         buf.write(u"\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\4\f\t\f\4\r\t\r")
         buf.write(u"\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\3\2\3\2\3\3")
         buf.write(u"\3\3\3\3\3\3\3\3\3\3\7\3+\n\3\f\3\16\3.\13\3\3\4\3\4")
         buf.write(u"\3\4\3\4\3\4\3\4\3\4\3\4\3\4\5\49\n\4\3\4\3\4\7\4=\n")
         buf.write(u"\4\f\4\16\4@\13\4\3\5\3\5\5\5D\n\5\3\6\3\6\3\6\3\6\3")
         buf.write(u"\6\3\6\7\6L\n\6\f\6\16\6O\13\6\3\7\3\7\3\7\3\7\3\7\3")
-        buf.write(u"\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3")
-        buf.write(u"\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3")
-        buf.write(u"\7\3\7\3\7\5\7s\n\7\3\b\3\b\3\b\3\b\3\b\3\t\3\t\3\t\3")
-        buf.write(u"\t\3\n\3\n\3\n\3\n\5\n\u0082\n\n\3\13\3\13\3\f\3\f\3")
-        buf.write(u"\r\3\r\3\r\3\r\3\r\3\r\5\r\u008e\n\r\3\r\3\r\7\r\u0092")
-        buf.write(u"\n\r\f\r\16\r\u0095\13\r\3\16\3\16\3\16\3\16\3\16\3\16")
-        buf.write(u"\7\16\u009d\n\16\f\16\16\16\u00a0\13\16\3\16\3\16\5\16")
-        buf.write(u"\u00a4\n\16\3\17\3\17\3\17\5\17\u00a9\n\17\3\20\3\20")
-        buf.write(u"\3\21\3\21\3\21\2\6\4\6\n\30\22\2\4\6\b\n\f\16\20\22")
-        buf.write(u"\24\26\30\32\34\36 \2\t\4\2\t\t\f\f\4\2\b\b\n\n\3\2#")
-        buf.write(u"$\3\2%(\4\2\3\3\66\66\3\2\3\5\3\2\25\33\u00b2\2\"\3\2")
-        buf.write(u"\2\2\4$\3\2\2\2\68\3\2\2\2\bC\3\2\2\2\nE\3\2\2\2\fr\3")
-        buf.write(u"\2\2\2\16t\3\2\2\2\20y\3\2\2\2\22}\3\2\2\2\24\u0083\3")
-        buf.write(u"\2\2\2\26\u0085\3\2\2\2\30\u008d\3\2\2\2\32\u00a3\3\2")
-        buf.write(u"\2\2\34\u00a8\3\2\2\2\36\u00aa\3\2\2\2 \u00ac\3\2\2\2")
-        buf.write(u"\"#\5\4\3\2#\3\3\2\2\2$%\b\3\1\2%&\5\6\4\2&,\3\2\2\2")
-        buf.write(u"\'(\f\4\2\2()\t\2\2\2)+\5\4\3\5*\'\3\2\2\2+.\3\2\2\2")
-        buf.write(u",*\3\2\2\2,-\3\2\2\2-\5\3\2\2\2.,\3\2\2\2/\60\b\4\1\2")
-        buf.write(u"\60\61\7\60\2\2\61\62\5\n\6\2\62\63\7/\2\2\639\3\2\2")
-        buf.write(u"\2\64\65\7.\2\2\65\66\5\4\3\2\66\67\7-\2\2\679\3\2\2")
-        buf.write(u"\28/\3\2\2\28\64\3\2\2\29>\3\2\2\2:;\f\3\2\2;=\5\b\5")
-        buf.write(u"\2<:\3\2\2\2=@\3\2\2\2><\3\2\2\2>?\3\2\2\2?\7\3\2\2\2")
-        buf.write(u"@>\3\2\2\2AD\5\16\b\2BD\5\20\t\2CA\3\2\2\2CB\3\2\2\2")
-        buf.write(u"D\t\3\2\2\2EF\b\6\1\2FG\5\f\7\2GM\3\2\2\2HI\f\4\2\2I")
-        buf.write(u"J\t\3\2\2JL\5\n\6\5KH\3\2\2\2LO\3\2\2\2MK\3\2\2\2MN\3")
-        buf.write(u"\2\2\2N\13\3\2\2\2OM\3\2\2\2PQ\5\22\n\2QR\t\4\2\2RS\5")
-        buf.write(u"\34\17\2Ss\3\2\2\2TU\5\22\n\2UV\t\5\2\2VW\5\36\20\2W")
-        buf.write(u"s\3\2\2\2XY\5\22\n\2YZ\7\22\2\2Z[\5\32\16\2[s\3\2\2\2")
-        buf.write(u"\\]\5\22\n\2]^\7\r\2\2^_\7\5\2\2_s\3\2\2\2`a\5\22\n\2")
-        buf.write(u"ab\7\16\2\2bc\7\7\2\2cs\3\2\2\2de\5\22\n\2ef\7\20\2\2")
-        buf.write(u"fg\7\5\2\2gs\3\2\2\2hi\5\22\n\2ij\7\17\2\2jk\7\5\2\2")
-        buf.write(u"ks\3\2\2\2lm\7.\2\2mn\5\n\6\2no\7-\2\2os\3\2\2\2pq\7")
-        buf.write(u"\13\2\2qs\5\f\7\2rP\3\2\2\2rT\3\2\2\2rX\3\2\2\2r\\\3")
-        buf.write(u"\2\2\2r`\3\2\2\2rd\3\2\2\2rh\3\2\2\2rl\3\2\2\2rp\3\2")
-        buf.write(u"\2\2s\r\3\2\2\2tu\7\23\2\2uv\7\5\2\2vw\7\24\2\2wx\7\5")
-        buf.write(u"\2\2x\17\3\2\2\2yz\7\37\2\2z{\7\3\2\2{|\5 \21\2|\21\3")
-        buf.write(u"\2\2\2}~\5\24\13\2~\177\7*\2\2\177\u0081\5\26\f\2\u0080")
-        buf.write(u"\u0082\5\30\r\2\u0081\u0080\3\2\2\2\u0081\u0082\3\2\2")
-        buf.write(u"\2\u0082\23\3\2\2\2\u0083\u0084\7\"\2\2\u0084\25\3\2")
-        buf.write(u"\2\2\u0085\u0086\7\"\2\2\u0086\27\3\2\2\2\u0087\u0088")
-        buf.write(u"\b\r\1\2\u0088\u0089\7+\2\2\u0089\u008e\7\"\2\2\u008a")
-        buf.write(u"\u008b\7\60\2\2\u008b\u008c\t\6\2\2\u008c\u008e\7/\2")
-        buf.write(u"\2\u008d\u0087\3\2\2\2\u008d\u008a\3\2\2\2\u008e\u0093")
-        buf.write(u"\3\2\2\2\u008f\u0090\f\5\2\2\u0090\u0092\5\30\r\6\u0091")
-        buf.write(u"\u008f\3\2\2\2\u0092\u0095\3\2\2\2\u0093\u0091\3\2\2")
-        buf.write(u"\2\u0093\u0094\3\2\2\2\u0094\31\3\2\2\2\u0095\u0093\3")
-        buf.write(u"\2\2\2\u0096\u0097\7.\2\2\u0097\u00a4\7-\2\2\u0098\u0099")
-        buf.write(u"\7.\2\2\u0099\u009e\5\34\17\2\u009a\u009b\7,\2\2\u009b")
-        buf.write(u"\u009d\5\34\17\2\u009c\u009a\3\2\2\2\u009d\u00a0\3\2")
-        buf.write(u"\2\2\u009e\u009c\3\2\2\2\u009e\u009f\3\2\2\2\u009f\u00a1")
-        buf.write(u"\3\2\2\2\u00a0\u009e\3\2\2\2\u00a1\u00a2\7-\2\2\u00a2")
-        buf.write(u"\u00a4\3\2\2\2\u00a3\u0096\3\2\2\2\u00a3\u0098\3\2\2")
-        buf.write(u"\2\u00a4\33\3\2\2\2\u00a5\u00a9\5\36\20\2\u00a6\u00a9")
-        buf.write(u"\7\6\2\2\u00a7\u00a9\7\36\2\2\u00a8\u00a5\3\2\2\2\u00a8")
-        buf.write(u"\u00a6\3\2\2\2\u00a8\u00a7\3\2\2\2\u00a9\35\3\2\2\2\u00aa")
-        buf.write(u"\u00ab\t\7\2\2\u00ab\37\3\2\2\2\u00ac\u00ad\t\b\2\2\u00ad")
-        buf.write(u"!\3\2\2\2\16,8>CMr\u0081\u008d\u0093\u009e\u00a3\u00a8")
+        buf.write(u"\7\3\7\3\7\3\7\3\7\5\7[\n\7\3\7\3\7\3\7\3\7\3\7\5\7b")
+        buf.write(u"\n\7\3\7\3\7\3\7\3\7\3\7\5\7i\n\7\3\7\3\7\3\7\3\7\3\7")
+        buf.write(u"\5\7p\n\7\3\7\3\7\3\7\3\7\3\7\5\7w\n\7\3\7\3\7\3\7\3")
+        buf.write(u"\7\3\7\3\7\3\7\5\7\u0080\n\7\3\b\3\b\3\b\3\b\3\b\3\t")
+        buf.write(u"\3\t\3\t\3\t\3\n\3\n\3\n\3\n\5\n\u008f\n\n\3\13\3\13")
+        buf.write(u"\3\f\3\f\3\r\3\r\3\r\3\r\3\r\3\r\5\r\u009b\n\r\3\r\3")
+        buf.write(u"\r\7\r\u009f\n\r\f\r\16\r\u00a2\13\r\3\16\3\16\3\16\3")
+        buf.write(u"\16\3\16\3\16\7\16\u00aa\n\16\f\16\16\16\u00ad\13\16")
+        buf.write(u"\3\16\3\16\5\16\u00b1\n\16\3\17\3\17\3\17\5\17\u00b6")
+        buf.write(u"\n\17\3\20\3\20\3\21\3\21\3\21\2\6\4\6\n\30\22\2\4\6")
+        buf.write(u"\b\n\f\16\20\22\24\26\30\32\34\36 \2\t\4\2\t\t\f\f\4")
+        buf.write(u"\2\b\b\n\n\3\2#$\3\2%(\4\2\3\3\66\66\3\2\3\5\3\2\25\33")
+        buf.write(u"\u00c3\2\"\3\2\2\2\4$\3\2\2\2\68\3\2\2\2\bC\3\2\2\2\n")
+        buf.write(u"E\3\2\2\2\f\177\3\2\2\2\16\u0081\3\2\2\2\20\u0086\3\2")
+        buf.write(u"\2\2\22\u008a\3\2\2\2\24\u0090\3\2\2\2\26\u0092\3\2\2")
+        buf.write(u"\2\30\u009a\3\2\2\2\32\u00b0\3\2\2\2\34\u00b5\3\2\2\2")
+        buf.write(u"\36\u00b7\3\2\2\2 \u00b9\3\2\2\2\"#\5\4\3\2#\3\3\2\2")
+        buf.write(u"\2$%\b\3\1\2%&\5\6\4\2&,\3\2\2\2\'(\f\4\2\2()\t\2\2\2")
+        buf.write(u")+\5\4\3\5*\'\3\2\2\2+.\3\2\2\2,*\3\2\2\2,-\3\2\2\2-")
+        buf.write(u"\5\3\2\2\2.,\3\2\2\2/\60\b\4\1\2\60\61\7\60\2\2\61\62")
+        buf.write(u"\5\n\6\2\62\63\7/\2\2\639\3\2\2\2\64\65\7.\2\2\65\66")
+        buf.write(u"\5\4\3\2\66\67\7-\2\2\679\3\2\2\28/\3\2\2\28\64\3\2\2")
+        buf.write(u"\29>\3\2\2\2:;\f\3\2\2;=\5\b\5\2<:\3\2\2\2=@\3\2\2\2")
+        buf.write(u"><\3\2\2\2>?\3\2\2\2?\7\3\2\2\2@>\3\2\2\2AD\5\16\b\2")
+        buf.write(u"BD\5\20\t\2CA\3\2\2\2CB\3\2\2\2D\t\3\2\2\2EF\b\6\1\2")
+        buf.write(u"FG\5\f\7\2GM\3\2\2\2HI\f\4\2\2IJ\t\3\2\2JL\5\n\6\5KH")
+        buf.write(u"\3\2\2\2LO\3\2\2\2MK\3\2\2\2MN\3\2\2\2N\13\3\2\2\2OM")
+        buf.write(u"\3\2\2\2PQ\5\22\n\2QR\t\4\2\2RS\5\34\17\2S\u0080\3\2")
+        buf.write(u"\2\2TU\5\22\n\2UV\t\5\2\2VW\5\36\20\2W\u0080\3\2\2\2")
+        buf.write(u"XZ\5\22\n\2Y[\7\13\2\2ZY\3\2\2\2Z[\3\2\2\2[\\\3\2\2\2")
+        buf.write(u"\\]\7\22\2\2]^\5\32\16\2^\u0080\3\2\2\2_a\5\22\n\2`b")
+        buf.write(u"\7\13\2\2a`\3\2\2\2ab\3\2\2\2bc\3\2\2\2cd\7\r\2\2de\7")
+        buf.write(u"\5\2\2e\u0080\3\2\2\2fh\5\22\n\2gi\7\13\2\2hg\3\2\2\2")
+        buf.write(u"hi\3\2\2\2ij\3\2\2\2jk\7\16\2\2kl\7\7\2\2l\u0080\3\2")
+        buf.write(u"\2\2mo\5\22\n\2np\7\13\2\2on\3\2\2\2op\3\2\2\2pq\3\2")
+        buf.write(u"\2\2qr\7\20\2\2rs\7\5\2\2s\u0080\3\2\2\2tv\5\22\n\2u")
+        buf.write(u"w\7\13\2\2vu\3\2\2\2vw\3\2\2\2wx\3\2\2\2xy\7\17\2\2y")
+        buf.write(u"z\7\5\2\2z\u0080\3\2\2\2{|\7.\2\2|}\5\n\6\2}~\7-\2\2")
+        buf.write(u"~\u0080\3\2\2\2\177P\3\2\2\2\177T\3\2\2\2\177X\3\2\2")
+        buf.write(u"\2\177_\3\2\2\2\177f\3\2\2\2\177m\3\2\2\2\177t\3\2\2")
+        buf.write(u"\2\177{\3\2\2\2\u0080\r\3\2\2\2\u0081\u0082\7\23\2\2")
+        buf.write(u"\u0082\u0083\7\5\2\2\u0083\u0084\7\24\2\2\u0084\u0085")
+        buf.write(u"\7\5\2\2\u0085\17\3\2\2\2\u0086\u0087\7\37\2\2\u0087")
+        buf.write(u"\u0088\7\3\2\2\u0088\u0089\5 \21\2\u0089\21\3\2\2\2\u008a")
+        buf.write(u"\u008b\5\24\13\2\u008b\u008c\7*\2\2\u008c\u008e\5\26")
+        buf.write(u"\f\2\u008d\u008f\5\30\r\2\u008e\u008d\3\2\2\2\u008e\u008f")
+        buf.write(u"\3\2\2\2\u008f\23\3\2\2\2\u0090\u0091\7\"\2\2\u0091\25")
+        buf.write(u"\3\2\2\2\u0092\u0093\7\"\2\2\u0093\27\3\2\2\2\u0094\u0095")
+        buf.write(u"\b\r\1\2\u0095\u0096\7+\2\2\u0096\u009b\7\"\2\2\u0097")
+        buf.write(u"\u0098\7\60\2\2\u0098\u0099\t\6\2\2\u0099\u009b\7/\2")
+        buf.write(u"\2\u009a\u0094\3\2\2\2\u009a\u0097\3\2\2\2\u009b\u00a0")
+        buf.write(u"\3\2\2\2\u009c\u009d\f\5\2\2\u009d\u009f\5\30\r\6\u009e")
+        buf.write(u"\u009c\3\2\2\2\u009f\u00a2\3\2\2\2\u00a0\u009e\3\2\2")
+        buf.write(u"\2\u00a0\u00a1\3\2\2\2\u00a1\31\3\2\2\2\u00a2\u00a0\3")
+        buf.write(u"\2\2\2\u00a3\u00a4\7.\2\2\u00a4\u00b1\7-\2\2\u00a5\u00a6")
+        buf.write(u"\7.\2\2\u00a6\u00ab\5\34\17\2\u00a7\u00a8\7,\2\2\u00a8")
+        buf.write(u"\u00aa\5\34\17\2\u00a9\u00a7\3\2\2\2\u00aa\u00ad\3\2")
+        buf.write(u"\2\2\u00ab\u00a9\3\2\2\2\u00ab\u00ac\3\2\2\2\u00ac\u00ae")
+        buf.write(u"\3\2\2\2\u00ad\u00ab\3\2\2\2\u00ae\u00af\7-\2\2\u00af")
+        buf.write(u"\u00b1\3\2\2\2\u00b0\u00a3\3\2\2\2\u00b0\u00a5\3\2\2")
+        buf.write(u"\2\u00b1\33\3\2\2\2\u00b2\u00b6\5\36\20\2\u00b3\u00b6")
+        buf.write(u"\7\6\2\2\u00b4\u00b6\7\36\2\2\u00b5\u00b2\3\2\2\2\u00b5")
+        buf.write(u"\u00b3\3\2\2\2\u00b5\u00b4\3\2\2\2\u00b6\35\3\2\2\2\u00b7")
+        buf.write(u"\u00b8\t\7\2\2\u00b8\37\3\2\2\2\u00b9\u00ba\t\b\2\2\u00ba")
+        buf.write(u"!\3\2\2\2\23,8>CMZahov\177\u008e\u009a\u00a0\u00ab\u00b0")
+        buf.write(u"\u00b5")
         return buf.getvalue()
 
 
@@ -639,6 +648,8 @@ class CyboxPatternParser ( Parser ):
             return self.getToken(CyboxPatternParser.MATCHES, 0)
         def RegexLiteral(self):
             return self.getToken(CyboxPatternParser.RegexLiteral, 0)
+        def NOT(self):
+            return self.getToken(CyboxPatternParser.NOT, 0)
 
         def enterRule(self, listener):
             if hasattr(listener, "enterPropTestRegex"):
@@ -662,6 +673,8 @@ class CyboxPatternParser ( Parser ):
             return self.getToken(CyboxPatternParser.CONTAINS, 0)
         def StringLiteral(self):
             return self.getToken(CyboxPatternParser.StringLiteral, 0)
+        def NOT(self):
+            return self.getToken(CyboxPatternParser.NOT, 0)
 
         def enterRule(self, listener):
             if hasattr(listener, "enterPropTestContains"):
@@ -715,6 +728,8 @@ class CyboxPatternParser ( Parser ):
             return self.getToken(CyboxPatternParser.LIKE, 0)
         def StringLiteral(self):
             return self.getToken(CyboxPatternParser.StringLiteral, 0)
+        def NOT(self):
+            return self.getToken(CyboxPatternParser.NOT, 0)
 
         def enterRule(self, listener):
             if hasattr(listener, "enterPropTestLike"):
@@ -764,6 +779,8 @@ class CyboxPatternParser ( Parser ):
             return self.getToken(CyboxPatternParser.INSUBNET, 0)
         def StringLiteral(self):
             return self.getToken(CyboxPatternParser.StringLiteral, 0)
+        def NOT(self):
+            return self.getToken(CyboxPatternParser.NOT, 0)
 
         def enterRule(self, listener):
             if hasattr(listener, "enterPropTestInSubnet"):
@@ -788,6 +805,8 @@ class CyboxPatternParser ( Parser ):
         def setLiteral(self):
             return self.getTypedRuleContext(CyboxPatternParser.SetLiteralContext,0)
 
+        def NOT(self):
+            return self.getToken(CyboxPatternParser.NOT, 0)
 
         def enterRule(self, listener):
             if hasattr(listener, "enterPropTestSet"):
@@ -821,27 +840,6 @@ class CyboxPatternParser ( Parser ):
                 listener.exitPropTestParen(self)
 
 
-    class PropTestNotContext(PropTestContext):
-
-        def __init__(self, parser, ctx): # actually a CyboxPatternParser.PropTestContext)
-            super(CyboxPatternParser.PropTestNotContext, self).__init__(parser)
-            self.copyFrom(ctx)
-
-        def NOT(self):
-            return self.getToken(CyboxPatternParser.NOT, 0)
-        def propTest(self):
-            return self.getTypedRuleContext(CyboxPatternParser.PropTestContext,0)
-
-
-        def enterRule(self, listener):
-            if hasattr(listener, "enterPropTestNot"):
-                listener.enterPropTestNot(self)
-
-        def exitRule(self, listener):
-            if hasattr(listener, "exitPropTestNot"):
-                listener.exitPropTestNot(self)
-
-
 
     def propTest(self):
 
@@ -849,9 +847,9 @@ class CyboxPatternParser ( Parser ):
         self.enterRule(localctx, 10, self.RULE_propTest)
         self._la = 0 # Token type
         try:
-            self.state = 112
+            self.state = 125
             self._errHandler.sync(self);
-            la_ = self._interp.adaptivePredict(self._input,5,self._ctx)
+            la_ = self._interp.adaptivePredict(self._input,10,self._ctx)
             if la_ == 1:
                 localctx = CyboxPatternParser.PropTestEqualContext(self, localctx)
                 self.enterOuterAlt(localctx, 1)
@@ -887,74 +885,100 @@ class CyboxPatternParser ( Parser ):
                 self.enterOuterAlt(localctx, 3)
                 self.state = 86
                 self.objectPath()
-                self.state = 87
-                self.match(CyboxPatternParser.IN)
                 self.state = 88
+                _la = self._input.LA(1)
+                if _la==CyboxPatternParser.NOT:
+                    self.state = 87
+                    self.match(CyboxPatternParser.NOT)
+
+
+                self.state = 90
+                self.match(CyboxPatternParser.IN)
+                self.state = 91
                 self.setLiteral()
                 pass
 
             elif la_ == 4:
                 localctx = CyboxPatternParser.PropTestLikeContext(self, localctx)
                 self.enterOuterAlt(localctx, 4)
-                self.state = 90
+                self.state = 93
                 self.objectPath()
-                self.state = 91
+                self.state = 95
+                _la = self._input.LA(1)
+                if _la==CyboxPatternParser.NOT:
+                    self.state = 94
+                    self.match(CyboxPatternParser.NOT)
+
+
+                self.state = 97
                 self.match(CyboxPatternParser.LIKE)
-                self.state = 92
+                self.state = 98
                 self.match(CyboxPatternParser.StringLiteral)
                 pass
 
             elif la_ == 5:
                 localctx = CyboxPatternParser.PropTestRegexContext(self, localctx)
                 self.enterOuterAlt(localctx, 5)
-                self.state = 94
+                self.state = 100
                 self.objectPath()
-                self.state = 95
+                self.state = 102
+                _la = self._input.LA(1)
+                if _la==CyboxPatternParser.NOT:
+                    self.state = 101
+                    self.match(CyboxPatternParser.NOT)
+
+
+                self.state = 104
                 self.match(CyboxPatternParser.MATCHES)
-                self.state = 96
+                self.state = 105
                 self.match(CyboxPatternParser.RegexLiteral)
                 pass
 
             elif la_ == 6:
                 localctx = CyboxPatternParser.PropTestInSubnetContext(self, localctx)
                 self.enterOuterAlt(localctx, 6)
-                self.state = 98
+                self.state = 107
                 self.objectPath()
-                self.state = 99
+                self.state = 109
+                _la = self._input.LA(1)
+                if _la==CyboxPatternParser.NOT:
+                    self.state = 108
+                    self.match(CyboxPatternParser.NOT)
+
+
+                self.state = 111
                 self.match(CyboxPatternParser.INSUBNET)
-                self.state = 100
+                self.state = 112
                 self.match(CyboxPatternParser.StringLiteral)
                 pass
 
             elif la_ == 7:
                 localctx = CyboxPatternParser.PropTestContainsContext(self, localctx)
                 self.enterOuterAlt(localctx, 7)
-                self.state = 102
+                self.state = 114
                 self.objectPath()
-                self.state = 103
+                self.state = 116
+                _la = self._input.LA(1)
+                if _la==CyboxPatternParser.NOT:
+                    self.state = 115
+                    self.match(CyboxPatternParser.NOT)
+
+
+                self.state = 118
                 self.match(CyboxPatternParser.CONTAINS)
-                self.state = 104
+                self.state = 119
                 self.match(CyboxPatternParser.StringLiteral)
                 pass
 
             elif la_ == 8:
                 localctx = CyboxPatternParser.PropTestParenContext(self, localctx)
                 self.enterOuterAlt(localctx, 8)
-                self.state = 106
+                self.state = 121
                 self.match(CyboxPatternParser.LPAREN)
-                self.state = 107
+                self.state = 122
                 self.comparisonExpression(0)
-                self.state = 108
+                self.state = 123
                 self.match(CyboxPatternParser.RPAREN)
-                pass
-
-            elif la_ == 9:
-                localctx = CyboxPatternParser.PropTestNotContext(self, localctx)
-                self.enterOuterAlt(localctx, 9)
-                self.state = 110
-                self.match(CyboxPatternParser.NOT)
-                self.state = 111
-                self.propTest()
                 pass
 
 
@@ -1004,13 +1028,13 @@ class CyboxPatternParser ( Parser ):
         self.enterRule(localctx, 12, self.RULE_startStopQualifier)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 114
+            self.state = 127
             self.match(CyboxPatternParser.START)
-            self.state = 115
+            self.state = 128
             self.match(CyboxPatternParser.StringLiteral)
-            self.state = 116
+            self.state = 129
             self.match(CyboxPatternParser.STOP)
-            self.state = 117
+            self.state = 130
             self.match(CyboxPatternParser.StringLiteral)
         except RecognitionException as re:
             localctx.exception = re
@@ -1056,11 +1080,11 @@ class CyboxPatternParser ( Parser ):
         self.enterRule(localctx, 14, self.RULE_withinQualifier)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 119
+            self.state = 132
             self.match(CyboxPatternParser.WITHIN)
-            self.state = 120
+            self.state = 133
             self.match(CyboxPatternParser.IntLiteral)
-            self.state = 121
+            self.state = 134
             self.timeUnit()
         except RecognitionException as re:
             localctx.exception = re
@@ -1112,16 +1136,16 @@ class CyboxPatternParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 123
+            self.state = 136
             self.objectType()
-            self.state = 124
+            self.state = 137
             self.match(CyboxPatternParser.COLON)
-            self.state = 125
+            self.state = 138
             self.firstPathComponent()
-            self.state = 127
+            self.state = 140
             _la = self._input.LA(1)
             if _la==CyboxPatternParser.DOT or _la==CyboxPatternParser.LBRACK:
-                self.state = 126
+                self.state = 139
                 self.objectPathComponent(0)
 
 
@@ -1162,7 +1186,7 @@ class CyboxPatternParser ( Parser ):
         self.enterRule(localctx, 18, self.RULE_objectType)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 129
+            self.state = 142
             self.match(CyboxPatternParser.Identifier)
         except RecognitionException as re:
             localctx.exception = re
@@ -1201,7 +1225,7 @@ class CyboxPatternParser ( Parser ):
         self.enterRule(localctx, 20, self.RULE_firstPathComponent)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 131
+            self.state = 144
             self.match(CyboxPatternParser.Identifier)
         except RecognitionException as re:
             localctx.exception = re
@@ -1301,40 +1325,40 @@ class CyboxPatternParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 139
+            self.state = 152
             token = self._input.LA(1)
             if token in [CyboxPatternParser.DOT]:
                 localctx = CyboxPatternParser.KeyPathStepContext(self, localctx)
                 self._ctx = localctx
                 _prevctx = localctx
 
-                self.state = 134
+                self.state = 147
                 self.match(CyboxPatternParser.DOT)
-                self.state = 135
+                self.state = 148
                 self.match(CyboxPatternParser.Identifier)
 
             elif token in [CyboxPatternParser.LBRACK]:
                 localctx = CyboxPatternParser.IndexPathStepContext(self, localctx)
                 self._ctx = localctx
                 _prevctx = localctx
-                self.state = 136
+                self.state = 149
                 self.match(CyboxPatternParser.LBRACK)
-                self.state = 137
+                self.state = 150
                 _la = self._input.LA(1)
                 if not(_la==CyboxPatternParser.IntLiteral or _la==CyboxPatternParser.ASTERISK):
                     self._errHandler.recoverInline(self)
                 else:
                     self.consume()
-                self.state = 138
+                self.state = 151
                 self.match(CyboxPatternParser.RBRACK)
 
             else:
                 raise NoViableAltException(self)
 
             self._ctx.stop = self._input.LT(-1)
-            self.state = 145
+            self.state = 158
             self._errHandler.sync(self)
-            _alt = self._interp.adaptivePredict(self._input,8,self._ctx)
+            _alt = self._interp.adaptivePredict(self._input,13,self._ctx)
             while _alt!=2 and _alt!=ATN.INVALID_ALT_NUMBER:
                 if _alt==1:
                     if self._parseListeners is not None:
@@ -1342,15 +1366,15 @@ class CyboxPatternParser ( Parser ):
                     _prevctx = localctx
                     localctx = CyboxPatternParser.PathStepContext(self, CyboxPatternParser.ObjectPathComponentContext(self, _parentctx, _parentState))
                     self.pushNewRecursionContext(localctx, _startState, self.RULE_objectPathComponent)
-                    self.state = 141
+                    self.state = 154
                     if not self.precpred(self._ctx, 3):
                         from antlr4.error.Errors import FailedPredicateException
                         raise FailedPredicateException(self, "self.precpred(self._ctx, 3)")
-                    self.state = 142
+                    self.state = 155
                     self.objectPathComponent(4) 
-                self.state = 147
+                self.state = 160
                 self._errHandler.sync(self)
-                _alt = self._interp.adaptivePredict(self._input,8,self._ctx)
+                _alt = self._interp.adaptivePredict(self._input,13,self._ctx)
 
         except RecognitionException as re:
             localctx.exception = re
@@ -1405,36 +1429,36 @@ class CyboxPatternParser ( Parser ):
         self.enterRule(localctx, 24, self.RULE_setLiteral)
         self._la = 0 # Token type
         try:
-            self.state = 161
+            self.state = 174
             self._errHandler.sync(self);
-            la_ = self._interp.adaptivePredict(self._input,10,self._ctx)
+            la_ = self._interp.adaptivePredict(self._input,15,self._ctx)
             if la_ == 1:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 148
+                self.state = 161
                 self.match(CyboxPatternParser.LPAREN)
-                self.state = 149
+                self.state = 162
                 self.match(CyboxPatternParser.RPAREN)
                 pass
 
             elif la_ == 2:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 150
+                self.state = 163
                 self.match(CyboxPatternParser.LPAREN)
-                self.state = 151
+                self.state = 164
                 self.primitiveLiteral()
-                self.state = 156
+                self.state = 169
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
                 while _la==CyboxPatternParser.COMMA:
-                    self.state = 152
+                    self.state = 165
                     self.match(CyboxPatternParser.COMMA)
-                    self.state = 153
+                    self.state = 166
                     self.primitiveLiteral()
-                    self.state = 158
+                    self.state = 171
                     self._errHandler.sync(self)
                     _la = self._input.LA(1)
 
-                self.state = 159
+                self.state = 172
                 self.match(CyboxPatternParser.RPAREN)
                 pass
 
@@ -1482,21 +1506,21 @@ class CyboxPatternParser ( Parser ):
         localctx = CyboxPatternParser.PrimitiveLiteralContext(self, self._ctx, self.state)
         self.enterRule(localctx, 26, self.RULE_primitiveLiteral)
         try:
-            self.state = 166
+            self.state = 179
             token = self._input.LA(1)
             if token in [CyboxPatternParser.IntLiteral, CyboxPatternParser.FloatLiteral, CyboxPatternParser.StringLiteral]:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 163
+                self.state = 176
                 self.orderableLiteral()
 
             elif token in [CyboxPatternParser.BoolLiteral]:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 164
+                self.state = 177
                 self.match(CyboxPatternParser.BoolLiteral)
 
             elif token in [CyboxPatternParser.NULL]:
                 self.enterOuterAlt(localctx, 3)
-                self.state = 165
+                self.state = 178
                 self.match(CyboxPatternParser.NULL)
 
             else:
@@ -1546,7 +1570,7 @@ class CyboxPatternParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 168
+            self.state = 181
             _la = self._input.LA(1)
             if not((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << CyboxPatternParser.IntLiteral) | (1 << CyboxPatternParser.FloatLiteral) | (1 << CyboxPatternParser.StringLiteral))) != 0)):
                 self._errHandler.recoverInline(self)
@@ -1608,7 +1632,7 @@ class CyboxPatternParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 170
+            self.state = 183
             _la = self._input.LA(1)
             if not((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << CyboxPatternParser.MILLISECONDS) | (1 << CyboxPatternParser.SECONDS) | (1 << CyboxPatternParser.MINUTES) | (1 << CyboxPatternParser.HOURS) | (1 << CyboxPatternParser.DAYS) | (1 << CyboxPatternParser.MONTHS) | (1 << CyboxPatternParser.YEARS))) != 0)):
                 self._errHandler.recoverInline(self)
