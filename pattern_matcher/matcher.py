@@ -587,8 +587,8 @@ def _obs_map_prop_test(obs_map, predicate):
     The structure of the result of a property test is:
 
     {
-      obs_idx: {cybox_obj_id1, cybox_obj_id2, ...}),
-      obs_idx: {cybox_obj_id1, cybox_obj_id2, ...}),
+      obs_idx: {cybox_obj_id1, cybox_obj_id2, ...},
+      obs_idx: {cybox_obj_id1, cybox_obj_id2, ...},
       etc...
     }
 
@@ -1424,7 +1424,7 @@ class MatchListener(CyboxPatternListener):
 
         filtered_obs_map = _step_filter_observations(obs_val, prop_name)
         dereferenced_obs_map = self.__dereference_objects(prop_name,
-                                                           filtered_obs_map)
+                                                          filtered_obs_map)
 
         self.__push(dereferenced_obs_map, debug_label)
 
@@ -1438,7 +1438,7 @@ class MatchListener(CyboxPatternListener):
 
         filtered_obs_map = _step_filter_observations(obs_val, prop_name)
         dereferenced_obs_map = self.__dereference_objects(prop_name,
-                                                           filtered_obs_map)
+                                                          filtered_obs_map)
 
         self.__push(dereferenced_obs_map, debug_label)
 
