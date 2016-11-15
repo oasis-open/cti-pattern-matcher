@@ -508,7 +508,7 @@ def _disjoint(iterable1, iterable2):
     # is there a faster way to do this?
     s1 = set(iterable1)
     s2 = set(iterable2)
-    return len(s1 & s2) == 0
+    return s1.isdisjoint(s2)
 
 
 def _timestamps_within(timestamps, duration):
