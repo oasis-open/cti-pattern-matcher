@@ -582,7 +582,7 @@ def _obs_map_prop_test(obs_map, predicate):
     place to document it.
 
     Required structure for obs_map is the result of object path selection;
-    see MatcherListener.exitObjectPath() for details.
+    see MatchListener.exitObjectPath() for details.
 
     The structure of the result of a property test is:
 
