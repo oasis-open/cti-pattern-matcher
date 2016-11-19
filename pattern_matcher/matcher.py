@@ -4,8 +4,8 @@ import argparse
 import datetime
 import dateutil.relativedelta
 import dateutil.tz
-import functools
 import io
+import itertools
 import json
 import operator
 import pprint
@@ -890,10 +890,7 @@ class MatchListener(CyboxPatternListener):
             # since this structure is predictable, I could do something
             # simpler.  Other code dealing with bindings doesn't expect any
             # nested structure, so I do the flattening here.
-
-            # 'reduce' is a builtin in python2; using it via functools
-            # yields compatibility with python3.
-            filtered_bindings = [functools.reduce(operator.concat, binding)
+            filtered_bindings = [tuple(itertools.chain.from_iterable(binding))
                                  for binding in filtered_bindings]
 
         self.__push(filtered_bindings, debug_label)
