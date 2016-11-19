@@ -55,10 +55,7 @@ AND file-object:file_system_properties.file_path.components[1] = 'Windows'
 AND file-object:file_system_properties.file_path.components[2] = 'System32'
 AND file-object:file_system_properties.file_name = 'foo.dll']""",
 "[file-object:extended_properties.windows_pebinary.sections[*].entropy > 7.0]",
-#"[Artifact:log = 'Login failed.'] REPEATED 5 TIMES START '2016-01-20T12:31:12.12345Z' STOP '2016-01-20T12:31:12.12345Z'",
-#"file-object:extended_properties.test + file-object:extended_properties.test1 - file-object:extended_properties.test2 = 9",
-#"file-object:extended_properties[0].test + file-object:extended_properties[1].test * file-object:extended_properties[2].test >= 142",
-#"file-object:extended_properties.test[2] - file-object:extended_properties.test[1] - file-object:extended_properties.test[0] = -9"
+"[Artifact:log = 'Login failed.'] REPEATED 5 TIMES"
 ]
 
 PASS_CASES = [(TEST_CASES[0], TEST + '0pass.json'),
@@ -72,9 +69,7 @@ PASS_CASES = [(TEST_CASES[0], TEST + '0pass.json'),
               (TEST_CASES[10], TEST + '11pass1.json'),
               (TEST_CASES[11], TEST + '12pass.json'),
               (TEST_CASES[12], TEST + '13pass.json'),
-#              (TEST_CASES[13], TEST + '14pass.json'),
-#              (TEST_CASES[14], TEST + '15pass.json'),
-#              (TEST_CASES[15], TEST + '16pass.json')
+              (TEST_CASES[13], TEST + '14pass.json'),
               ]
 
 
@@ -113,14 +108,8 @@ FAIL_CASES = [(TEST_CASES[0], TEST + '0fail1.json'),
               (TEST_CASES[11], TEST + '11fail2.json'),
               (TEST_CASES[12], TEST + '12fail1.json'),
               (TEST_CASES[12], TEST + '12fail2.json'),
-#              (TEST_CASES[13], TEST + '13fail1.json'),
-#              (TEST_CASES[13], TEST + '13fail2.json'),
-#              (TEST_CASES[14], TEST + '14fail1.json'),
-#              (TEST_CASES[14], TEST + '14fail2.json'),
-#              (TEST_CASES[15], TEST + '15fail1.json'),
-#              (TEST_CASES[15], TEST + '15fail2.json'),
-#              (TEST_CASES[16], TEST + '16fail1.json'),
-#              (TEST_CASES[16], TEST + '16fail2.json')
+              (TEST_CASES[13], TEST + '14fail1.json'),
+              (TEST_CASES[13], TEST + '13fail2.json'),
               ]
 
 

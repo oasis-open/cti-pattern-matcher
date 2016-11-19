@@ -157,6 +157,15 @@ class CyboxPatternListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by CyboxPatternParser#repeatedQualifier.
+    def enterRepeatedQualifier(self, ctx):
+        pass
+
+    # Exit a parse tree produced by CyboxPatternParser#repeatedQualifier.
+    def exitRepeatedQualifier(self, ctx):
+        pass
+
+
     # Enter a parse tree produced by CyboxPatternParser#objectPath.
     def enterObjectPath(self, ctx):
         pass

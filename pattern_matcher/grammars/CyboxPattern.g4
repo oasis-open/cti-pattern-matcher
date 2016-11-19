@@ -19,6 +19,7 @@ observationExpression
 qualifier
   : startStopQualifier
   | withinQualifier
+  | repeatedQualifier
   ;
 
 comparisonExpression
@@ -43,6 +44,10 @@ startStopQualifier
 
 withinQualifier
   : WITHIN IntLiteral timeUnit
+  ;
+
+repeatedQualifier
+  : REPEATED IntLiteral TIMES
   ;
 
 objectPath
