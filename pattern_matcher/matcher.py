@@ -5,7 +5,6 @@ import datetime
 import dateutil.relativedelta
 import dateutil.tz
 import io
-import itertools
 import json
 import operator
 import pprint
@@ -756,9 +755,7 @@ class MatchListener(CyboxPatternListener):
                     # together instead...
                     if _disjoint(lhs_binding, rhs_binding):
                         if ctx.ALONGWITH():
-                            joined_bindings.append(tuple(
-                                itertools.chain(lhs_binding, rhs_binding)
-                            ))
+                            joined_bindings.append(lhs_binding + rhs_binding)
 
                         elif ctx.FOLLOWEDBY():
                             # make sure the rhs timestamps are later (or equal)
@@ -768,10 +765,8 @@ class MatchListener(CyboxPatternListener):
                             )
 
                             if latest_lhs_timestamp <= earliest_rhs_timestamp:
-                                joined_bindings.append(tuple(
-                                    itertools.chain(lhs_binding,
-                                                    rhs_binding)
-                                ))
+                                joined_bindings.append(lhs_binding +
+                                                       rhs_binding)
 
                         else:
                             raise UnsupportedOperatorError(op_str)
