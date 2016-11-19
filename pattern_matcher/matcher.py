@@ -854,84 +854,96 @@ class MatchListener(CyboxPatternListener):
 
     # Don't need to do anything for exitObservationExpressionCompound
 
-    def exitObservationExpressionQualified(self, ctx):
+    def exitObservationExpressionRepeated(self, ctx):
         """
-        Consumes a list of bindings for the qualified observation expression,
-            and a qualifier value, which depends on the type of qualifier.
-        Produces a filtered list of bindings, filtered according to the
-            particular qualifier used.
+        Consumes a list of bindings for the qualified observation expression.
+        Produces a list of bindings which account for the repetition.  The
+          length of each new binding is equal to the length of the old bindings
+          times the repeat count.
         """
 
-        qualifier_node = ctx.qualifier().getChild(0)
-        # strip the "Context" suffix off...
-        qualifier_name = type(qualifier_node).__name__[:-7]
-        qualifier_type_id = qualifier_node.getRuleIndex()
+        rep_count = _literal_terminal_to_python_val(
+            ctx.repeatedQualifier().IntLiteral()
+        )
+        debug_label = "exitObservationExpressionRepeated ({})".format(
+            rep_count
+        )
 
-        debug_label = "exitObservationExpression ({})".format(qualifier_name)
+        bindings = self.__pop(debug_label)
 
-        if qualifier_type_id == CyboxPatternParser.RULE_withinQualifier:
-            # In this case, duration is a dateutil.relativedelta.relativedelta
-            # object (see exitWithinQualifier()).
-            duration = self.__pop(debug_label)
-            bindings = self.__pop(debug_label)
-
-            filtered_bindings = []
-            for binding in bindings:
-                if _timestamps_within(
-                        (self.__timestamps[obs_id] for obs_id in binding),
-                        duration):
-                    filtered_bindings.append(binding)
-
-        elif qualifier_type_id == CyboxPatternParser.RULE_startStopQualifier:
-            # In this case, these are start and stop timestamps as
-            # datetime.datetime objects (see exitStartStopQualifier()).
-            start_time, stop_time = self.__pop(debug_label)
-            bindings = self.__pop(debug_label)
-
-            filtered_bindings = []
-            for binding in bindings:
-                in_bounds = all(
-                    start_time <= self.__timestamps[obs_id] < stop_time
-                    for obs_id in binding
-                )
-
-                if in_bounds:
-                    filtered_bindings.append(binding)
-
-        elif qualifier_type_id == CyboxPatternParser.RULE_repeatedQualifier:
-            rep_count = _literal_terminal_to_python_val(
-                qualifier_node.IntLiteral())
-            bindings = self.__pop(debug_label)
-
-            # Need to find all 'rep_count'-sized disjoint combinations of
-            # bindings.
-            if rep_count < 1:
-                raise MatcherException("Invalid repetition count: {}".format(
-                    rep_count))
-            elif rep_count == 1:
-                # As an optimization, if rep_count is 1, we use the bindings
-                # as-is.
-                filtered_bindings = bindings
-            else:
-                # A list of tuples goes in (bindings)
-                filtered_bindings = _filtered_combinations(bindings, rep_count,
-                                                           _disjoint)
-                # ... and a list of tuples of tuples comes out
-                # (filtered_bindings).  The following flattens each outer
-                # tuple.  I could have also written a generic flattener, but
-                # since this structure is predictable, I could do something
-                # simpler.  Other code dealing with bindings doesn't expect any
-                # nested structure, so I do the flattening here.
-                if len(filtered_bindings) > 0:
-                    # 'reduce' is a builtin in python2; using it via functools
-                    # yields compatibility with python3.
-                    filtered_bindings = \
-                        [functools.reduce(operator.concat, binding)
-                         for binding in filtered_bindings]
-
+        # Need to find all 'rep_count'-sized disjoint combinations of
+        # bindings.
+        if rep_count < 1:
+            raise MatcherException("Invalid repetition count: {}".format(
+                rep_count))
+        elif rep_count == 1:
+            # As an optimization, if rep_count is 1, we use the bindings
+            # as-is.
+            filtered_bindings = bindings
         else:
-            raise MatcherException("Unsupported qualifier: {}".format(
-                qualifier_name))
+            # A list of tuples goes in (bindings)
+            filtered_bindings = _filtered_combinations(bindings, rep_count,
+                                                       _disjoint)
+            # ... and a list of tuples of tuples comes out
+            # (filtered_bindings).  The following flattens each outer
+            # tuple.  I could have also written a generic flattener, but
+            # since this structure is predictable, I could do something
+            # simpler.  Other code dealing with bindings doesn't expect any
+            # nested structure, so I do the flattening here.
+
+            # 'reduce' is a builtin in python2; using it via functools
+            # yields compatibility with python3.
+            filtered_bindings = [functools.reduce(operator.concat, binding)
+                                 for binding in filtered_bindings]
+
+        self.__push(filtered_bindings, debug_label)
+
+    def exitObservationExpressionWithin(self, ctx):
+        """
+        Consumes (1) a duration, as a dateutil.relativedelta,relativedelta
+          object (see exitWithinQualifier()), and (2) a list of bindings.
+        Produces a list of bindings which are temporally filtered according
+          to the given duration.
+        """
+
+        debug_label = "exitObservationExpressionWithin"
+
+        duration = self.__pop(debug_label)
+        bindings = self.__pop(debug_label)
+
+        filtered_bindings = []
+        for binding in bindings:
+            if _timestamps_within(
+                    (self.__timestamps[obs_id] for obs_id in binding),
+                    duration):
+                filtered_bindings.append(binding)
+
+        self.__push(filtered_bindings, debug_label)
+
+    def exitObservationExpressionStartStop(self, ctx):
+        """
+        Consumes (1) a time interval as a pair of datetime.datetime objects,
+          and (2) a list of bindings.
+        Produces a list of bindings which are temporally filtered according
+          to the given time interval.
+        """
+
+        debug_label = "exitObservationExpressionStartStop"
+
+        # In this case, these are start and stop timestamps as
+        # datetime.datetime objects (see exitStartStopQualifier()).
+        start_time, stop_time = self.__pop(debug_label)
+        bindings = self.__pop(debug_label)
+
+        filtered_bindings = []
+        for binding in bindings:
+            in_bounds = all(
+                start_time <= self.__timestamps[obs_id] < stop_time
+                for obs_id in binding
+            )
+
+            if in_bounds:
+                filtered_bindings.append(binding)
 
         self.__push(filtered_bindings, debug_label)
 

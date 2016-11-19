@@ -11,15 +11,11 @@ observationExpressions
   ;
 
 observationExpression
-  : LBRACK comparisonExpression RBRACK     # observationExpressionSimple
-  | LPAREN observationExpressions RPAREN   # observationExpressionCompound
-  | observationExpression qualifier        # observationExpressionQualified
-  ;
-
-qualifier
-  : startStopQualifier
-  | withinQualifier
-  | repeatedQualifier
+  : LBRACK comparisonExpression RBRACK        # observationExpressionSimple
+  | LPAREN observationExpressions RPAREN      # observationExpressionCompound
+  | observationExpression startStopQualifier  # observationExpressionStartStop
+  | observationExpression withinQualifier     # observationExpressionWithin
+  | observationExpression repeatedQualifier   # observationExpressionRepeated
   ;
 
 comparisonExpression
