@@ -807,11 +807,7 @@ class MatchListener(CyboxPatternListener):
                     )
 
                 for rhs_binding in rhs_bindings:
-                    # Kinda silly I can't just do something like
-                    # func(*args1, *args2) and have both unpacked into the
-                    # function call... but I get a warning that it isn't
-                    # supported on python < 3.5.  So I chain iterables
-                    # together instead...
+
                     if _disjoint(lhs_binding, rhs_binding):
                         if ctx.ALONGWITH():
                             joined_bindings.append(lhs_binding + rhs_binding)
