@@ -76,6 +76,15 @@ class CyboxPatternListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by CyboxPatternParser#comparisonExpressionAnd.
+    def enterComparisonExpressionAnd(self, ctx):
+        pass
+
+    # Exit a parse tree produced by CyboxPatternParser#comparisonExpressionAnd.
+    def exitComparisonExpressionAnd(self, ctx):
+        pass
+
+
     # Enter a parse tree produced by CyboxPatternParser#propTestEqual.
     def enterPropTestEqual(self, ctx):
         pass

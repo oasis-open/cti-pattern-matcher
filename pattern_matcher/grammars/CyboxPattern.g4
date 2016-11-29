@@ -19,7 +19,12 @@ observationExpression
   ;
 
 comparisonExpression
-  : <assoc=left> comparisonExpression (AND|OR) comparisonExpression
+  : <assoc=left> comparisonExpression OR comparisonExpression
+  | comparisonExpressionAnd
+  ;
+
+comparisonExpressionAnd
+  : <assoc=left> comparisonExpressionAnd AND comparisonExpressionAnd
   | propTest
   ;
 
