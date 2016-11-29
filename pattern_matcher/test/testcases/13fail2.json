@@ -49,16 +49,16 @@
 			},
 			"sections": [
 				{
-					"name": "CODE",
+					"name": "CODE"
 				},
 				{
-					"name": "DATA",
+					"name": "DATA"
 				},
 				{
-					"name": "NicolasB",
+					"name": "NicolasB"
 				},
 				{
-					"name": ".idata",
+					"name": ".idata"
 				}
 			]
 		}

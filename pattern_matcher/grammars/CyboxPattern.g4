@@ -11,14 +11,11 @@ observationExpressions
   ;
 
 observationExpression
-  : LBRACK comparisonExpression RBRACK     # observationExpressionSimple
-  | LPAREN observationExpressions RPAREN   # observationExpressionCompound
-  | observationExpression qualifier        # observationExpressionQualified
-  ;
-
-qualifier
-  : startStopQualifier
-  | withinQualifier
+  : LBRACK comparisonExpression RBRACK        # observationExpressionSimple
+  | LPAREN observationExpressions RPAREN      # observationExpressionCompound
+  | observationExpression startStopQualifier  # observationExpressionStartStop
+  | observationExpression withinQualifier     # observationExpressionWithin
+  | observationExpression repeatedQualifier   # observationExpressionRepeated
   ;
 
 comparisonExpression
@@ -43,6 +40,10 @@ startStopQualifier
 
 withinQualifier
   : WITHIN IntLiteral timeUnit
+  ;
+
+repeatedQualifier
+  : REPEATED IntLiteral TIMES
   ;
 
 objectPath

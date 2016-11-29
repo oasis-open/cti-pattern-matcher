@@ -22,6 +22,15 @@ class CyboxPatternListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by CyboxPatternParser#observationExpressionRepeated.
+    def enterObservationExpressionRepeated(self, ctx):
+        pass
+
+    # Exit a parse tree produced by CyboxPatternParser#observationExpressionRepeated.
+    def exitObservationExpressionRepeated(self, ctx):
+        pass
+
+
     # Enter a parse tree produced by CyboxPatternParser#observationExpressionSimple.
     def enterObservationExpressionSimple(self, ctx):
         pass
@@ -40,21 +49,21 @@ class CyboxPatternListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by CyboxPatternParser#observationExpressionQualified.
-    def enterObservationExpressionQualified(self, ctx):
+    # Enter a parse tree produced by CyboxPatternParser#observationExpressionWithin.
+    def enterObservationExpressionWithin(self, ctx):
         pass
 
-    # Exit a parse tree produced by CyboxPatternParser#observationExpressionQualified.
-    def exitObservationExpressionQualified(self, ctx):
+    # Exit a parse tree produced by CyboxPatternParser#observationExpressionWithin.
+    def exitObservationExpressionWithin(self, ctx):
         pass
 
 
-    # Enter a parse tree produced by CyboxPatternParser#qualifier.
-    def enterQualifier(self, ctx):
+    # Enter a parse tree produced by CyboxPatternParser#observationExpressionStartStop.
+    def enterObservationExpressionStartStop(self, ctx):
         pass
 
-    # Exit a parse tree produced by CyboxPatternParser#qualifier.
-    def exitQualifier(self, ctx):
+    # Exit a parse tree produced by CyboxPatternParser#observationExpressionStartStop.
+    def exitObservationExpressionStartStop(self, ctx):
         pass
 
 
@@ -154,6 +163,15 @@ class CyboxPatternListener(ParseTreeListener):
 
     # Exit a parse tree produced by CyboxPatternParser#withinQualifier.
     def exitWithinQualifier(self, ctx):
+        pass
+
+
+    # Enter a parse tree produced by CyboxPatternParser#repeatedQualifier.
+    def enterRepeatedQualifier(self, ctx):
+        pass
+
+    # Exit a parse tree produced by CyboxPatternParser#repeatedQualifier.
+    def exitRepeatedQualifier(self, ctx):
         pass
 
 

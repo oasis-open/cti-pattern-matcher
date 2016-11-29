@@ -498,17 +498,23 @@ def _ip_or_cidr_in_subnet(ip_or_cidr_str, subnet_cidr):
     return masked_containee_ip == masked_container_ip
 
 
-def _disjoint(iterable1, iterable2):
+def _disjoint(first_seq, *rest_seq):
     """
-    Checks whether the values in the two given iterables are disjoint, i.e.
-    have an empty intersection.
-    :return: True if they are disjoint, False otherwise
+    Checks whether the values in first sequence are disjoint from the
+    values in the sequences in rest_seq.
+
+    :return: True if first_seq is disjoint from the rest, False otherwise.
     """
 
+    if len(rest_seq) == 0:
+        return True
+
     # is there a faster way to do this?
-    s1 = set(iterable1)
-    s2 = set(iterable2)
-    return len(s1 & s2) == 0
+    fs = set(first_seq)
+    return all(
+        fs.isdisjoint(set(seq))
+        for seq in rest_seq
+    )
 
 
 def _timestamps_within(timestamps, duration):
@@ -582,13 +588,13 @@ def _obs_map_prop_test(obs_map, predicate):
     place to document it.
 
     Required structure for obs_map is the result of object path selection;
-    see MatcherListener.exitObjectPath() for details.
+    see MatchListener.exitObjectPath() for details.
 
     The structure of the result of a property test is:
 
     {
-      obs_idx: {cybox_obj_id1, cybox_obj_id2, ...}),
-      obs_idx: {cybox_obj_id1, cybox_obj_id2, ...}),
+      obs_idx: {cybox_obj_id1, cybox_obj_id2, ...},
+      obs_idx: {cybox_obj_id1, cybox_obj_id2, ...},
       etc...
     }
 
@@ -615,6 +621,58 @@ def _obs_map_prop_test(obs_map, predicate):
             passed_obs[obs_idx] = passed_cybox_obj_roots
 
     return passed_obs
+
+
+def _filtered_combinations(values, combo_size, filter_pred=None):
+    """
+    Finds combinations of values of the given size, from the given sequence,
+    filtered according to the given predicate.
+
+    This function builds up the combinations incrementally, and the predicate
+    is invoked with partial results.  This allows many combinations to be
+    ruled out early.  If the predicate returns True, the combination is kept,
+    otherwise it is discarded.
+
+    The predicate is invoked with each combination value as a separate
+    argument.  E.g. if (1,2,3) is a candidate combination (or partial
+    combination), the predicate is invoked as pred(1, 2, 3).  So the predicate
+    will probably need a "*args"-style argument for capturing variable
+    numbers of positional arguments.
+
+    Because of the way combinations are built up incrementally, the predicate
+    may assume that args 1 through N already satisfy the predicate (they've
+    already been run through it), which may allow you to optimize the
+    implementation.  Arg 0 is the "new" arg being tested to see if can be
+    prepended to the rest of the args.
+
+    :param values: The sequence of values
+    :param combo_size: The desired combination size (must be >= 1)
+    :param filter_pred: The filter predicate.  If None (the default), no
+        filtering is done.
+    :return: The combinations, as a list of tuples.
+    """
+
+    if combo_size < 1:
+        raise ValueError("combo_size must be >= 1")
+    elif combo_size > len(values):
+        # Not enough values to make any combo
+        return []
+    elif combo_size == 1:
+        # Each value is its own combo
+        return [(value,) for value in values
+                if filter_pred is None or filter_pred(value)]
+    else:
+
+        sub_combos = _filtered_combinations(values[1:], combo_size - 1,
+                                            filter_pred)
+
+        combos = [(values[0],) + sub_combo
+                  for sub_combo in sub_combos
+                  if filter_pred is None or filter_pred(values[0], *sub_combo)]
+
+        combos += _filtered_combinations(values[1:], combo_size, filter_pred)
+
+        return combos
 
 
 class MatchListener(CyboxPatternListener):
@@ -749,16 +807,10 @@ class MatchListener(CyboxPatternListener):
                     )
 
                 for rhs_binding in rhs_bindings:
-                    # Kinda silly I can't just do something like
-                    # func(*args1, *args2) and have both unpacked into the
-                    # function call... but I get a warning that it isn't
-                    # supported on python < 3.5.  So I chain iterables
-                    # together instead...
+
                     if _disjoint(lhs_binding, rhs_binding):
                         if ctx.ALONGWITH():
-                            joined_bindings.append(tuple(
-                                itertools.chain(lhs_binding, rhs_binding)
-                            ))
+                            joined_bindings.append(lhs_binding + rhs_binding)
 
                         elif ctx.FOLLOWEDBY():
                             # make sure the rhs timestamps are later (or equal)
@@ -768,10 +820,8 @@ class MatchListener(CyboxPatternListener):
                             )
 
                             if latest_lhs_timestamp <= earliest_rhs_timestamp:
-                                joined_bindings.append(tuple(
-                                    itertools.chain(lhs_binding,
-                                                    rhs_binding)
-                                ))
+                                joined_bindings.append(lhs_binding +
+                                                       rhs_binding)
 
                         else:
                             raise UnsupportedOperatorError(op_str)
@@ -800,51 +850,93 @@ class MatchListener(CyboxPatternListener):
 
     # Don't need to do anything for exitObservationExpressionCompound
 
-    def exitObservationExpressionQualified(self, ctx):
+    def exitObservationExpressionRepeated(self, ctx):
         """
-        Consumes a list of bindings for the qualified observation expression,
-            and a qualifier value, which depends on the type of qualifier.
-        Produces a filtered list of bindings, filtered according to the
-            particular qualifier used.
+        Consumes a list of bindings for the qualified observation expression.
+        Produces a list of bindings which account for the repetition.  The
+          length of each new binding is equal to the length of the old bindings
+          times the repeat count.
         """
 
-        qualifier_node = ctx.qualifier().getChild(0)
-        # strip the "Context" suffix off...
-        qualifier_name = type(qualifier_node).__name__[:-7]
-        qualifier_type_id = qualifier_node.getRuleIndex()
+        rep_count = _literal_terminal_to_python_val(
+            ctx.repeatedQualifier().IntLiteral()
+        )
+        debug_label = "exitObservationExpressionRepeated ({})".format(
+            rep_count
+        )
 
-        debug_label = "exitObservationExpression ({})".format(qualifier_name)
+        bindings = self.__pop(debug_label)
 
-        qualifier_val = self.__pop(debug_label)
+        # Need to find all 'rep_count'-sized disjoint combinations of
+        # bindings.
+        if rep_count < 1:
+            raise MatcherException("Invalid repetition count: {}".format(
+                rep_count))
+        elif rep_count == 1:
+            # As an optimization, if rep_count is 1, we use the bindings
+            # as-is.
+            filtered_bindings = bindings
+        else:
+            # A list of tuples goes in (bindings)
+            filtered_bindings = _filtered_combinations(bindings, rep_count,
+                                                       _disjoint)
+            # ... and a list of tuples of tuples comes out
+            # (filtered_bindings).  The following flattens each outer
+            # tuple.  I could have also written a generic flattener, but
+            # since this structure is predictable, I could do something
+            # simpler.  Other code dealing with bindings doesn't expect any
+            # nested structure, so I do the flattening here.
+            filtered_bindings = [tuple(itertools.chain.from_iterable(binding))
+                                 for binding in filtered_bindings]
+
+        self.__push(filtered_bindings, debug_label)
+
+    def exitObservationExpressionWithin(self, ctx):
+        """
+        Consumes (1) a duration, as a dateutil.relativedelta,relativedelta
+          object (see exitWithinQualifier()), and (2) a list of bindings.
+        Produces a list of bindings which are temporally filtered according
+          to the given duration.
+        """
+
+        debug_label = "exitObservationExpressionWithin"
+
+        duration = self.__pop(debug_label)
         bindings = self.__pop(debug_label)
 
         filtered_bindings = []
-        if qualifier_type_id == CyboxPatternParser.RULE_withinQualifier:
-            # In this case, qualifier_val is a
-            # dateutil.relativedelta.relativedelta object.
-            for binding in bindings:
-                if _timestamps_within(
-                        (self.__timestamps[obs_id] for obs_id in binding),
-                        qualifier_val):
-                    filtered_bindings.append(binding)
+        for binding in bindings:
+            if _timestamps_within(
+                    (self.__timestamps[obs_id] for obs_id in binding),
+                    duration):
+                filtered_bindings.append(binding)
 
-        elif qualifier_type_id == CyboxPatternParser.RULE_startStopQualifier:
-            # In this case, qualifier_val is a tuple containing the start
-            # and stop timestamps as datetime.datetime objects.
-            start_time, stop_time = qualifier_val
+        self.__push(filtered_bindings, debug_label)
 
-            for binding in bindings:
-                in_bounds = all(
-                    start_time <= self.__timestamps[obs_id] < stop_time
-                    for obs_id in binding
-                )
+    def exitObservationExpressionStartStop(self, ctx):
+        """
+        Consumes (1) a time interval as a pair of datetime.datetime objects,
+          and (2) a list of bindings.
+        Produces a list of bindings which are temporally filtered according
+          to the given time interval.
+        """
 
-                if in_bounds:
-                    filtered_bindings.append(binding)
+        debug_label = "exitObservationExpressionStartStop"
 
-        else:
-            raise MatcherException("Unsupported qualifier: {}".format(
-                qualifier_name))
+        # In this case, these are start and stop timestamps as
+        # datetime.datetime objects (see exitStartStopQualifier()).
+        start_time, stop_time = self.__pop(debug_label)
+        bindings = self.__pop(debug_label)
+
+        filtered_bindings = []
+        for binding in bindings:
+            in_bounds = all(
+                start_time <= self.__timestamps[obs_id] < stop_time
+                for obs_id in binding
+            )
+
+            if in_bounds:
+                filtered_bindings.append(binding)
 
         self.__push(filtered_bindings, debug_label)
 
@@ -1424,7 +1516,7 @@ class MatchListener(CyboxPatternListener):
 
         filtered_obs_map = _step_filter_observations(obs_val, prop_name)
         dereferenced_obs_map = self.__dereference_objects(prop_name,
-                                                           filtered_obs_map)
+                                                          filtered_obs_map)
 
         self.__push(dereferenced_obs_map, debug_label)
 
@@ -1438,7 +1530,7 @@ class MatchListener(CyboxPatternListener):
 
         filtered_obs_map = _step_filter_observations(obs_val, prop_name)
         dereferenced_obs_map = self.__dereference_objects(prop_name,
-                                                           filtered_obs_map)
+                                                          filtered_obs_map)
 
         self.__push(dereferenced_obs_map, debug_label)
 
