@@ -62,7 +62,7 @@ and the observation data:
     }
     ```
     The matcher handles references by substituting the referenced object for the
-    reference.  So the each list `["0", "1"]` is replaced with a list of the
+    reference.  So each list `["0", "1"]` is replaced with a list of the
     referenced objects.  Which themselves have two references apiece, which get
     replaced with the same objects, which have two references apiece, etc.
     Also, because of the `[*]` index steps, nothing gets pruned away; all paths
