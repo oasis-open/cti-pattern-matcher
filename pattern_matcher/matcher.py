@@ -1006,70 +1006,85 @@ class MatchListener(CyboxPatternListener):
         Consumes zero or two maps of observation IDs produced by child
           propTest's (see _obs_map_prop_test()) and/or
           sub-comparison-expressions.
-        Produces: if one propTest, this callback does nothing.  If two, the
-          top two maps on the stack are combined into a single map of
+        Produces: if one child expression, this callback does nothing.  If
+          two, the top two maps on the stack are combined into a single map of
           observation IDs.
 
-          If the 'and' operator is used, the map has those IDs common to
-          both (intersection); their cybox object ID sets are also intersected.
-          If this latter intersection is empty, the corresponding observation
-          is dropped.
-
-          If 'or', the maps are merged (union); observation IDs which are
-          shared between both operands have their cybox object ID sets
-          unioned in the result.
+          This implements the "OR" operator.  So the maps are merged (union);
+          observation IDs which are shared between both operands have their
+          cybox object ID sets unioned in the result.
         """
 
-        num_operands = len(ctx.comparisonExpression())
+        debug_label = "exitComparisonExpression"
+        num_or_operands = len(ctx.comparisonExpression())
 
-        if num_operands == 2:
-            op_str = ctx.getChild(1).getText()
-            debug_label = "exitComparisonExpression ({})".format(op_str)
+        # Just in case...
+        if num_or_operands not in (0, 2):
+            raise MatcherInternalError("Unexpected number of "
+                "comparisonExpression children: {}".format(num_or_operands))
+
+        if num_or_operands == 2:
+            # The result is collected into obs1.
             obs2 = self.__pop(debug_label)
             obs1 = self.__pop(debug_label)
 
-            # In both cases below, the result is collected into obs1.
-            if ctx.AND():
-
-                # We intersect the observation IDs and their corresponding
-                # cybox object ID sets.  If any of the cybox object ID set
-                # intersections is empty, we drop the observation from the
-                # result.
-                obs_ids_to_drop = []
-                for obs_id, cybox_obj_ids in six.iteritems(obs1):
-                    if obs_id in obs2:
-                        obs1[obs_id] &= obs2[obs_id]
-                        if not obs1[obs_id]:
-                            obs_ids_to_drop.append(obs_id)
-                    else:
-                        obs_ids_to_drop.append(obs_id)
-
-                # Now drop the ones we found (can't modify as we iterated
-                # above, so this needs to be a separate pass).
-                for obs_id in obs_ids_to_drop:
-                    del obs1[obs_id]
-
-            elif ctx.OR():
-                # We union the observation IDs and their corresponding
-                # cybox object ID sets.
-                for obs_id, cybox_obj_ids in six.iteritems(obs2):
-                    if obs_id in obs1:
-                        obs1[obs_id] |= cybox_obj_ids
-                    else:
-                        obs1[obs_id] = cybox_obj_ids
-
-            else:
-                raise UnsupportedOperatorError(op_str)
+            # We union the observation IDs and their corresponding
+            # cybox object ID sets.
+            for obs_id, cybox_obj_ids in six.iteritems(obs2):
+                if obs_id in obs1:
+                    obs1[obs_id] |= cybox_obj_ids
+                else:
+                    obs1[obs_id] = cybox_obj_ids
 
             self.__push(obs1, debug_label)
 
-        elif num_operands != 0:
-            # Just in case...
-            raise MatcherInternalError("Unexpected number of "
-                "comparisonExpression children: {}".format(num_operands))
+    def exitComparisonExpressionAnd(self, ctx):
+        """
+        Consumes zero or two maps of observation IDs produced by child
+          propTest's (see _obs_map_prop_test()) and/or
+          sub-comparison-expressions.
+        Produces: if one child expression, this callback does nothing.  If
+          two, the top two maps on the stack are combined into a single map of
+          observation IDs.
 
-        # if only the one propTest child, we don't have to do anything to the
-        # top of the stack.
+          This implements the "AND" operator.  So the result map has those IDs
+          common to both (intersection); their cybox object ID sets are also
+          intersected.  If this latter intersection is empty, the corresponding
+          observation is dropped.
+        """
+
+        debug_label = "exitComparisonExpressionAnd"
+        num_and_operands = len(ctx.comparisonExpressionAnd())
+
+        # Just in case...
+        if num_and_operands not in (0, 2):
+            raise MatcherInternalError("Unexpected number of "
+                "comparisonExpressionAnd children: {}".format(num_and_operands))
+
+        if num_and_operands == 2:
+            # The result is collected into obs1.
+            obs2 = self.__pop(debug_label)
+            obs1 = self.__pop(debug_label)
+
+            # We intersect the observation IDs and their corresponding
+            # cybox object ID sets.  If any of the cybox object ID set
+            # intersections is empty, we drop the observation from the
+            # result.
+            obs_ids_to_drop = []
+            for obs_id, cybox_obj_ids in six.iteritems(obs1):
+                if obs_id in obs2:
+                    obs1[obs_id] &= obs2[obs_id]
+                    if not obs1[obs_id]:
+                        obs_ids_to_drop.append(obs_id)
+                else:
+                    obs_ids_to_drop.append(obs_id)
+
+            # Now drop the ones we found (can't modify as we iterated
+            # above, so this needs to be a separate pass).
+            for obs_id in obs_ids_to_drop:
+                del obs1[obs_id]
+
+            self.__push(obs1, debug_label)
 
     def exitPropTestEqual(self, ctx):
         """

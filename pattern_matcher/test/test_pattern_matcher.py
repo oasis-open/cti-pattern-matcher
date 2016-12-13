@@ -55,7 +55,8 @@ AND file-object:file_system_properties.file_path.components[1] = 'Windows'
 AND file-object:file_system_properties.file_path.components[2] = 'System32'
 AND file-object:file_system_properties.file_name = 'foo.dll']""",
 "[file-object:extended_properties.windows_pebinary.sections[*].entropy > 7.0]",
-"[Artifact:log = 'Login failed.'] REPEATED 5 TIMES"
+"[Artifact:log = 'Login failed.'] REPEATED 5 TIMES",
+"[file-object:size > 30 or file-object:size > 9999999 and file-object:size < 0]", # verify operator precedence
 ]
 
 PASS_CASES = [(TEST_CASES[0], TEST + '0pass.json'),
@@ -70,6 +71,7 @@ PASS_CASES = [(TEST_CASES[0], TEST + '0pass.json'),
               (TEST_CASES[11], TEST + '12pass.json'),
               (TEST_CASES[12], TEST + '13pass.json'),
               (TEST_CASES[13], TEST + '14pass.json'),
+              (TEST_CASES[14], TEST + '10pass.json'),
               ]
 
 
