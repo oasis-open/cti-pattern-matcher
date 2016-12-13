@@ -76,24 +76,25 @@ from pattern_matcher.grammars.CyboxPatternParser import CyboxPatternParser
 _TOKEN_TYPE_COERCERS = {
     CyboxPatternParser.IntLiteral: int,
     # for strings, strip quotes and un-escape embedded quotes
-    CyboxPatternParser.StringLiteral: lambda s: s[1:-1].replace("''", "'"),
+    CyboxPatternParser.StringLiteral: lambda s: s[1:-1].replace(u"''", u"'"),
     CyboxPatternParser.BoolLiteral: lambda s: s.lower() == "true",
     CyboxPatternParser.FloatLiteral: float,
-    CyboxPatternParser.NULL: lambda _: None
+    CyboxPatternParser.NULL: lambda _: None,
+    # Binary literals: strip prefix & quotes, decode to binary data
+    CyboxPatternParser.BinaryLiteral: lambda s: s[2:-1].decode("base64"),
+    CyboxPatternParser.HexLiteral: lambda s: s[2:-1].decode("hex")
 }
 
 
 # Map python types to 2-arg equality functions.  The functions must return
-# True if equal, False otherwise.  It's mostly the same thing for now,
-# but perhaps would provide a convenient place to hook in alternative
-# equality checkers if necessary?
+# True if equal, False otherwise.
 #
 # This table may be treated symmetrically via _get_table_symmetric() below.
 # (I only added half the entries since I plan to use that.)  And of course,
 # that means all the functions in the table must be insensitive to the order
 # of types of their arguments.
 #
-# Since I use python operators, python's mixed-type comparison rules are
+# Where I use python operators, python's mixed-type comparison rules are
 # in effect, e.g. conversion of operands to a common type.
 _NoneType = type(None)  # better way to do this??
 
@@ -106,6 +107,26 @@ def _ret_true(_1, _2):
     return True
 
 
+def _bin_str_equals(val1, val2):
+    # Figure out which arg is the binary one, and which is the string...
+    if isinstance(val1, six.text_type):
+        str_val = val1
+        bin_val = val2
+    else:
+        str_val = val2
+        bin_val = val1
+
+    # Comparison is only allowed if all the string codepoints are < 256.
+    cmp_allowed = all(ord(c) < 256 for c in str_val)
+
+    if not cmp_allowed:
+        # Per spec, this results in not-equal.
+        return False
+
+    str_as_bin = bytearray(ord(c) for c in str_val)
+    return str_as_bin == bin_val
+
+
 _COMPARE_EQ_FUNCS = {
     int: {
         int: operator.eq,
@@ -116,7 +137,7 @@ _COMPARE_EQ_FUNCS = {
     },
     six.binary_type: {
         six.binary_type: operator.eq,
-        six.text_type: operator.eq
+        six.text_type: _bin_str_equals
     },
     six.text_type: {
         six.text_type: operator.eq
@@ -132,21 +153,53 @@ _COMPARE_EQ_FUNCS = {
 
 # Similar for <, >, etc comparisons.  These functions should return <0 if
 # first arg is less than second; 0 if equal, >0 if first arg is greater.
-# It's all the same thing for now (cmp)... but perhaps would provide a
-# convenient place to hook in alternative comparators if necessary?
 #
 # This table may be treated symmetrically via _get_table_symmetric() below.
 # (I only added half the entries since I plan to use that.)  And of course,
 # that means all the functions in the table must be insensitive to the order
 # of types of their arguments.
 #
-# Since I use python operators, python's mixed-type comparison rules are
+# Where I use python operators, python's mixed-type comparison rules are
 # in effect, e.g. conversion of operands to a common type.
 #
 # cmp() was removed in Python 3. See
 # https://docs.python.org/3.0/whatsnew/3.0.html#ordering-comparisons
 def _cmp(a, b):
     return (a > b) - (a < b)
+
+
+def _bin_str_compare(val1, val2):
+    """
+    Does string/binary comparison as described in the spec.  Raises an
+    exception if the string is unsuitable for comparison.  The spec says
+    the result must be "false", but order comparators can't return true or
+    false.  Their purpose is to compute an ordering: less, equal, or greater.
+    So I have to use an exception.
+
+    One of the args must be of unicode type, the other must be a binary type
+    (bytes/str, bytearray, etc).
+    """
+
+    # Figure out which arg is the binary one, and which is the string...
+    if isinstance(val1, six.text_type):
+        str_val = val1
+        str_was_first = True
+    else:
+        str_val = val2
+        str_was_first = False
+
+    # Comparison is only allowed if all the string codepoints are < 256.
+    cmp_allowed = all(ord(c) < 256 for c in str_val)
+
+    if not cmp_allowed:
+        raise ValueError(u"Can't compare to binary: " + str_val)
+
+    str_as_bin = bytearray(ord(c) for c in str_val)
+
+    if str_was_first:
+        return _cmp(str_as_bin, val2)
+    else:
+        return _cmp(val1, str_as_bin)
 
 
 _COMPARE_ORDER_FUNCS = {
@@ -159,7 +212,7 @@ _COMPARE_ORDER_FUNCS = {
     },
     six.binary_type: {
         six.binary_type: _cmp,
-        six.text_type: _cmp
+        six.text_type: _bin_str_compare
     },
     six.text_type: {
         six.text_type: _cmp
@@ -186,7 +239,7 @@ class UnsupportedOperatorError(MatcherInternalError):
     """
     def __init__(self, op_str):
         super(UnsupportedOperatorError, self).__init__(
-            "Unsupported operator: '{}'".format(op_str)
+            u"Unsupported operator: '{}'".format(op_str)
         )
 
 
@@ -203,7 +256,7 @@ class TypeMismatchException(MatcherException):
         :param literal_type: A token type (which is an int)
         """
         super(TypeMismatchException, self).__init__(
-            "Type mismatch in '{}' operation: json={}, pattern={}".format(
+            u"Type mismatch in '{}' operation: json={}, pattern={}".format(
                 cmp_op,
                 type_from_cybox_json,
                 CyboxPatternParser.symbolicNames[literal_type]
@@ -216,7 +269,7 @@ class MatcherErrorListener(antlr4.error.ErrorListener.ErrorListener):
     Simple error listener which just remembers the last error message received.
     """
     def syntaxError(self, recognizer, offendingSymbol, line, column, msg, e):
-        self.error_message = msg
+        self.error_message = u"{}:{}: {}".format(line, column, msg)
 
 
 def _get_table_symmetric(table, val1, val2):
@@ -247,6 +300,28 @@ def _get_table_symmetric(table, val1, val2):
         return tmp.get(val1)
 
 
+def _process_prop_suffix(prop_name, value):
+    """
+    Some JSON properties have suffixes indicating the type of the value.  This
+    will translate the json value into a Python type with the proper semantics,
+    so that subsequent property tests will work properly.
+
+    :param prop_name: The JSON property name
+    :param value: The JSON property value
+    :return: If key is a specially suffixed property name, an instance of an
+        appropriate python type.  Otherwise, value itself is returned.
+    """
+
+    if prop_name.endswith(u"_hex"):
+        # binary type, expressed as hex
+        value = value.decode("hex")
+    elif prop_name.endswith(u"_bin"):
+        # binary type, expressed as base64
+        value = value.decode("base64")
+
+    return value
+
+
 def _step_into_objs(objs, step):
     """
     'objs' is a list of cybox (sub)structures.  'step' describes a
@@ -255,6 +330,9 @@ def _step_into_objs(objs, step):
     a string, assume the top level is a dict, and the string is a key.
     If a structure is such that the step can't be taken (e.g. the dict
     doesn't have the particular key), filter the value from the list.
+
+    This will also automatically convert values of specially suffixed
+    properties into the proper type.  See _process_prop_suffix().
 
     :return: A new list containing the "stepped-into" structures, minus
        any structures which couldn't be stepped into.
@@ -266,15 +344,16 @@ def _step_into_objs(objs, step):
             if isinstance(obj, list) and step < len(obj):
                 stepped_cybox_objs.append(obj[step])
             # can't index non-lists
-    elif isinstance(step, six.string_types):
+    elif isinstance(step, six.text_type):
         for obj in objs:
             if isinstance(obj, dict) and step in obj:
-                stepped_cybox_objs.append(obj[step])
+                processed_value = _process_prop_suffix(step, obj[step])
+                stepped_cybox_objs.append(processed_value)
             # can't do key lookup in non-dicts
 
     else:
         raise MatcherInternalError(
-            "Unsupported step type: {}".format(type(step)))
+            u"Unsupported step type: {}".format(type(step)))
 
     return stepped_cybox_objs
 
@@ -370,7 +449,7 @@ def _literal_terminal_to_python_val(literal_terminal):
         coercer = _TOKEN_TYPE_COERCERS[token_type]
         python_value = coercer(literal_terminal.getText())
     else:
-        raise MatcherInternalError("Unsupported literal type: {}".format(
+        raise MatcherInternalError(u"Unsupported literal type: {}".format(
             CyboxPatternParser.symbolicNames[token_type]))
 
     return python_value
@@ -406,8 +485,8 @@ def _str_to_datetime(timestamp_str):
 
     # Can't create a pattern with an optional part... so make two patterns
     # and try both.
-    format = "%Y-%m-%dT%H:%M:%SZ"
-    format_frac = "%Y-%m-%dT%H:%M:%S.%fZ"
+    format = u"%Y-%m-%dT%H:%M:%SZ"
+    format_frac = u"%Y-%m-%dT%H:%M:%S.%fZ"
 
     dt = None
     try:
@@ -445,7 +524,7 @@ def _ip_addr_to_int(ip_str):
     try:
         ip_bytes = socket.inet_aton(ip_str)
     except socket.error:
-        raise MatcherException("Invalid IPv4 address: {}".format(ip_str))
+        raise MatcherException(u"Invalid IPv4 address: {}".format(ip_str))
 
     int_val, = struct.unpack(">I", ip_bytes)  # unsigned big-endian
 
@@ -459,20 +538,20 @@ def _cidr_subnet_to_ints(subnet_cidr):
     is the prefix size.
     """
 
-    slash_idx = subnet_cidr.find("/")
+    slash_idx = subnet_cidr.find(u"/")
     if slash_idx == -1:
-        raise MatcherException("Invalid CIDR subnet: {}".format(subnet_cidr))
+        raise MatcherException(u"Invalid CIDR subnet: {}".format(subnet_cidr))
 
     ip_str = subnet_cidr[:slash_idx]
     prefix_str = subnet_cidr[slash_idx+1:]
 
     ip_int = _ip_addr_to_int(ip_str)
     if not prefix_str.isdigit():
-        raise MatcherException("Invalid CIDR subnet: {}".format(subnet_cidr))
+        raise MatcherException(u"Invalid CIDR subnet: {}".format(subnet_cidr))
     prefix_size = int(prefix_str)
 
     if prefix_size < 1 or prefix_size > 32:
-        raise MatcherException("Invalid CIDR subnet: {}".format(subnet_cidr))
+        raise MatcherException(u"Invalid CIDR subnet: {}".format(subnet_cidr))
 
     return ip_int, prefix_size
 
@@ -491,7 +570,7 @@ def _ip_or_cidr_in_subnet(ip_or_cidr_str, subnet_cidr):
     # container contain the containee?
 
     # Handle either plain IP or CIDR notation for the containee.
-    slash_idx = ip_or_cidr_str.find("/")
+    slash_idx = ip_or_cidr_str.find(u"/")
     if slash_idx == -1:
         containee_ip_int = _ip_addr_to_int(ip_or_cidr_str)
         containee_prefix_size = 32
@@ -574,13 +653,13 @@ def _dereference_cybox_objs(cybox_objs, cybox_obj_references, ref_prop_name):
     """
     dereferenced_cybox_objs = []
     for referenced_obj_id in cybox_obj_references:
-        if not isinstance(referenced_obj_id, six.string_types):
+        if not isinstance(referenced_obj_id, six.text_type):
             raise MatcherException(
-                "{} value of reference property '{}' was not "
-                "a string!  Got {}".format(
+                u"{} value of reference property '{}' was not "
+                u"a string!  Got {}".format(
                     # Say "A value" if the property is a reference list,
                     # otherwise "The value".
-                    "A" if ref_prop_name.endswith("_refs") else "The",
+                    u"A" if ref_prop_name.endswith(u"_refs") else u"The",
                     ref_prop_name, referenced_obj_id
                 ))
 
@@ -668,7 +747,7 @@ def _filtered_combinations(values, combo_size, filter_pred=None):
     """
 
     if combo_size < 1:
-        raise ValueError("combo_size must be >= 1")
+        raise ValueError(u"combo_size must be >= 1")
     elif combo_size > len(values):
         # Not enough values to make any combo
         return []
@@ -719,7 +798,7 @@ class MatchListener(CyboxPatternListener):
     be the case with a backtracking algorithm.
     """
 
-    def __init__(self, observations, timestamps, verbose=False):
+    def __init__(self, observations, timestamps, verbose=False, escape_unicode=False):
         """
         Initialize this match listener.
 
@@ -733,6 +812,10 @@ class MatchListener(CyboxPatternListener):
         :param verbose: If True, dump detailed information about triggered
             callbacks and stack activity to stdout.  This can provide useful
             information about what the matcher is doing.
+        :param escape_unicode: If your Python balks at printing unicode chars
+            to your console, you can set this to True to have them escaped.
+            Only applicable when verbose is True, otherwise nothing is printed.
+            Also see env variable PYTHONIOENCODING.  Defaults to False.
         """
         self.__observations = observations
         self.__timestamps = timestamps
@@ -741,6 +824,7 @@ class MatchListener(CyboxPatternListener):
         assert len(self.__observations) == len(self.__timestamps)
 
         self.__verbose = verbose
+        self.__escape_unicode = escape_unicode
         # Holds intermediate results
         self.__compute_stack = []
 
@@ -753,8 +837,11 @@ class MatchListener(CyboxPatternListener):
 
         if self.__verbose:
             if label:
-                print("{}: ".format(label), end="")
-            print("push {}".format(pprint.pformat(val)))
+                if self.__escape_unicode:
+                    label = label.encode("unicode_escape")
+                print(u"{}: ".format(label), end=u"")
+            # pprint seems to unicode-escape things automatically.
+            print(u"push {}".format(pprint.pformat(val)))
 
     def __pop(self, label=None):
         """Utility for popping a value off the compute stack.
@@ -765,8 +852,11 @@ class MatchListener(CyboxPatternListener):
 
         if self.__verbose:
             if label:
-                print("{}: ".format(label), end="")
-            print("pop {}".format(pprint.pformat(val)))
+                if self.__escape_unicode:
+                    label = label.encode("unicode_escape")
+                print(u"{}: ".format(label), end=u"")
+            # pprint seems to unicode-escape things automatically.
+            print(u"pop {}".format(pprint.pformat(val)))
 
         return val
 
@@ -801,12 +891,12 @@ class MatchListener(CyboxPatternListener):
 
         if num_operands not in (0, 2):
             # Just in case...
-            msg = "Unexpected number of observationExpressions children: {}"
+            msg = u"Unexpected number of observationExpressions children: {}"
             raise MatcherInternalError(msg.format(num_operands))
 
         if num_operands == 2:
             op_str = ctx.getChild(1).getText()
-            debug_label = "exitObservationExpressions ({})".format(op_str)
+            debug_label = u"exitObservationExpressions ({})".format(op_str)
 
             rhs_bindings = self.__pop(debug_label)
             lhs_bindings = self.__pop(debug_label)
@@ -858,7 +948,7 @@ class MatchListener(CyboxPatternListener):
         tuples).
         """
 
-        debug_label = "exitObservationExpression (simple)"
+        debug_label = u"exitObservationExpression (simple)"
         obs_ids = self.__pop(debug_label)
         obs_id_tuples = [(obs_id,) for obs_id in obs_ids.keys()]
         self.__push(obs_id_tuples, debug_label)
@@ -876,7 +966,7 @@ class MatchListener(CyboxPatternListener):
         rep_count = _literal_terminal_to_python_val(
             ctx.repeatedQualifier().IntLiteral()
         )
-        debug_label = "exitObservationExpressionRepeated ({})".format(
+        debug_label = u"exitObservationExpressionRepeated ({})".format(
             rep_count
         )
 
@@ -885,7 +975,7 @@ class MatchListener(CyboxPatternListener):
         # Need to find all 'rep_count'-sized disjoint combinations of
         # bindings.
         if rep_count < 1:
-            raise MatcherException("Invalid repetition count: {}".format(
+            raise MatcherException(u"Invalid repetition count: {}".format(
                 rep_count))
         elif rep_count == 1:
             # As an optimization, if rep_count is 1, we use the bindings
@@ -914,7 +1004,7 @@ class MatchListener(CyboxPatternListener):
           to the given duration.
         """
 
-        debug_label = "exitObservationExpressionWithin"
+        debug_label = u"exitObservationExpressionWithin"
 
         duration = self.__pop(debug_label)
         bindings = self.__pop(debug_label)
@@ -936,7 +1026,7 @@ class MatchListener(CyboxPatternListener):
           to the given time interval.
         """
 
-        debug_label = "exitObservationExpressionStartStop"
+        debug_label = u"exitObservationExpressionStartStop"
 
         # In this case, these are start and stop timestamps as
         # datetime.datetime objects (see exitStartStopQualifier()).
@@ -967,13 +1057,13 @@ class MatchListener(CyboxPatternListener):
 
         start_dt = _str_to_datetime(start_str)
         if start_dt is None:
-            raise MatcherException("Invalid timestamp format: {}".format(start_str))
+            raise MatcherException(u"Invalid timestamp format: {}".format(start_str))
 
         stop_dt = _str_to_datetime(stop_str)
         if stop_dt is None:
-            raise MatcherException("Invalid timestamp format: {}".format(stop_str))
+            raise MatcherException(u"Invalid timestamp format: {}".format(stop_str))
 
-        self.__push((start_dt, stop_dt), "exitStartStopQualifier")
+        self.__push((start_dt, stop_dt), u"exitStartStopQualifier")
 
     def exitWithinQualifier(self, ctx):
         """
@@ -982,28 +1072,28 @@ class MatchListener(CyboxPatternListener):
           the specified interval.
         """
 
-        debug_label = "exitWithinQualifier"
+        debug_label = u"exitWithinQualifier"
         unit = self.__pop(debug_label)
         value = _literal_terminal_to_python_val(ctx.IntLiteral())
         if value < 0:
-            raise MatcherException("Invalid WITHIN value: {}".format(value))
+            raise MatcherException(u"Invalid WITHIN value: {}".format(value))
 
-        if unit == "years":
+        if unit == u"years":
             delta = dateutil.relativedelta.relativedelta(years=value)
-        elif unit == "months":
+        elif unit == u"months":
             delta = dateutil.relativedelta.relativedelta(months=value)
-        elif unit == "days":
+        elif unit == u"days":
             delta = dateutil.relativedelta.relativedelta(days=value)
-        elif unit == "hours":
+        elif unit == u"hours":
             delta = dateutil.relativedelta.relativedelta(hours=value)
-        elif unit == "minutes":
+        elif unit == u"minutes":
             delta = dateutil.relativedelta.relativedelta(minutes=value)
-        elif unit == "seconds":
+        elif unit == u"seconds":
             delta = dateutil.relativedelta.relativedelta(seconds=value)
-        elif unit == "milliseconds":
+        elif unit == u"milliseconds":
             delta = dateutil.relativedelta.relativedelta(microseconds=value*1000)
         else:
-            raise MatcherException("Unsupported WITHIN unit: {}".format(unit))
+            raise MatcherException(u"Unsupported WITHIN unit: {}".format(unit))
 
         self.__push(delta, debug_label)
 
@@ -1014,7 +1104,7 @@ class MatchListener(CyboxPatternListener):
           lower case.
         """
         unit = ctx.getText().lower()
-        self.__push(unit, "exitTimeUnit")
+        self.__push(unit, u"exitTimeUnit")
 
     def exitComparisonExpression(self, ctx):
         """
@@ -1030,12 +1120,12 @@ class MatchListener(CyboxPatternListener):
           cybox object ID sets unioned in the result.
         """
 
-        debug_label = "exitComparisonExpression"
+        debug_label = u"exitComparisonExpression"
         num_or_operands = len(ctx.comparisonExpression())
 
         # Just in case...
         if num_or_operands not in (0, 2):
-            msg = "Unexpected number of comparisonExpression children: {}"
+            msg = u"Unexpected number of comparisonExpression children: {}"
             raise MatcherInternalError(msg.format(num_or_operands))
 
         if num_or_operands == 2:
@@ -1068,12 +1158,12 @@ class MatchListener(CyboxPatternListener):
           observation is dropped.
         """
 
-        debug_label = "exitComparisonExpressionAnd"
+        debug_label = u"exitComparisonExpressionAnd"
         num_and_operands = len(ctx.comparisonExpressionAnd())
 
         # Just in case...
         if num_and_operands not in (0, 2):
-            msg = "Unexpected number of comparisonExpression children: {}"
+            msg = u"Unexpected number of comparisonExpression children: {}"
             raise MatcherInternalError(msg.format(num_and_operands))
 
         if num_and_operands == 2:
@@ -1121,9 +1211,9 @@ class MatchListener(CyboxPatternListener):
         literal_node = ctx.primitiveLiteral()
         literal_terminal = _get_first_terminal_descendant(literal_node)
         literal_value = _literal_terminal_to_python_val(literal_terminal)
-        debug_label = "exitPropTestEqual ({} {})".format(
+        debug_label = u"exitPropTestEqual ({} {})".format(
             ctx.getChild(1).getText(),
-            literal_value
+            literal_terminal.getText()
         )
 
         obs_values = self.__pop(debug_label)
@@ -1166,9 +1256,9 @@ class MatchListener(CyboxPatternListener):
         literal_terminal = _get_first_terminal_descendant(literal_node)
         literal_value = _literal_terminal_to_python_val(literal_terminal)
         op_str = ctx.getChild(1).getText()
-        debug_label = "exitPropTestOrder ('{}' {})".format(
+        debug_label = u"exitPropTestOrder ('{}' {})".format(
             op_str,
-            literal_value
+            literal_terminal.getText()
         )
 
         obs_values = self.__pop(debug_label)
@@ -1184,19 +1274,25 @@ class MatchListener(CyboxPatternListener):
                 #     type(value),
                 #     literal_terminal.getSymbol().type)
 
-            result = cmp_func(value, literal_value)
-
-            if ctx.LT():
-                result = result < 0
-            elif ctx.GT():
-                result = result > 0
-            elif ctx.LE():
-                result = result <= 0
-            elif ctx.GE():
-                result = result >= 0
+            try:
+                result = cmp_func(value, literal_value)
+            except ValueError:
+                # The only comparison func that raises ValueError as of this
+                # writing is for binary<->string comparisons, when the string is
+                # of the wrong form.  Spec says the result must be false.
+                result = False
             else:
-                # shouldn't ever happen, right?
-                raise UnsupportedOperatorError(op_str)
+                if ctx.LT():
+                    result = result < 0
+                elif ctx.GT():
+                    result = result > 0
+                elif ctx.LE():
+                    result = result <= 0
+                elif ctx.GE():
+                    result = result >= 0
+                else:
+                    # shouldn't ever happen, right?
+                    raise UnsupportedOperatorError(op_str)
 
             return result
 
@@ -1215,8 +1311,8 @@ class MatchListener(CyboxPatternListener):
           set of root cybox object IDs.  See _obs_map_prop_test().
         """
 
-        debug_label = "exitPropTestSet{}".format(
-            " (not)" if ctx.NOT() else ""
+        debug_label = u"exitPropTestSet{}".format(
+            u" (not)" if ctx.NOT() else u""
         )
         s = self.__pop(debug_label)  # pop the set
         obs_values = self.__pop(debug_label)  # pop the observation values
@@ -1256,8 +1352,8 @@ class MatchListener(CyboxPatternListener):
         """
 
         operand_str = _literal_terminal_to_python_val(ctx.StringLiteral())
-        debug_label = "exitPropTestLike ({}{})".format(
-            "not " if ctx.NOT() else "",
+        debug_label = u"exitPropTestLike ({}{})".format(
+            u"not " if ctx.NOT() else "",
             operand_str
         )
 
@@ -1269,7 +1365,7 @@ class MatchListener(CyboxPatternListener):
 
         def like_pred(value):
             # non-strings can't match
-            if not isinstance(value, six.string_types):
+            if not isinstance(value, six.text_type):
                 return False
 
             result = compiled_re.match(value)
@@ -1297,8 +1393,8 @@ class MatchListener(CyboxPatternListener):
         """
 
         regex_terminal = ctx.RegexLiteral()
-        debug_label = "exitPropTestRegex ({}{})".format(
-            "not " if ctx.NOT() else "",
+        debug_label = u"exitPropTestRegex ({}{})".format(
+            u"not " if ctx.NOT() else u"",
             regex_terminal.getText()
         )
 
@@ -1308,7 +1404,7 @@ class MatchListener(CyboxPatternListener):
         compiled_re = re.compile(regex)
 
         def regex_pred(value):
-            if not isinstance(value, six.string_types):
+            if not isinstance(value, six.text_type):
                 return False
 
             # Don't need a full-string match
@@ -1337,14 +1433,14 @@ class MatchListener(CyboxPatternListener):
         """
         subnet_str = _literal_terminal_to_python_val(ctx.StringLiteral())
 
-        debug_label = "exitPropTestIsSubset ({}{})".format(
-            "not " if ctx.NOT() else "",
+        debug_label = u"exitPropTestIsSubset ({}{})".format(
+            u"not " if ctx.NOT() else u"",
             subnet_str
         )
         obs_values = self.__pop(debug_label)
 
         def subnet_pred(value):
-            if not isinstance(value, six.string_types):
+            if not isinstance(value, six.text_type):
                 return False
 
             result = _ip_or_cidr_in_subnet(value, subnet_str)
@@ -1372,14 +1468,14 @@ class MatchListener(CyboxPatternListener):
         """
         ip_or_subnet_str = _literal_terminal_to_python_val(ctx.StringLiteral())
 
-        debug_label = "exitPropTestIsSuperset ({}{})".format(
-            "not " if ctx.NOT() else "",
+        debug_label = u"exitPropTestIsSuperset ({}{})".format(
+            u"not " if ctx.NOT() else u"",
             ip_or_subnet_str
         )
         obs_values = self.__pop(debug_label)
 
         def contains_pred(value):
-            if not isinstance(value, six.string_types):
+            if not isinstance(value, six.text_type):
                 return False
 
             result = _ip_or_cidr_in_subnet(ip_or_subnet_str, value)
@@ -1429,18 +1525,18 @@ class MatchListener(CyboxPatternListener):
         for obs_idx, obs in enumerate(self.__observations):
 
             # Skip observations without objects
-            if "objects" not in obs:
+            if u"objects" not in obs:
                 continue
 
             objects_from_this_obs = {}
-            for obj_id, obj in six.iteritems(obs["objects"]):
-                if "type" in obj and obj["type"] == type_:
+            for obj_id, obj in six.iteritems(obs[u"objects"]):
+                if u"type" in obj and obj[u"type"] == type_:
                     objects_from_this_obs[obj_id] = [obj]
 
             if len(objects_from_this_obs) > 0:
                 results[obs_idx] = objects_from_this_obs
 
-        self.__push(results, "exitObjectType ({})".format(type_))
+        self.__push(results, u"exitObjectType ({})".format(type_))
 
     def __dereference_objects(self, prop_name, obs_map):
         """
@@ -1464,7 +1560,7 @@ class MatchListener(CyboxPatternListener):
             dereferenced observation data is returned.
         """
 
-        if prop_name.endswith("_ref"):
+        if prop_name.endswith(u"_ref"):
             # An object reference.  All top-level values should be
             # string cybox object IDs.
             dereferenced_obs_map = {}
@@ -1474,7 +1570,7 @@ class MatchListener(CyboxPatternListener):
                     dereferenced_cybox_objs = _dereference_cybox_objs(
                         # Note that "objects" must be a key of the observation,
                         # or it wouldn't be on the stack.  See exitObjectType().
-                        self.__observations[obs_idx]["objects"],
+                        self.__observations[obs_idx][u"objects"],
                         references,
                         prop_name
                     )
@@ -1488,7 +1584,7 @@ class MatchListener(CyboxPatternListener):
 
             obs_map = dereferenced_obs_map
 
-        elif prop_name.endswith("_refs"):
+        elif prop_name.endswith(u"_refs"):
             # A list of object references.  All top-level values should
             # be lists (of cybox object references).
             dereferenced_obs_map = {}
@@ -1499,13 +1595,13 @@ class MatchListener(CyboxPatternListener):
                     for reference_list in reference_lists:
                         if not isinstance(reference_list, list):
                             raise MatcherException(
-                                "The value of reference list property '{}' was not "
-                                "a list!  Got {}".format(
+                                u"The value of reference list property '{}' was not "
+                                u"a list!  Got {}".format(
                                     prop_name, reference_list
                                 ))
 
                         dereferenced_cybox_objs = _dereference_cybox_objs(
-                            self.__observations[obs_idx]["objects"],
+                            self.__observations[obs_idx][u"objects"],
                             reference_list,
                             prop_name
                         )
@@ -1541,9 +1637,9 @@ class MatchListener(CyboxPatternListener):
         """
 
         prop_name = ctx.Identifier().getText()
-        if prop_name.startswith('"'):
+        if prop_name.startswith(u'"'):
             prop_name = prop_name[1:-1]
-        debug_label = "exitFirstPathComponent ({})".format(prop_name)
+        debug_label = u"exitFirstPathComponent ({})".format(prop_name)
         obs_val = self.__pop(debug_label)
 
         filtered_obs_map = _step_filter_observations(obs_val, prop_name)
@@ -1557,9 +1653,9 @@ class MatchListener(CyboxPatternListener):
         Does the same as exitFirstPathComponent().
         """
         prop_name = ctx.Identifier().getText()
-        if prop_name.startswith('"'):
+        if prop_name.startswith(u'"'):
             prop_name = prop_name[1:-1]
-        debug_label = "exitKeyPathStep ({})".format(prop_name)
+        debug_label = u"exitKeyPathStep ({})".format(prop_name)
         obs_val = self.__pop(debug_label)
 
         filtered_obs_map = _step_filter_observations(obs_val, prop_name)
@@ -1576,22 +1672,22 @@ class MatchListener(CyboxPatternListener):
         if ctx.IntLiteral():
             index = _literal_terminal_to_python_val(ctx.IntLiteral())
             if index < 0:
-                raise MatcherException("Invalid list index: {}".format(index))
-            debug_label = "exitIndexPathStep ({})".format(index)
+                raise MatcherException(u"Invalid list index: {}".format(index))
+            debug_label = u"exitIndexPathStep ({})".format(index)
             obs_val = self.__pop(debug_label)
 
             filtered_obs_map = _step_filter_observations(obs_val, index)
 
         elif ctx.ASTERISK():
             # In this case, we step into all of the list elements.
-            debug_label = "exitIndexPathStep (*)"
+            debug_label = u"exitIndexPathStep (*)"
             obs_val = self.__pop(debug_label)
 
             filtered_obs_map = _step_filter_observations_index_star(obs_val)
 
         else:
             # reallly shouldn't happen...
-            raise MatcherInternalError("Unsupported index path step!")
+            raise MatcherInternalError(u"Unsupported index path step!")
 
         self.__push(filtered_obs_map, debug_label)
 
@@ -1610,10 +1706,10 @@ class MatchListener(CyboxPatternListener):
             literal_value = _literal_terminal_to_python_val(literal_terminal)
             s.add(literal_value)
 
-        self.__push(s, "exitSetLiteral ({})".format(ctx.getText()))
+        self.__push(s, u"exitSetLiteral ({})".format(ctx.getText()))
 
 
-def match(pattern, containers, timestamps, verbose=False):
+def match(pattern, containers, timestamps, verbose=False, escape_unicode=False):
     """
     Match the given pattern against the given containers and timestamps.
 
@@ -1625,6 +1721,8 @@ def match(pattern, containers, timestamps, verbose=False):
         as a list of timezone-aware datetime.datetime objects.  There must be
         the same number of timestamps as containers.
     :param verbose: Whether to dump detailed info about matcher operation
+    :param escape_unicode: Whether to escape unicode in verbose output (only
+        applicable if verbose is True).
     :return: True if the pattern matches, False if not
     """
 
@@ -1646,7 +1744,7 @@ def match(pattern, containers, timestamps, verbose=False):
 
     # parser.setTrace(True)
 
-    matcher = MatchListener(containers, timestamps, verbose)
+    matcher = MatchListener(containers, timestamps, verbose, escape_unicode)
     matched = False
     try:
         tree = parser.pattern()
@@ -1706,13 +1804,22 @@ def main():
                             ignored).  If not given, all containers will be
                             assigned the current time.
                             """)
+    arg_parser.add_argument("-e", "--encoding", default="utf8", help="""
+    Set encoding used for reading container, pattern, and timestamp files.
+    Must be an encoding name Python understands.  Default is utf8.
+    """)
+    arg_parser.add_argument("-u", "--escape-unicode", action="store_true",
+                            help="""Escape unicode chars in console output.
+                            This helps when the matcher dies when attempting to
+                            print unicode chars to your console.  See also
+                            environment variable PYTHONIOENCODING.""")
     arg_parser.add_argument("-v", "--verbose", action="store_true",
                             help="""Be verbose""")
 
     args = arg_parser.parse_args()
     json_in = args.file
     try:
-        containers = json.load(json_in)
+        containers = json.load(json_in, encoding=args.encoding)
     finally:
         json_in.close()
 
@@ -1721,11 +1828,12 @@ def main():
             timestamps = []
             for line in args.timestamps:
                 line = line.strip()
+                line = line.decode(args.encoding)
                 if not line:
                     continue  # skip blank lines
                 timestamp = _str_to_datetime(line)
                 if timestamp is None:
-                    raise ValueError("Invalid timestamp format: {}".format(line))
+                    raise ValueError(u"Invalid timestamp format: {}".format(line))
                 timestamps.append(timestamp)
         finally:
             args.timestamps.close()
@@ -1734,7 +1842,7 @@ def main():
                       for _ in containers]
 
     if len(timestamps) < len(containers):
-        print("There are fewer timestamps than containers! ({}<{})".format(
+        print(u"There are fewer timestamps than containers! ({}<{})".format(
             len(timestamps), len(containers)
         ))
         sys.exit(1)
@@ -1748,10 +1856,14 @@ def main():
                 continue  # skip blank lines
             if pattern[0] == "#":
                 continue  # skip commented out lines
-            if match(pattern, containers, timestamps, args.verbose):
-                print("\nPASS: ", pattern)
+            pattern = pattern.decode(args.encoding)
+            escaped_pattern = pattern.encode("unicode_escape") \
+                if args.escape_unicode else pattern
+            if match(pattern, containers, timestamps, args.verbose,
+                     args.escape_unicode):
+                print(u"\nPASS: ", pattern)
             else:
-                print("\nFAIL: ", pattern)
+                print(u"\nFAIL: ", escaped_pattern)
     finally:
         args.patterns.close()
 
