@@ -1322,7 +1322,7 @@ class MatchListener(CyboxPatternListener):
 
         self.__push(passed_obs, debug_label)
 
-    def exitPropTestInSubnet(self, ctx):
+    def exitPropTestIsSubset(self, ctx):
         """
         Consumes an observation data map, {obs_id: {...}, ...}, representing
           selected values from cybox objects in each container
@@ -1337,7 +1337,7 @@ class MatchListener(CyboxPatternListener):
         """
         subnet_str = _literal_terminal_to_python_val(ctx.StringLiteral())
 
-        debug_label = "exitPropTestInSubnet ({}{})".format(
+        debug_label = "exitPropTestIsSubset ({}{})".format(
             "not " if ctx.NOT() else "",
             subnet_str
         )
@@ -1357,7 +1357,7 @@ class MatchListener(CyboxPatternListener):
 
         self.__push(passed_obs, debug_label)
 
-    def exitPropTestContains(self, ctx):
+    def exitPropTestIsSuperset(self, ctx):
         """
         Consumes an observation data map, {obs_id: {...}, ...}, representing
           selected values from cybox objects in each container
@@ -1372,7 +1372,7 @@ class MatchListener(CyboxPatternListener):
         """
         ip_or_subnet_str = _literal_terminal_to_python_val(ctx.StringLiteral())
 
-        debug_label = "exitPropTestContains ({}{})".format(
+        debug_label = "exitPropTestIsSuperset ({}{})".format(
             "not " if ctx.NOT() else "",
             ip_or_subnet_str
         )

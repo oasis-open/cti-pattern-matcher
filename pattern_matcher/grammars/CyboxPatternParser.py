@@ -117,10 +117,10 @@ class CyboxPatternParser ( Parser ):
     symbolicNames = [ u"<INVALID>", u"IntLiteral", u"FloatLiteral", u"StringLiteral", 
                       u"BoolLiteral", u"RegexLiteral", u"AND", u"ALONGWITH", 
                       u"OR", u"NOT", u"FOLLOWEDBY", u"LIKE", u"MATCHES", 
-                      u"CONTAINS", u"INSUBNET", u"LAST", u"IN", u"START", 
+                      u"ISSUPERSET", u"ISSUBSET", u"LAST", u"IN", u"START", 
                       u"STOP", u"MILLISECONDS", u"SECONDS", u"MINUTES", 
                       u"HOURS", u"DAYS", u"MONTHS", u"YEARS", u"TRUE", u"FALSE", 
-                      u"NULL", u"WITHIN", u"REPEATED", u"TIMES", u"Identifier", 
+                      u"NULL", u"WITHIN", u"REPEATS", u"TIMES", u"Identifier", 
                       u"EQ", u"NEQ", u"LT", u"LE", u"GT", u"GE", u"QUOTE", 
                       u"COLON", u"DOT", u"COMMA", u"RPAREN", u"LPAREN", 
                       u"RBRACK", u"LBRACK", u"PLUS", u"HYPHEN", u"MINUS", 
@@ -165,8 +165,8 @@ class CyboxPatternParser ( Parser ):
     FOLLOWEDBY=10
     LIKE=11
     MATCHES=12
-    CONTAINS=13
-    INSUBNET=14
+    ISSUPERSET=13
+    ISSUBSET=14
     LAST=15
     IN=16
     START=17
@@ -182,7 +182,7 @@ class CyboxPatternParser ( Parser ):
     FALSE=27
     NULL=28
     WITHIN=29
-    REPEATED=30
+    REPEATS=30
     TIMES=31
     Identifier=32
     EQ=33
@@ -754,31 +754,6 @@ class CyboxPatternParser ( Parser ):
                 listener.exitPropTestRegex(self)
 
 
-    class PropTestContainsContext(PropTestContext):
-
-        def __init__(self, parser, ctx): # actually a CyboxPatternParser.PropTestContext)
-            super(CyboxPatternParser.PropTestContainsContext, self).__init__(parser)
-            self.copyFrom(ctx)
-
-        def objectPath(self):
-            return self.getTypedRuleContext(CyboxPatternParser.ObjectPathContext,0)
-
-        def CONTAINS(self):
-            return self.getToken(CyboxPatternParser.CONTAINS, 0)
-        def StringLiteral(self):
-            return self.getToken(CyboxPatternParser.StringLiteral, 0)
-        def NOT(self):
-            return self.getToken(CyboxPatternParser.NOT, 0)
-
-        def enterRule(self, listener):
-            if hasattr(listener, "enterPropTestContains"):
-                listener.enterPropTestContains(self)
-
-        def exitRule(self, listener):
-            if hasattr(listener, "exitPropTestContains"):
-                listener.exitPropTestContains(self)
-
-
     class PropTestOrderContext(PropTestContext):
 
         def __init__(self, parser, ctx): # actually a CyboxPatternParser.PropTestContext)
@@ -860,31 +835,6 @@ class CyboxPatternParser ( Parser ):
                 listener.exitPropTestEqual(self)
 
 
-    class PropTestInSubnetContext(PropTestContext):
-
-        def __init__(self, parser, ctx): # actually a CyboxPatternParser.PropTestContext)
-            super(CyboxPatternParser.PropTestInSubnetContext, self).__init__(parser)
-            self.copyFrom(ctx)
-
-        def objectPath(self):
-            return self.getTypedRuleContext(CyboxPatternParser.ObjectPathContext,0)
-
-        def INSUBNET(self):
-            return self.getToken(CyboxPatternParser.INSUBNET, 0)
-        def StringLiteral(self):
-            return self.getToken(CyboxPatternParser.StringLiteral, 0)
-        def NOT(self):
-            return self.getToken(CyboxPatternParser.NOT, 0)
-
-        def enterRule(self, listener):
-            if hasattr(listener, "enterPropTestInSubnet"):
-                listener.enterPropTestInSubnet(self)
-
-        def exitRule(self, listener):
-            if hasattr(listener, "exitPropTestInSubnet"):
-                listener.exitPropTestInSubnet(self)
-
-
     class PropTestSetContext(PropTestContext):
 
         def __init__(self, parser, ctx): # actually a CyboxPatternParser.PropTestContext)
@@ -911,6 +861,31 @@ class CyboxPatternParser ( Parser ):
                 listener.exitPropTestSet(self)
 
 
+    class PropTestIsSubsetContext(PropTestContext):
+
+        def __init__(self, parser, ctx): # actually a CyboxPatternParser.PropTestContext)
+            super(CyboxPatternParser.PropTestIsSubsetContext, self).__init__(parser)
+            self.copyFrom(ctx)
+
+        def objectPath(self):
+            return self.getTypedRuleContext(CyboxPatternParser.ObjectPathContext,0)
+
+        def ISSUBSET(self):
+            return self.getToken(CyboxPatternParser.ISSUBSET, 0)
+        def StringLiteral(self):
+            return self.getToken(CyboxPatternParser.StringLiteral, 0)
+        def NOT(self):
+            return self.getToken(CyboxPatternParser.NOT, 0)
+
+        def enterRule(self, listener):
+            if hasattr(listener, "enterPropTestIsSubset"):
+                listener.enterPropTestIsSubset(self)
+
+        def exitRule(self, listener):
+            if hasattr(listener, "exitPropTestIsSubset"):
+                listener.exitPropTestIsSubset(self)
+
+
     class PropTestParenContext(PropTestContext):
 
         def __init__(self, parser, ctx): # actually a CyboxPatternParser.PropTestContext)
@@ -932,6 +907,31 @@ class CyboxPatternParser ( Parser ):
         def exitRule(self, listener):
             if hasattr(listener, "exitPropTestParen"):
                 listener.exitPropTestParen(self)
+
+
+    class PropTestIsSupersetContext(PropTestContext):
+
+        def __init__(self, parser, ctx): # actually a CyboxPatternParser.PropTestContext)
+            super(CyboxPatternParser.PropTestIsSupersetContext, self).__init__(parser)
+            self.copyFrom(ctx)
+
+        def objectPath(self):
+            return self.getTypedRuleContext(CyboxPatternParser.ObjectPathContext,0)
+
+        def ISSUPERSET(self):
+            return self.getToken(CyboxPatternParser.ISSUPERSET, 0)
+        def StringLiteral(self):
+            return self.getToken(CyboxPatternParser.StringLiteral, 0)
+        def NOT(self):
+            return self.getToken(CyboxPatternParser.NOT, 0)
+
+        def enterRule(self, listener):
+            if hasattr(listener, "enterPropTestIsSuperset"):
+                listener.enterPropTestIsSuperset(self)
+
+        def exitRule(self, listener):
+            if hasattr(listener, "exitPropTestIsSuperset"):
+                listener.exitPropTestIsSuperset(self)
 
 
 
@@ -1029,7 +1029,7 @@ class CyboxPatternParser ( Parser ):
                 pass
 
             elif la_ == 6:
-                localctx = CyboxPatternParser.PropTestInSubnetContext(self, localctx)
+                localctx = CyboxPatternParser.PropTestIsSubsetContext(self, localctx)
                 self.enterOuterAlt(localctx, 6)
                 self.state = 120
                 self.objectPath()
@@ -1041,13 +1041,13 @@ class CyboxPatternParser ( Parser ):
 
 
                 self.state = 124
-                self.match(CyboxPatternParser.INSUBNET)
+                self.match(CyboxPatternParser.ISSUBSET)
                 self.state = 125
                 self.match(CyboxPatternParser.StringLiteral)
                 pass
 
             elif la_ == 7:
-                localctx = CyboxPatternParser.PropTestContainsContext(self, localctx)
+                localctx = CyboxPatternParser.PropTestIsSupersetContext(self, localctx)
                 self.enterOuterAlt(localctx, 7)
                 self.state = 127
                 self.objectPath()
@@ -1059,7 +1059,7 @@ class CyboxPatternParser ( Parser ):
 
 
                 self.state = 131
-                self.match(CyboxPatternParser.CONTAINS)
+                self.match(CyboxPatternParser.ISSUPERSET)
                 self.state = 132
                 self.match(CyboxPatternParser.StringLiteral)
                 pass
@@ -1194,8 +1194,8 @@ class CyboxPatternParser ( Parser ):
             super(CyboxPatternParser.RepeatedQualifierContext, self).__init__(parent, invokingState)
             self.parser = parser
 
-        def REPEATED(self):
-            return self.getToken(CyboxPatternParser.REPEATED, 0)
+        def REPEATS(self):
+            return self.getToken(CyboxPatternParser.REPEATS, 0)
 
         def IntLiteral(self):
             return self.getToken(CyboxPatternParser.IntLiteral, 0)
@@ -1224,7 +1224,7 @@ class CyboxPatternParser ( Parser ):
         try:
             self.enterOuterAlt(localctx, 1)
             self.state = 149
-            self.match(CyboxPatternParser.REPEATED)
+            self.match(CyboxPatternParser.REPEATS)
             self.state = 150
             self.match(CyboxPatternParser.IntLiteral)
             self.state = 151
