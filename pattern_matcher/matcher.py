@@ -77,7 +77,7 @@ _TOKEN_TYPE_COERCERS = {
     CyboxPatternParser.IntLiteral: int,
     # for strings, strip quotes and un-escape embedded quotes
     CyboxPatternParser.StringLiteral: lambda s: s[1:-1].replace("''", "'"),
-    CyboxPatternParser.BoolLiteral: bool,
+    CyboxPatternParser.BoolLiteral: lambda s: s.lower() == "true",
     CyboxPatternParser.FloatLiteral: float,
     CyboxPatternParser.NULL: lambda _: None
 }
@@ -1541,6 +1541,8 @@ class MatchListener(CyboxPatternListener):
         """
 
         prop_name = ctx.Identifier().getText()
+        if prop_name.startswith('"'):
+            prop_name = prop_name[1:-1]
         debug_label = "exitFirstPathComponent ({})".format(prop_name)
         obs_val = self.__pop(debug_label)
 
@@ -1555,6 +1557,8 @@ class MatchListener(CyboxPatternListener):
         Does the same as exitFirstPathComponent().
         """
         prop_name = ctx.Identifier().getText()
+        if prop_name.startswith('"'):
+            prop_name = prop_name[1:-1]
         debug_label = "exitKeyPathStep ({})".format(prop_name)
         obs_val = self.__pop(debug_label)
 
