@@ -6,9 +6,11 @@ setup(
     packages=find_packages(),
     description='Match STIX content against STIX patterns',
     install_requires=[
-        "six",
+        "antlr4-python2-runtime==4.5.3 ; python_version < '3'",
+        "antlr4-python3-runtime==4.5.3 ; python_version >= '3'",
+        "enum34 ; python_version ~= '3.3.0'",
         "python-dateutil",
-        "antlr4-python2-runtime>=4.5.3"
+        "six",
     ],
     tests_require=[
         "pytest>=2.9.2"
