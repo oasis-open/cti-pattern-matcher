@@ -114,12 +114,12 @@ _COMPARE_EQ_FUNCS = {
     float: {
         float: operator.eq
     },
-    str: {
-        str: operator.eq,
-        unicode: operator.eq
+    six.binary_type: {
+        six.binary_type: operator.eq,
+        six.text_type: operator.eq
     },
-    unicode: {
-        unicode: operator.eq
+    six.text_type: {
+        six.text_type: operator.eq
     },
     bool: {
         bool: operator.eq
@@ -142,20 +142,27 @@ _COMPARE_EQ_FUNCS = {
 #
 # Since I use python operators, python's mixed-type comparison rules are
 # in effect, e.g. conversion of operands to a common type.
+#
+# cmp() was removed in Python 3. See
+# https://docs.python.org/3.0/whatsnew/3.0.html#ordering-comparisons
+def _cmp(a, b):
+    return (a > b) - (a < b)
+
+
 _COMPARE_ORDER_FUNCS = {
     int: {
-        int: cmp,
-        float: cmp
+        int: _cmp,
+        float: _cmp
     },
     float: {
-        float: cmp
+        float: _cmp
     },
-    str: {
-        str: cmp,
-        unicode: cmp
+    six.binary_type: {
+        six.binary_type: _cmp,
+        six.text_type: _cmp
     },
-    unicode: {
-        unicode: cmp
+    six.text_type: {
+        six.text_type: _cmp
     }
 }
 
