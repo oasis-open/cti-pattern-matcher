@@ -96,8 +96,16 @@ _TOKEN_TYPE_COERCERS = {
 # Since I use python operators, python's mixed-type comparison rules are
 # in effect, e.g. conversion of operands to a common type.
 _NoneType = type(None)  # better way to do this??
-def _ret_false(_1, _2): return False
-def _ret_true(_1, _2): return True
+
+
+def _ret_false(_1, _2):
+    return False
+
+
+def _ret_true(_1, _2):
+    return True
+
+
 _COMPARE_EQ_FUNCS = {
     int: {
         int: operator.eq,
@@ -379,7 +387,7 @@ def _like_to_regex(like):
         sbuf.write(u"$")
         s = sbuf.getvalue()
 
-    #print(like, "=>", s)
+    # print(like, "=>", s)
     return s
 
 
@@ -764,8 +772,8 @@ class MatchListener(CyboxPatternListener):
         # all the found bindings (as tuples).  If there is at least one, the
         # pattern matched.  If the parse failed, the top stack element could
         # be anything... so don't call this function in that situation!
-        return len(self.__compute_stack) > 0 and \
-               len(self.__compute_stack[0]) > 0
+        return (len(self.__compute_stack) > 0 and
+                len(self.__compute_stack[0]) > 0)
 
     def exitObservationExpressions(self, ctx):
         """
@@ -786,8 +794,8 @@ class MatchListener(CyboxPatternListener):
 
         if num_operands not in (0, 2):
             # Just in case...
-            raise MatcherInternalError("Unexpected number of "
-                "observationExpressions children: {}".format(num_operands))
+            msg = "Unexpected number of observationExpressions children: {}"
+            raise MatcherInternalError(msg.format(num_operands))
 
         if num_operands == 2:
             op_str = ctx.getChild(1).getText()
@@ -1020,8 +1028,8 @@ class MatchListener(CyboxPatternListener):
 
         # Just in case...
         if num_or_operands not in (0, 2):
-            raise MatcherInternalError("Unexpected number of "
-                "comparisonExpression children: {}".format(num_or_operands))
+            msg = "Unexpected number of comparisonExpression children: {}"
+            raise MatcherInternalError(msg.format(num_or_operands))
 
         if num_or_operands == 2:
             # The result is collected into obs1.
@@ -1058,8 +1066,8 @@ class MatchListener(CyboxPatternListener):
 
         # Just in case...
         if num_and_operands not in (0, 2):
-            raise MatcherInternalError("Unexpected number of "
-                "comparisonExpressionAnd children: {}".format(num_and_operands))
+            msg = "Unexpected number of comparisonExpression children: {}"
+            raise MatcherInternalError(msg.format(num_and_operands))
 
         if num_and_operands == 2:
             # The result is collected into obs1.
@@ -1625,13 +1633,13 @@ def match(pattern, containers, timestamps, verbose=False):
     # handling the built-in RecognitionException errors.)
     parser._errHandler = antlr4.BailErrorStrategy()
 
-    #parser.setTrace(True)
+    # parser.setTrace(True)
 
     matcher = MatchListener(containers, timestamps, verbose)
     matched = False
     try:
         tree = parser.pattern()
-        #print(tree.toStringTree(recog=parser))
+        # print(tree.toStringTree(recog=parser))
 
         antlr4.ParseTreeWalker.DEFAULT.walk(matcher, tree)
 
@@ -1702,7 +1710,8 @@ def main():
             timestamps = []
             for line in args.timestamps:
                 line = line.strip()
-                if not line: continue  # skip blank lines
+                if not line:
+                    continue  # skip blank lines
                 timestamp = _str_to_datetime(line)
                 if timestamp is None:
                     raise ValueError("Invalid timestamp format: {}".format(line))
@@ -1724,8 +1733,10 @@ def main():
     try:
         for pattern in args.patterns:
             pattern = pattern.strip()
-            if not pattern: continue  # skip blank lines
-            if pattern[0] == "#": continue  # skip commented out lines
+            if not pattern:
+                continue  # skip blank lines
+            if pattern[0] == "#":
+                continue  # skip commented out lines
             if match(pattern, containers, timestamps, args.verbose):
                 print("\nPASS: ", pattern)
             else:

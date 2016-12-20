@@ -26,37 +26,36 @@ TEST = 'testcases/'
 ###############################################################################
 
 TEST_CASES = [
-"[file-object:hashes.sha-256 = 'aec070645fe53ee3b3763059376134f058cc337247c978add178b6ccdfb0019f']",
-"[ipv4addr-object:value INSUBNET '192.168.0.1/24']",
-"[emailaddr-object:value MATCHES /.+\\@ibm\\.com$/ AND file-object:name MATCHES /^Final Report.+\\.exe$/]",
-"[file-object:hashes.sha-256 = 'aec070645fe53ee3b3763059376134f058cc337247c978add178b6ccdfb0019f' AND file-object:mime-type = 'application/x-pdf']",
-"""
-[file-object:hashes.sha-256 = 'bf07a7fbb825fc0aae7bf4a1177b2b31fcf8a3feeaf7092761e18c859ee52a9c']
-ALONGWITH
-[file-object:hashes.sha-256 = 'aec070645fe53ee3b3763059376134f058cc337247c978add178b6ccdfb0019f']""",
-"""
-[file-object:hashes.md5 = '79054025255fb1a26e4bc422aef54eb4']
-FOLLOWEDBY
-[win-registry-key-object:key = 'hkey_local_machine\\foo\\bar'] WITHIN 5 MINUTES""",
-"""
-([user-account-object:value = 'Peter']
-ALONGWITH
-[user-account-object:value = 'Paul']
-ALONGWITH
-[user-account-object:value = 'Mary']) WITHIN 5 MINUTES""",
-"[artifact-object:mime-type = 'application/vnd.tcpdump.pcap' AND artifact-object:payload MATCHES /Zm9vYmFy/]",
-"[network-connection-object:extended_properties[0].source_payload MATCHES /dGVzdHRlc3R0ZXN0/]",
-"[file-object:size IN (32, 64, 641028)]",
-"[network-connection-object:extended_properties[*].source_payload MATCHES /dGVzdHRlc3R0ZXN0/]",
-"""
-[file-object:file_system_properties.file_path.delimiter = '\\'
-AND file-object:file_system_properties.file_path.components[0] = 'C:'
-AND file-object:file_system_properties.file_path.components[1] = 'Windows'
-AND file-object:file_system_properties.file_path.components[2] = 'System32'
-AND file-object:file_system_properties.file_name = 'foo.dll']""",
-"[file-object:extended_properties.windows_pebinary.sections[*].entropy > 7.0]",
-"[Artifact:log = 'Login failed.'] REPEATED 5 TIMES",
-"[file-object:size > 30 or file-object:size > 9999999 and file-object:size < 0]", # verify operator precedence
+    "[file-object:hashes.sha-256 = 'aec070645fe53ee3b3763059376134f058cc337247c978add178b6ccdfb0019f']",
+    "[ipv4addr-object:value INSUBNET '192.168.0.1/24']",
+    "[emailaddr-object:value MATCHES /.+\\@ibm\\.com$/ AND file-object:name MATCHES /^Final Report.+\\.exe$/]",
+    "[file-object:hashes.sha-256 = 'aec070645fe53ee3b3763059376134f058cc337247c978add178b6ccdfb0019f' AND file-object:mime-type = 'application/x-pdf']",
+    """
+    [file-object:hashes.sha-256 = 'bf07a7fbb825fc0aae7bf4a1177b2b31fcf8a3feeaf7092761e18c859ee52a9c']
+    ALONGWITH
+    [file-object:hashes.sha-256 = 'aec070645fe53ee3b3763059376134f058cc337247c978add178b6ccdfb0019f']""",
+    """
+    [file-object:hashes.md5 = '79054025255fb1a26e4bc422aef54eb4']
+    FOLLOWEDBY
+    [win-registry-key-object:key = 'hkey_local_machine\\foo\\bar'] WITHIN 5 MINUTES""",
+    """
+    ([user-account-object:value = 'Peter']
+    ALONGWITH
+    [user-account-object:value = 'Paul']
+    ALONGWITH
+    [user-account-object:value = 'Mary']) WITHIN 5 MINUTES""",
+    "[artifact-object:mime-type = 'application/vnd.tcpdump.pcap' AND artifact-object:payload MATCHES /Zm9vYmFy/]",
+    "[network-connection-object:extended_properties[0].source_payload MATCHES /dGVzdHRlc3R0ZXN0/]",
+    "[file-object:size IN (32, 64, 641028)]",
+    "[network-connection-object:extended_properties[*].source_payload MATCHES /dGVzdHRlc3R0ZXN0/]",
+    """[file-object:file_system_properties.file_path.delimiter = '\\'
+    AND file-object:file_system_properties.file_path.components[0] = 'C:'
+    AND file-object:file_system_properties.file_path.components[1] = 'Windows'
+    AND file-object:file_system_properties.file_path.components[2] = 'System32'
+    AND file-object:file_system_properties.file_name = 'foo.dll']""",
+    "[file-object:extended_properties.windows_pebinary.sections[*].entropy > 7.0]",
+    "[Artifact:log = 'Login failed.'] REPEATED 5 TIMES",
+    "[file-object:size > 30 or file-object:size > 9999999 and file-object:size < 0]",  # verify operator precedence
 ]
 
 PASS_CASES = [(TEST_CASES[0], TEST + '0pass.json'),
