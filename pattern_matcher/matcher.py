@@ -1358,7 +1358,7 @@ class MatchListener(CyboxPatternListener):
 
         operand_str = _literal_terminal_to_python_val(ctx.StringLiteral())
         debug_label = u"exitPropTestLike ({}{})".format(
-            u"not " if ctx.NOT() else "",
+            u"not " if ctx.NOT() else u"",
             operand_str
         )
 
