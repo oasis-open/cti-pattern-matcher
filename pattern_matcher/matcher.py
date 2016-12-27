@@ -1861,7 +1861,7 @@ def main():
                 if args.escape_unicode else pattern
             if match(pattern, containers, timestamps, args.verbose,
                      args.escape_unicode):
-                print(u"\nPASS: ", pattern)
+                print(u"\nPASS: ", escaped_pattern)
             else:
                 print(u"\nFAIL: ", escaped_pattern)
     finally:
