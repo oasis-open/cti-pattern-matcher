@@ -803,7 +803,7 @@ class MatchListener(CyboxPatternListener):
     be the case with a backtracking algorithm.
     """
 
-    def __init__(self, observations, timestamps, verbose=False, escape_unicode=False):
+    def __init__(self, observations, timestamps, verbose=False):
         """
         Initialize this match listener.
 
@@ -817,10 +817,6 @@ class MatchListener(CyboxPatternListener):
         :param verbose: If True, dump detailed information about triggered
             callbacks and stack activity to stdout.  This can provide useful
             information about what the matcher is doing.
-        :param escape_unicode: If your Python balks at printing unicode chars
-            to your console, you can set this to True to have them escaped.
-            Only applicable when verbose is True, otherwise nothing is printed.
-            Also see env variable PYTHONIOENCODING.  Defaults to False.
         """
         self.__observations = observations
         self.__timestamps = timestamps
@@ -829,7 +825,6 @@ class MatchListener(CyboxPatternListener):
         assert len(self.__observations) == len(self.__timestamps)
 
         self.__verbose = verbose
-        self.__escape_unicode = escape_unicode
         # Holds intermediate results
         self.__compute_stack = []
 
@@ -842,8 +837,7 @@ class MatchListener(CyboxPatternListener):
 
         if self.__verbose:
             if label:
-                if self.__escape_unicode:
-                    label = label.encode("unicode_escape")
+                label = label.encode("unicode_escape")
                 print(u"{}: ".format(label), end=u"")
             # pprint seems to unicode-escape things automatically.
             print(u"push {}".format(pprint.pformat(val)))
@@ -857,8 +851,7 @@ class MatchListener(CyboxPatternListener):
 
         if self.__verbose:
             if label:
-                if self.__escape_unicode:
-                    label = label.encode("unicode_escape")
+                label = label.encode("unicode_escape")
                 print(u"{}: ".format(label), end=u"")
             # pprint seems to unicode-escape things automatically.
             print(u"pop {}".format(pprint.pformat(val)))
@@ -1714,7 +1707,7 @@ class MatchListener(CyboxPatternListener):
         self.__push(s, u"exitSetLiteral ({})".format(ctx.getText()))
 
 
-def match(pattern, containers, timestamps, verbose=False, escape_unicode=False):
+def match(pattern, containers, timestamps, verbose=False):
     """
     Match the given pattern against the given containers and timestamps.
 
@@ -1749,7 +1742,7 @@ def match(pattern, containers, timestamps, verbose=False, escape_unicode=False):
 
     # parser.setTrace(True)
 
-    matcher = MatchListener(containers, timestamps, verbose, escape_unicode)
+    matcher = MatchListener(containers, timestamps, verbose)
     matched = False
     try:
         tree = parser.pattern()
@@ -1813,11 +1806,6 @@ def main():
     Set encoding used for reading container, pattern, and timestamp files.
     Must be an encoding name Python understands.  Default is utf8.
     """)
-    arg_parser.add_argument("-u", "--escape-unicode", action="store_true",
-                            help="""Escape unicode chars in console output.
-                            This helps when the matcher dies when attempting to
-                            print unicode chars to your console.  See also
-                            environment variable PYTHONIOENCODING.""")
     arg_parser.add_argument("-v", "--verbose", action="store_true",
                             help="""Be verbose""")
 
@@ -1862,10 +1850,8 @@ def main():
             if pattern[0] == "#":
                 continue  # skip commented out lines
             pattern = pattern.decode(args.encoding)
-            escaped_pattern = pattern.encode("unicode_escape") \
-                if args.escape_unicode else pattern
-            if match(pattern, containers, timestamps, args.verbose,
-                     args.escape_unicode):
+            escaped_pattern = pattern.encode("unicode_escape")
+            if match(pattern, containers, timestamps, args.verbose):
                 print(u"\nPASS: ", escaped_pattern)
             else:
                 print(u"\nFAIL: ", escaped_pattern)
