@@ -6,7 +6,17 @@ pattern
   ;
 
 observationExpressions
-  : <assoc=left> observationExpressions (ALONGWITH|FOLLOWEDBY) observationExpressions
+  : <assoc=left> observationExpressions FOLLOWEDBY observationExpressions
+  | observationExpressionOr
+  ;
+
+observationExpressionOr
+  : <assoc=left> observationExpressionOr OR observationExpressionOr
+  | observationExpressionAnd
+  ;
+
+observationExpressionAnd
+  : <assoc=left> observationExpressionAnd AND observationExpressionAnd
   | observationExpression
   ;
 
@@ -138,7 +148,6 @@ TimestampLiteral :
 // Keywords
 
 AND:  A N D;
-ALONGWITH:  A L O N G W I T H ;
 OR:  O R;
 NOT:  N O T;
 FOLLOWEDBY: F O L L O W E D B Y;
