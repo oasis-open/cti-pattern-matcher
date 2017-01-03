@@ -27,7 +27,7 @@ TEST = 'testcases/'
 
 TEST_CASES = [
     "[file-object:hashes.sha-256 = 'aec070645fe53ee3b3763059376134f058cc337247c978add178b6ccdfb0019f']",
-    "[ipv4addr-object:value INSUBNET '192.168.0.1/24']",
+    "[ipv4addr-object:value ISSUBSET '192.168.0.1/24']",
     "[emailaddr-object:value MATCHES /.+\\@ibm\\.com$/ AND file-object:name MATCHES /^Final Report.+\\.exe$/]",
     "[file-object:hashes.sha-256 = 'aec070645fe53ee3b3763059376134f058cc337247c978add178b6ccdfb0019f' AND file-object:mime-type = 'application/x-pdf']",
     """
@@ -54,7 +54,7 @@ TEST_CASES = [
     AND file-object:file_system_properties.file_path.components[2] = 'System32'
     AND file-object:file_system_properties.file_name = 'foo.dll']""",
     "[file-object:extended_properties.windows_pebinary.sections[*].entropy > 7.0]",
-    "[Artifact:log = 'Login failed.'] REPEATED 5 TIMES",
+    "[Artifact:log = 'Login failed.'] REPEATS 5 TIMES",
     "[file-object:size > 30 or file-object:size > 9999999 and file-object:size < 0]",  # verify operator precedence
 ]
 

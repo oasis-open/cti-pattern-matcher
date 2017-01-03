@@ -130,21 +130,21 @@ class CyboxPatternListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by CyboxPatternParser#propTestInSubnet.
-    def enterPropTestInSubnet(self, ctx):
+    # Enter a parse tree produced by CyboxPatternParser#propTestIsSubset.
+    def enterPropTestIsSubset(self, ctx):
         pass
 
-    # Exit a parse tree produced by CyboxPatternParser#propTestInSubnet.
-    def exitPropTestInSubnet(self, ctx):
+    # Exit a parse tree produced by CyboxPatternParser#propTestIsSubset.
+    def exitPropTestIsSubset(self, ctx):
         pass
 
 
-    # Enter a parse tree produced by CyboxPatternParser#propTestContains.
-    def enterPropTestContains(self, ctx):
+    # Enter a parse tree produced by CyboxPatternParser#propTestIsSuperset.
+    def enterPropTestIsSuperset(self, ctx):
         pass
 
-    # Exit a parse tree produced by CyboxPatternParser#propTestContains.
-    def exitPropTestContains(self, ctx):
+    # Exit a parse tree produced by CyboxPatternParser#propTestIsSuperset.
+    def exitPropTestIsSuperset(self, ctx):
         pass
 
 
