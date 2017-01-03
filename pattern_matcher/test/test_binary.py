@@ -69,4 +69,3 @@ def test_binary_match(pattern):
 def test_binary_nomatch(pattern):
     assert not pattern_matcher.matcher.match(pattern, _observations,
                                              _timestamps)
-
