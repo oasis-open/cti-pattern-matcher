@@ -321,8 +321,6 @@ def _process_prop_suffix(prop_name, value):
         appropriate python type.  Otherwise, value itself is returned.
     """
 
-    # In python, hex/base64 decoding is always binary->binary.  So I gotta
-    # get the text value to binary, so I can decode it to... binary.
     if prop_name.endswith(u"_hex"):
         # binary type, expressed as hex
         value = binascii.a2b_hex(value)
@@ -1752,8 +1750,6 @@ def match(pattern, containers, timestamps, verbose=False):
         as a list of timezone-aware datetime.datetime objects.  There must be
         the same number of timestamps as containers.
     :param verbose: Whether to dump detailed info about matcher operation
-    :param escape_unicode: Whether to escape unicode in verbose output (only
-        applicable if verbose is True).
     :return: True if the pattern matches, False if not
     """
 
