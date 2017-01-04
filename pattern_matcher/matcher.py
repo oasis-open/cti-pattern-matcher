@@ -1,7 +1,8 @@
 from __future__ import print_function
 
 import argparse
-import codecs
+import base64
+import binascii
 import datetime
 import dateutil.relativedelta
 import dateutil.tz
@@ -82,10 +83,8 @@ _TOKEN_TYPE_COERCERS = {
     CyboxPatternParser.FloatLiteral: float,
     CyboxPatternParser.NULL: lambda _: None,
     # Binary literals: strip prefix & quotes, decode to binary data
-    CyboxPatternParser.BinaryLiteral: lambda s: codecs.decode(
-        s[2:-1].encode("ascii"), "base64"),
-    CyboxPatternParser.HexLiteral: lambda s: codecs.decode(
-        s[2:-1].encode("ascii"), "hex")
+    CyboxPatternParser.BinaryLiteral: lambda s: base64.standard_b64decode(s[2:-1]),
+    CyboxPatternParser.HexLiteral: lambda s: binascii.a2b_hex(s[2:-1])
 }
 
 
@@ -319,10 +318,10 @@ def _process_prop_suffix(prop_name, value):
     # get the text value to binary, so I can decode it to... binary.
     if prop_name.endswith(u"_hex"):
         # binary type, expressed as hex
-        value = codecs.decode(value.encode("ascii"), "hex")
+        value = binascii.a2b_hex(value)
     elif prop_name.endswith(u"_bin"):
         # binary type, expressed as base64
-        value = codecs.decode(value.encode("ascii"), "base64")
+        value = base64.standard_b64decode(value)
 
     return value
 
