@@ -802,7 +802,7 @@ def _compute_expected_binding_size(ctx):
             ctx.repeatedQualifier().IntLiteral())
 
         if rep_count < 1:
-            raise MatcherException("Invalid repetition count: {}".format(
+            raise MatcherException(u"Invalid repetition count: {}".format(
                 rep_count))
 
         return child_count * rep_count
@@ -976,11 +976,11 @@ class MatchListener(CyboxPatternListener):
 
         if num_operands not in (0, 2):
             # Just in case...
-            msg = "Unexpected number of observationExpressionOr children: {}"
+            msg = u"Unexpected number of observationExpressionOr children: {}"
             raise MatcherInternalError(msg.format(num_operands))
 
         if num_operands == 2:
-            debug_label = "exitObservationExpressionOr"
+            debug_label = u"exitObservationExpressionOr"
 
             rhs_bindings = self.__pop(debug_label)
             lhs_bindings = self.__pop(debug_label)
@@ -1041,11 +1041,11 @@ class MatchListener(CyboxPatternListener):
 
         if num_operands not in (0, 2):
             # Just in case...
-            msg = "Unexpected number of observationExpressionAnd children: {}"
+            msg = u"Unexpected number of observationExpressionAnd children: {}"
             raise MatcherInternalError(msg.format(num_operands))
 
         if num_operands == 2:
-            debug_label = "exitObservationExpressionAnd"
+            debug_label = u"exitObservationExpressionAnd"
 
             rhs_bindings = self.__pop(debug_label)
             lhs_bindings = self.__pop(debug_label)
