@@ -79,7 +79,7 @@ _TOKEN_TYPE_COERCERS = {
     CyboxPatternParser.IntLiteral: int,
     # for strings, strip quotes and un-escape embedded quotes
     CyboxPatternParser.StringLiteral: lambda s: s[1:-1].replace(u"''", u"'"),
-    CyboxPatternParser.BoolLiteral: lambda s: s.lower() == "true",
+    CyboxPatternParser.BoolLiteral: lambda s: s.lower() == u"true",
     CyboxPatternParser.FloatLiteral: float,
     # Binary literals: strip prefix & quotes, decode to binary data
     CyboxPatternParser.BinaryLiteral: lambda s: base64.standard_b64decode(s[2:-1]),
@@ -1233,7 +1233,7 @@ class MatchListener(CyboxPatternListener):
                     value = _str_to_datetime(value)
                 except ValueError as e:
                     six.raise_from(
-                        MatcherException("Invalid timestamp in JSON: {}".format(
+                        MatcherException(u"Invalid timestamp in JSON: {}".format(
                             value
                         )), e)
 
@@ -1291,7 +1291,7 @@ class MatchListener(CyboxPatternListener):
                     value = _str_to_datetime(value)
                 except ValueError as e:
                     six.raise_from(
-                        MatcherException("Invalid timestamp in JSON: {}".format(
+                        MatcherException(u"Invalid timestamp in JSON: {}".format(
                             value
                         )), e)
 
