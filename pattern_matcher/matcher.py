@@ -79,12 +79,13 @@ _TOKEN_TYPE_COERCERS = {
     CyboxPatternParser.IntLiteral: int,
     # for strings, strip quotes and un-escape embedded quotes
     CyboxPatternParser.StringLiteral: lambda s: s[1:-1].replace(u"''", u"'"),
-    CyboxPatternParser.BoolLiteral: lambda s: s.lower() == "true",
+    CyboxPatternParser.BoolLiteral: lambda s: s.lower() == u"true",
     CyboxPatternParser.FloatLiteral: float,
-    CyboxPatternParser.NULL: lambda _: None,
     # Binary literals: strip prefix & quotes, decode to binary data
     CyboxPatternParser.BinaryLiteral: lambda s: base64.standard_b64decode(s[2:-1]),
-    CyboxPatternParser.HexLiteral: lambda s: binascii.a2b_hex(s[2:-1])
+    CyboxPatternParser.HexLiteral: lambda s: binascii.a2b_hex(s[2:-1]),
+    CyboxPatternParser.TimestampLiteral: lambda t: _str_to_datetime(t[2:-1]),
+    CyboxPatternParser.NULL: lambda _: None
 }
 
 
@@ -146,6 +147,9 @@ _COMPARE_EQ_FUNCS = {
     },
     bool: {
         bool: operator.eq
+    },
+    datetime.datetime: {
+        datetime.datetime: operator.eq
     },
     _NoneType: {
         _NoneType: _ret_true
@@ -218,6 +222,9 @@ _COMPARE_ORDER_FUNCS = {
     },
     six.text_type: {
         six.text_type: _cmp
+    },
+    datetime.datetime: {
+        datetime.datetime: _cmp
     }
 }
 
@@ -314,8 +321,6 @@ def _process_prop_suffix(prop_name, value):
         appropriate python type.  Otherwise, value itself is returned.
     """
 
-    # In python, hex/base64 decoding is always binary->binary.  So I gotta
-    # get the text value to binary, so I can decode it to... binary.
     if prop_name.endswith(u"_hex"):
         # binary type, expressed as hex
         value = binascii.a2b_hex(value)
@@ -448,10 +453,16 @@ def _literal_terminal_to_python_val(literal_terminal):
     parse tree to a Python value.
     """
     token_type = literal_terminal.getSymbol().type
+    token_text = literal_terminal.getText()
 
     if token_type in _TOKEN_TYPE_COERCERS:
         coercer = _TOKEN_TYPE_COERCERS[token_type]
-        python_value = coercer(literal_terminal.getText())
+        try:
+            python_value = coercer(token_text)
+        except Exception as e:
+            six.raise_from(MatcherException(u"Invalid {}: {}".format(
+                CyboxPatternParser.symbolicNames[token_type], token_text
+            )), e)
     else:
         raise MatcherInternalError(u"Unsupported literal type: {}".format(
             CyboxPatternParser.symbolicNames[token_type]))
@@ -481,32 +492,27 @@ def _like_to_regex(like):
     return s
 
 
-def _str_to_datetime(timestamp_str):
+def _str_to_datetime(timestamp_str, ignore_case=False):
     """
     Convert a timestamp string from a pattern to a datetime.datetime object.
-    If conversion fails, return None.
+    If conversion fails, raises a ValueError.
     """
 
-    # Can't create a pattern with an optional part... so make two patterns
-    # and try both.
-    format = u"%Y-%m-%dT%H:%M:%SZ"
-    format_frac = u"%Y-%m-%dT%H:%M:%S.%fZ"
+    # strptime() appears to work case-insensitively.  I think we require
+    # case-sensitivity for timestamp literals inside patterns and JSON
+    # (for the "T" and "Z" chars).  So check case first.
+    if not ignore_case and any(c.islower() for c in timestamp_str):
+        raise ValueError(u"Invalid timestamp format "
+                         u"(require upper case): {}".format(timestamp_str))
 
-    dt = None
-    try:
-        dt = datetime.datetime.strptime(timestamp_str, format)
-        # strptime doesn't seem to have a format specifier for the 'Z'
-        # in isoformat strings... so just set utc timezone directly.
-        dt = dt.replace(tzinfo=dateutil.tz.tzutc())
-    except ValueError:
-        pass
+    # Can't create a pattern with an optional part... so use two patterns
+    if u"." in timestamp_str:
+        fmt = u"%Y-%m-%dT%H:%M:%S.%fZ"
+    else:
+        fmt = u"%Y-%m-%dT%H:%M:%SZ"
 
-    if dt is None:
-        try:
-            dt = datetime.datetime.strptime(timestamp_str, format_frac)
-            dt = dt.replace(tzinfo=dateutil.tz.tzutc())
-        except ValueError:
-            pass
+    dt = datetime.datetime.strptime(timestamp_str, fmt)
+    dt = dt.replace(tzinfo=dateutil.tz.tzutc())
 
     return dt
 
@@ -1052,13 +1058,13 @@ class MatchListener(CyboxPatternListener):
         start_str = _literal_terminal_to_python_val(ctx.StringLiteral(0))
         stop_str = _literal_terminal_to_python_val(ctx.StringLiteral(1))
 
-        start_dt = _str_to_datetime(start_str)
-        if start_dt is None:
-            raise MatcherException(u"Invalid timestamp format: {}".format(start_str))
-
-        stop_dt = _str_to_datetime(stop_str)
-        if stop_dt is None:
-            raise MatcherException(u"Invalid timestamp format: {}".format(stop_str))
+        # If the language used timestamp literals here, this could go away...
+        try:
+            start_dt = _str_to_datetime(start_str)
+            stop_dt = _str_to_datetime(stop_str)
+        except ValueError as e:
+            # re-raise as MatcherException.
+            raise six.raise_from(MatcherException(*e.args), e)
 
         self.__push((start_dt, stop_dt), u"exitStartStopQualifier")
 
@@ -1216,6 +1222,19 @@ class MatchListener(CyboxPatternListener):
         obs_values = self.__pop(debug_label)
 
         def equality_pred(value):
+
+            # timestamp hackage: if we have a timestamp literal from the
+            # pattern, try to interpret the json value as a timestamp too.
+            if literal_terminal.getSymbol().type == \
+                    CyboxPatternParser.TimestampLiteral:
+                try:
+                    value = _str_to_datetime(value)
+                except ValueError as e:
+                    six.raise_from(
+                        MatcherException(u"Invalid timestamp in JSON: {}".format(
+                            value
+                        )), e)
+
             result = False
             eq_func = _get_table_symmetric(_COMPARE_EQ_FUNCS,
                                            type(literal_value),
@@ -1261,6 +1280,19 @@ class MatchListener(CyboxPatternListener):
         obs_values = self.__pop(debug_label)
 
         def order_pred(value):
+
+            # timestamp hackage: if we have a timestamp literal from the
+            # pattern, try to interpret the json value as a timestamp too.
+            if literal_terminal.getSymbol().type == \
+                    CyboxPatternParser.TimestampLiteral:
+                try:
+                    value = _str_to_datetime(value)
+                except ValueError as e:
+                    six.raise_from(
+                        MatcherException(u"Invalid timestamp in JSON: {}".format(
+                            value
+                        )), e)
+
             cmp_func = _get_table_symmetric(_COMPARE_ORDER_FUNCS,
                                             type(literal_value),
                                             type(value))
@@ -1718,8 +1750,6 @@ def match(pattern, containers, timestamps, verbose=False):
         as a list of timezone-aware datetime.datetime objects.  There must be
         the same number of timestamps as containers.
     :param verbose: Whether to dump detailed info about matcher operation
-    :param escape_unicode: Whether to escape unicode in verbose output (only
-        applicable if verbose is True).
     :return: True if the pattern matches, False if not
     """
 
@@ -1823,9 +1853,7 @@ def main():
                 line = line.decode(args.encoding)
                 if not line:
                     continue  # skip blank lines
-                timestamp = _str_to_datetime(line)
-                if timestamp is None:
-                    raise ValueError(u"Invalid timestamp format: {}".format(line))
+                timestamp = _str_to_datetime(line, ignore_case=True)
                 timestamps.append(timestamp)
         finally:
             args.timestamps.close()

@@ -90,6 +90,7 @@ orderableLiteral
   | StringLiteral
   | BinaryLiteral
   | HexLiteral
+  | TimestampLiteral
   ;
 
 timeUnit
@@ -122,6 +123,15 @@ BoolLiteral :
 
 RegexLiteral :
   DIVIDE ( ~'/' | '\\/' )* DIVIDE
+  ;
+
+TimestampLiteral :
+  't' QUOTE
+  [0-9] [0-9] [0-9] [0-9] HYPHEN [0-9] [0-9] HYPHEN [0-9] [0-9]
+  'T'
+  [0-9] [0-9] COLON [0-9] [0-9] COLON [0-9] [0-9] (DOT [0-9]+)?
+  'Z'
+  QUOTE
   ;
 
 //////////////////////////////////////////////
