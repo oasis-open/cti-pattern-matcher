@@ -39,6 +39,7 @@ _observations = [
 
 _timestamps = [datetime.datetime.now(dateutil.tz.tzutc())] * len(_observations)
 
+
 @pytest.mark.parametrize("pattern", [
     "[person:name='alice'] and [person:age>20]",
     "[person:name='alice'] or [person:name='carol']",
@@ -48,6 +49,7 @@ _timestamps = [datetime.datetime.now(dateutil.tz.tzutc())] * len(_observations)
 ])
 def test_and_or_match(pattern):
     assert match(pattern, _observations, _timestamps, True)
+
 
 @pytest.mark.parametrize("pattern", [
     "[person:name='alice'] and [person:name='zed']",
