@@ -55,7 +55,7 @@ def test_and_or_match(pattern):
 @pytest.mark.parametrize("pattern", [
     "[person:name='alice'] and [person:name='zelda']",
     "[person:name='mary'] or [person:name='zelda']",
-    "[person:age > 70] or [person:name > 'zelda'] and [person:name matches /^...?$/]",
+    "[person:age > 70] or [person:name > 'zelda'] and [person:name MATCHES '^...?$']",
     # same as precedence test above, with parentheses to alter eval order
     "([person:age > 20] or [person:name > 'zelda']) and [person:age < 0]"
 ])

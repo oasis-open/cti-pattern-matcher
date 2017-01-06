@@ -43,7 +43,7 @@ propTest
   | objectPath (GT|LT|GE|LE) orderableLiteral  # propTestOrder
   | objectPath NOT? IN setLiteral              # propTestSet
   | objectPath NOT? LIKE StringLiteral         # propTestLike
-  | objectPath NOT? MATCHES RegexLiteral       # propTestRegex
+  | objectPath NOT? MATCHES StringLiteral      # propTestRegex
   | objectPath NOT? ISSUBSET StringLiteral     # propTestIsSubset
   | objectPath NOT? ISSUPERSET StringLiteral   # propTestIsSuperset
   | LPAREN comparisonExpression RPAREN         # propTestParen
@@ -129,10 +129,6 @@ StringLiteral :
 
 BoolLiteral :
   TRUE | FALSE
-  ;
-
-RegexLiteral :
-  DIVIDE ( ~'/' | '\\/' )* DIVIDE
   ;
 
 TimestampLiteral :

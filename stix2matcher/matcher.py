@@ -1569,7 +1569,7 @@ class MatchListener(STIXPatternListener):
         errors.
         """
 
-        regex_terminal = ctx.RegexLiteral()
+        regex_terminal = ctx.StringLiteral()
         debug_label = u"exitPropTestRegex ({}{})".format(
             u"not " if ctx.NOT() else u"",
             regex_terminal.getText()

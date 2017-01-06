@@ -29,7 +29,7 @@ TEST = 'testcases/'
 TEST_CASES = [
     "[file-object:hashes.sha-256 = 'aec070645fe53ee3b3763059376134f058cc337247c978add178b6ccdfb0019f']",
     "[ipv4addr-object:value ISSUBSET '192.168.0.1/24']",
-    "[emailaddr-object:value MATCHES /.+\\@ibm\\.com$/ AND file-object:name MATCHES /^Final Report.+\\.exe$/]",
+    "[emailaddr-object:value MATCHES '.+\\@ibm\\.com$' AND file-object:name MATCHES '^Final Report.+\\.exe$']",
     "[file-object:hashes.sha-256 = 'aec070645fe53ee3b3763059376134f058cc337247c978add178b6ccdfb0019f' AND file-object:mime-type = 'application/x-pdf']",
     """
     [file-object:hashes.sha-256 = 'bf07a7fbb825fc0aae7bf4a1177b2b31fcf8a3feeaf7092761e18c859ee52a9c']
@@ -45,10 +45,10 @@ TEST_CASES = [
     [user-account-object:value = 'Paul']
     AND
     [user-account-object:value = 'Mary']) WITHIN 5 MINUTES""",
-    "[artifact-object:mime-type = 'application/vnd.tcpdump.pcap' AND artifact-object:payload MATCHES /Zm9vYmFy/]",
-    "[network-connection-object:extended_properties[0].source_payload MATCHES /dGVzdHRlc3R0ZXN0/]",
+    "[artifact-object:mime-type = 'application/vnd.tcpdump.pcap' AND artifact-object:payload MATCHES 'Zm9vYmFy']",
+    "[network-connection-object:extended_properties[0].source_payload MATCHES 'dGVzdHRlc3R0ZXN0']",
     "[file-object:size IN (32, 64, 641028)]",
-    "[network-connection-object:extended_properties[*].source_payload MATCHES /dGVzdHRlc3R0ZXN0/]",
+    "[network-connection-object:extended_properties[*].source_payload MATCHES 'dGVzdHRlc3R0ZXN0']",
     """[file-object:file_system_properties.file_path.delimiter = '\\'
     AND file-object:file_system_properties.file_path.components[0] = 'C:'
     AND file-object:file_system_properties.file_path.components[1] = 'Windows'
