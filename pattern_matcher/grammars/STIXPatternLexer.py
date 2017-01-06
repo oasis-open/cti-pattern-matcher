@@ -1,4 +1,4 @@
-# Generated from CyboxPattern.g4 by ANTLR 4.5.3
+# Generated from STIXPattern.g4 by ANTLR 4.5.3
 # encoding: utf-8
 from __future__ import print_function
 from antlr4 import *
@@ -288,7 +288,7 @@ def serializedATN():
         return buf.getvalue()
 
 
-class CyboxPatternLexer(Lexer):
+class STIXPatternLexer(Lexer):
 
     atn = ATNDeserializer().deserialize(serializedATN())
 
@@ -388,10 +388,10 @@ class CyboxPatternLexer(Lexer):
                   u"Z", u"HexDigit", u"TwoHexDigits", u"Base64Char", u"WS", 
                   u"COMMENT", u"LINE_COMMENT" ]
 
-    grammarFileName = u"CyboxPattern.g4"
+    grammarFileName = u"STIXPattern.g4"
 
     def __init__(self, input=None):
-        super(CyboxPatternLexer, self).__init__(input)
+        super(STIXPatternLexer, self).__init__(input)
         self.checkVersion("4.5.3")
         self._interp = LexerATNSimulator(self, self.atn, self.decisionsToDFA, PredictionContextCache())
         self._actions = None

@@ -21,9 +21,9 @@ import antlr4
 import antlr4.error.Errors
 import antlr4.error.ErrorListener
 
-from pattern_matcher.grammars.CyboxPatternListener import CyboxPatternListener
-from pattern_matcher.grammars.CyboxPatternLexer import CyboxPatternLexer
-from pattern_matcher.grammars.CyboxPatternParser import CyboxPatternParser
+from pattern_matcher.grammars.STIXPatternListener import STIXPatternListener
+from pattern_matcher.grammars.STIXPatternLexer import STIXPatternLexer
+from pattern_matcher.grammars.STIXPatternParser import STIXPatternParser
 
 
 # Example cybox-container.  Note that these have no timestamps.
@@ -76,15 +76,15 @@ from pattern_matcher.grammars.CyboxPatternParser import CyboxPatternParser
 # Coercers from strings (what all token values are) to python types.
 # Set and regex literals are not handled here; they're a different beast...
 _TOKEN_TYPE_COERCERS = {
-    CyboxPatternParser.IntLiteral: int,
+    STIXPatternParser.IntLiteral: int,
     # for strings, strip quotes and un-escape embedded quotes
-    CyboxPatternParser.StringLiteral: lambda s: s[1:-1].replace(u"''", u"'"),
-    CyboxPatternParser.BoolLiteral: lambda s: s.lower() == u"true",
-    CyboxPatternParser.FloatLiteral: float,
-    CyboxPatternParser.BinaryLiteral: lambda s: base64.standard_b64decode(s[2:-1]),
-    CyboxPatternParser.HexLiteral: lambda s: binascii.a2b_hex(s[2:-1]),
-    CyboxPatternParser.TimestampLiteral: lambda t: _str_to_datetime(t[2:-1]),
-    CyboxPatternParser.NULL: lambda _: None
+    STIXPatternParser.StringLiteral: lambda s: s[1:-1].replace(u"''", u"'"),
+    STIXPatternParser.BoolLiteral: lambda s: s.lower() == u"true",
+    STIXPatternParser.FloatLiteral: float,
+    STIXPatternParser.BinaryLiteral: lambda s: base64.standard_b64decode(s[2:-1]),
+    STIXPatternParser.HexLiteral: lambda s: binascii.a2b_hex(s[2:-1]),
+    STIXPatternParser.TimestampLiteral: lambda t: _str_to_datetime(t[2:-1]),
+    STIXPatternParser.NULL: lambda _: None
 }
 
 
@@ -267,7 +267,7 @@ class TypeMismatchException(MatcherException):
             u"Type mismatch in '{}' operation: json={}, pattern={}".format(
                 cmp_op,
                 type_from_cybox_json,
-                CyboxPatternParser.symbolicNames[literal_type]
+                STIXPatternParser.symbolicNames[literal_type]
             )
         )
 
@@ -460,11 +460,11 @@ def _literal_terminal_to_python_val(literal_terminal):
             python_value = coercer(token_text)
         except Exception as e:
             six.raise_from(MatcherException(u"Invalid {}: {}".format(
-                CyboxPatternParser.symbolicNames[token_type], token_text
+                STIXPatternParser.symbolicNames[token_type], token_text
             )), e)
     else:
         raise MatcherInternalError(u"Unsupported literal type: {}".format(
-            CyboxPatternParser.symbolicNames[token_type]))
+            STIXPatternParser.symbolicNames[token_type]))
 
     return python_value
 
@@ -790,9 +790,9 @@ def _compute_expected_binding_size(ctx):
         pattern.
     :return: A binding size (a number)
     """
-    if isinstance(ctx, CyboxPatternParser.ComparisonExpressionContext):
+    if isinstance(ctx, STIXPatternParser.ComparisonExpressionContext):
         return 1
-    elif isinstance(ctx, CyboxPatternParser.ObservationExpressionRepeatedContext):
+    elif isinstance(ctx, STIXPatternParser.ObservationExpressionRepeatedContext):
         # Guess I ought to correctly handle the repeat-qualified observation
         # expressions too huh?
         child_count = _compute_expected_binding_size(
@@ -813,7 +813,7 @@ def _compute_expected_binding_size(ctx):
                    for i in range(ctx.getChildCount()))
 
 
-class MatchListener(CyboxPatternListener):
+class MatchListener(STIXPatternListener):
     """
     A parser listener which performs pattern matching.  It works like an
     RPN calculator, pushing and popping intermediate results to/from an
@@ -1369,7 +1369,7 @@ class MatchListener(CyboxPatternListener):
             # timestamp hackage: if we have a timestamp literal from the
             # pattern, try to interpret the json value as a timestamp too.
             if literal_terminal.getSymbol().type == \
-                    CyboxPatternParser.TimestampLiteral:
+                    STIXPatternParser.TimestampLiteral:
                 try:
                     value = _str_to_datetime(value)
                 except ValueError as e:
@@ -1427,7 +1427,7 @@ class MatchListener(CyboxPatternListener):
             # timestamp hackage: if we have a timestamp literal from the
             # pattern, try to interpret the json value as a timestamp too.
             if literal_terminal.getSymbol().type == \
-                    CyboxPatternParser.TimestampLiteral:
+                    STIXPatternParser.TimestampLiteral:
                 try:
                     value = _str_to_datetime(value)
                 except ValueError as e:
@@ -1897,11 +1897,11 @@ def match(pattern, containers, timestamps, verbose=False):
     """
 
     in_ = antlr4.InputStream(pattern)
-    lexer = CyboxPatternLexer(in_)
+    lexer = STIXPatternLexer(in_)
     lexer.removeErrorListeners()  # remove the default "console" listener
     token_stream = antlr4.CommonTokenStream(lexer)
 
-    parser = CyboxPatternParser(token_stream)
+    parser = STIXPatternParser(token_stream)
     parser.removeErrorListeners()  # remove the default "console" listener
     error_listener = MatcherErrorListener()
     parser.addErrorListener(error_listener)

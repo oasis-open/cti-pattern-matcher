@@ -1,4 +1,4 @@
-# Generated from CyboxPattern.g4 by ANTLR 4.5.3
+# Generated from STIXPattern.g4 by ANTLR 4.5.3
 # encoding: utf-8
 from __future__ import print_function
 from antlr4 import *
@@ -105,9 +105,9 @@ def serializedATN():
         return buf.getvalue()
 
 
-class CyboxPatternParser ( Parser ):
+class STIXPatternParser ( Parser ):
 
-    grammarFileName = "CyboxPattern.g4"
+    grammarFileName = "STIXPattern.g4"
 
     atn = ATNDeserializer().deserialize(serializedATN())
 
@@ -229,7 +229,7 @@ class CyboxPatternParser ( Parser ):
     LINE_COMMENT=57
 
     def __init__(self, input):
-        super(CyboxPatternParser, self).__init__(input)
+        super(STIXPatternParser, self).__init__(input)
         self.checkVersion("4.5.3")
         self._interp = ParserATNSimulator(self, self.atn, self.decisionsToDFA, self.sharedContextCache)
         self._predicates = None
@@ -239,15 +239,15 @@ class CyboxPatternParser ( Parser ):
     class PatternContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
-            super(CyboxPatternParser.PatternContext, self).__init__(parent, invokingState)
+            super(STIXPatternParser.PatternContext, self).__init__(parent, invokingState)
             self.parser = parser
 
         def observationExpressions(self):
-            return self.getTypedRuleContext(CyboxPatternParser.ObservationExpressionsContext,0)
+            return self.getTypedRuleContext(STIXPatternParser.ObservationExpressionsContext,0)
 
 
         def getRuleIndex(self):
-            return CyboxPatternParser.RULE_pattern
+            return STIXPatternParser.RULE_pattern
 
         def enterRule(self, listener):
             if hasattr(listener, "enterPattern"):
@@ -262,7 +262,7 @@ class CyboxPatternParser ( Parser ):
 
     def pattern(self):
 
-        localctx = CyboxPatternParser.PatternContext(self, self._ctx, self.state)
+        localctx = STIXPatternParser.PatternContext(self, self._ctx, self.state)
         self.enterRule(localctx, 0, self.RULE_pattern)
         try:
             self.enterOuterAlt(localctx, 1)
@@ -279,25 +279,25 @@ class CyboxPatternParser ( Parser ):
     class ObservationExpressionsContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
-            super(CyboxPatternParser.ObservationExpressionsContext, self).__init__(parent, invokingState)
+            super(STIXPatternParser.ObservationExpressionsContext, self).__init__(parent, invokingState)
             self.parser = parser
 
         def observationExpressionOr(self):
-            return self.getTypedRuleContext(CyboxPatternParser.ObservationExpressionOrContext,0)
+            return self.getTypedRuleContext(STIXPatternParser.ObservationExpressionOrContext,0)
 
 
         def observationExpressions(self, i=None):
             if i is None:
-                return self.getTypedRuleContexts(CyboxPatternParser.ObservationExpressionsContext)
+                return self.getTypedRuleContexts(STIXPatternParser.ObservationExpressionsContext)
             else:
-                return self.getTypedRuleContext(CyboxPatternParser.ObservationExpressionsContext,i)
+                return self.getTypedRuleContext(STIXPatternParser.ObservationExpressionsContext,i)
 
 
         def FOLLOWEDBY(self):
-            return self.getToken(CyboxPatternParser.FOLLOWEDBY, 0)
+            return self.getToken(STIXPatternParser.FOLLOWEDBY, 0)
 
         def getRuleIndex(self):
-            return CyboxPatternParser.RULE_observationExpressions
+            return STIXPatternParser.RULE_observationExpressions
 
         def enterRule(self, listener):
             if hasattr(listener, "enterObservationExpressions"):
@@ -312,7 +312,7 @@ class CyboxPatternParser ( Parser ):
     def observationExpressions(self, _p=0):
         _parentctx = self._ctx
         _parentState = self.state
-        localctx = CyboxPatternParser.ObservationExpressionsContext(self, self._ctx, _parentState)
+        localctx = STIXPatternParser.ObservationExpressionsContext(self, self._ctx, _parentState)
         _prevctx = localctx
         _startState = 2
         self.enterRecursionRule(localctx, 2, self.RULE_observationExpressions, _p)
@@ -329,14 +329,14 @@ class CyboxPatternParser ( Parser ):
                     if self._parseListeners is not None:
                         self.triggerExitRuleEvent()
                     _prevctx = localctx
-                    localctx = CyboxPatternParser.ObservationExpressionsContext(self, _parentctx, _parentState)
+                    localctx = STIXPatternParser.ObservationExpressionsContext(self, _parentctx, _parentState)
                     self.pushNewRecursionContext(localctx, _startState, self.RULE_observationExpressions)
                     self.state = 43
                     if not self.precpred(self._ctx, 2):
                         from antlr4.error.Errors import FailedPredicateException
                         raise FailedPredicateException(self, "self.precpred(self._ctx, 2)")
                     self.state = 44
-                    self.match(CyboxPatternParser.FOLLOWEDBY)
+                    self.match(STIXPatternParser.FOLLOWEDBY)
                     self.state = 45
                     self.observationExpressions(3) 
                 self.state = 50
@@ -354,25 +354,25 @@ class CyboxPatternParser ( Parser ):
     class ObservationExpressionOrContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
-            super(CyboxPatternParser.ObservationExpressionOrContext, self).__init__(parent, invokingState)
+            super(STIXPatternParser.ObservationExpressionOrContext, self).__init__(parent, invokingState)
             self.parser = parser
 
         def observationExpressionAnd(self):
-            return self.getTypedRuleContext(CyboxPatternParser.ObservationExpressionAndContext,0)
+            return self.getTypedRuleContext(STIXPatternParser.ObservationExpressionAndContext,0)
 
 
         def observationExpressionOr(self, i=None):
             if i is None:
-                return self.getTypedRuleContexts(CyboxPatternParser.ObservationExpressionOrContext)
+                return self.getTypedRuleContexts(STIXPatternParser.ObservationExpressionOrContext)
             else:
-                return self.getTypedRuleContext(CyboxPatternParser.ObservationExpressionOrContext,i)
+                return self.getTypedRuleContext(STIXPatternParser.ObservationExpressionOrContext,i)
 
 
         def OR(self):
-            return self.getToken(CyboxPatternParser.OR, 0)
+            return self.getToken(STIXPatternParser.OR, 0)
 
         def getRuleIndex(self):
-            return CyboxPatternParser.RULE_observationExpressionOr
+            return STIXPatternParser.RULE_observationExpressionOr
 
         def enterRule(self, listener):
             if hasattr(listener, "enterObservationExpressionOr"):
@@ -387,7 +387,7 @@ class CyboxPatternParser ( Parser ):
     def observationExpressionOr(self, _p=0):
         _parentctx = self._ctx
         _parentState = self.state
-        localctx = CyboxPatternParser.ObservationExpressionOrContext(self, self._ctx, _parentState)
+        localctx = STIXPatternParser.ObservationExpressionOrContext(self, self._ctx, _parentState)
         _prevctx = localctx
         _startState = 4
         self.enterRecursionRule(localctx, 4, self.RULE_observationExpressionOr, _p)
@@ -404,14 +404,14 @@ class CyboxPatternParser ( Parser ):
                     if self._parseListeners is not None:
                         self.triggerExitRuleEvent()
                     _prevctx = localctx
-                    localctx = CyboxPatternParser.ObservationExpressionOrContext(self, _parentctx, _parentState)
+                    localctx = STIXPatternParser.ObservationExpressionOrContext(self, _parentctx, _parentState)
                     self.pushNewRecursionContext(localctx, _startState, self.RULE_observationExpressionOr)
                     self.state = 54
                     if not self.precpred(self._ctx, 2):
                         from antlr4.error.Errors import FailedPredicateException
                         raise FailedPredicateException(self, "self.precpred(self._ctx, 2)")
                     self.state = 55
-                    self.match(CyboxPatternParser.OR)
+                    self.match(STIXPatternParser.OR)
                     self.state = 56
                     self.observationExpressionOr(3) 
                 self.state = 61
@@ -429,25 +429,25 @@ class CyboxPatternParser ( Parser ):
     class ObservationExpressionAndContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
-            super(CyboxPatternParser.ObservationExpressionAndContext, self).__init__(parent, invokingState)
+            super(STIXPatternParser.ObservationExpressionAndContext, self).__init__(parent, invokingState)
             self.parser = parser
 
         def observationExpression(self):
-            return self.getTypedRuleContext(CyboxPatternParser.ObservationExpressionContext,0)
+            return self.getTypedRuleContext(STIXPatternParser.ObservationExpressionContext,0)
 
 
         def observationExpressionAnd(self, i=None):
             if i is None:
-                return self.getTypedRuleContexts(CyboxPatternParser.ObservationExpressionAndContext)
+                return self.getTypedRuleContexts(STIXPatternParser.ObservationExpressionAndContext)
             else:
-                return self.getTypedRuleContext(CyboxPatternParser.ObservationExpressionAndContext,i)
+                return self.getTypedRuleContext(STIXPatternParser.ObservationExpressionAndContext,i)
 
 
         def AND(self):
-            return self.getToken(CyboxPatternParser.AND, 0)
+            return self.getToken(STIXPatternParser.AND, 0)
 
         def getRuleIndex(self):
-            return CyboxPatternParser.RULE_observationExpressionAnd
+            return STIXPatternParser.RULE_observationExpressionAnd
 
         def enterRule(self, listener):
             if hasattr(listener, "enterObservationExpressionAnd"):
@@ -462,7 +462,7 @@ class CyboxPatternParser ( Parser ):
     def observationExpressionAnd(self, _p=0):
         _parentctx = self._ctx
         _parentState = self.state
-        localctx = CyboxPatternParser.ObservationExpressionAndContext(self, self._ctx, _parentState)
+        localctx = STIXPatternParser.ObservationExpressionAndContext(self, self._ctx, _parentState)
         _prevctx = localctx
         _startState = 6
         self.enterRecursionRule(localctx, 6, self.RULE_observationExpressionAnd, _p)
@@ -479,14 +479,14 @@ class CyboxPatternParser ( Parser ):
                     if self._parseListeners is not None:
                         self.triggerExitRuleEvent()
                     _prevctx = localctx
-                    localctx = CyboxPatternParser.ObservationExpressionAndContext(self, _parentctx, _parentState)
+                    localctx = STIXPatternParser.ObservationExpressionAndContext(self, _parentctx, _parentState)
                     self.pushNewRecursionContext(localctx, _startState, self.RULE_observationExpressionAnd)
                     self.state = 65
                     if not self.precpred(self._ctx, 2):
                         from antlr4.error.Errors import FailedPredicateException
                         raise FailedPredicateException(self, "self.precpred(self._ctx, 2)")
                     self.state = 66
-                    self.match(CyboxPatternParser.AND)
+                    self.match(STIXPatternParser.AND)
                     self.state = 67
                     self.observationExpressionAnd(3) 
                 self.state = 72
@@ -504,29 +504,29 @@ class CyboxPatternParser ( Parser ):
     class ObservationExpressionContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
-            super(CyboxPatternParser.ObservationExpressionContext, self).__init__(parent, invokingState)
+            super(STIXPatternParser.ObservationExpressionContext, self).__init__(parent, invokingState)
             self.parser = parser
 
 
         def getRuleIndex(self):
-            return CyboxPatternParser.RULE_observationExpression
+            return STIXPatternParser.RULE_observationExpression
 
      
         def copyFrom(self, ctx):
-            super(CyboxPatternParser.ObservationExpressionContext, self).copyFrom(ctx)
+            super(STIXPatternParser.ObservationExpressionContext, self).copyFrom(ctx)
 
 
     class ObservationExpressionRepeatedContext(ObservationExpressionContext):
 
-        def __init__(self, parser, ctx): # actually a CyboxPatternParser.ObservationExpressionContext)
-            super(CyboxPatternParser.ObservationExpressionRepeatedContext, self).__init__(parser)
+        def __init__(self, parser, ctx): # actually a STIXPatternParser.ObservationExpressionContext)
+            super(STIXPatternParser.ObservationExpressionRepeatedContext, self).__init__(parser)
             self.copyFrom(ctx)
 
         def observationExpression(self):
-            return self.getTypedRuleContext(CyboxPatternParser.ObservationExpressionContext,0)
+            return self.getTypedRuleContext(STIXPatternParser.ObservationExpressionContext,0)
 
         def repeatedQualifier(self):
-            return self.getTypedRuleContext(CyboxPatternParser.RepeatedQualifierContext,0)
+            return self.getTypedRuleContext(STIXPatternParser.RepeatedQualifierContext,0)
 
 
         def enterRule(self, listener):
@@ -540,17 +540,17 @@ class CyboxPatternParser ( Parser ):
 
     class ObservationExpressionSimpleContext(ObservationExpressionContext):
 
-        def __init__(self, parser, ctx): # actually a CyboxPatternParser.ObservationExpressionContext)
-            super(CyboxPatternParser.ObservationExpressionSimpleContext, self).__init__(parser)
+        def __init__(self, parser, ctx): # actually a STIXPatternParser.ObservationExpressionContext)
+            super(STIXPatternParser.ObservationExpressionSimpleContext, self).__init__(parser)
             self.copyFrom(ctx)
 
         def LBRACK(self):
-            return self.getToken(CyboxPatternParser.LBRACK, 0)
+            return self.getToken(STIXPatternParser.LBRACK, 0)
         def comparisonExpression(self):
-            return self.getTypedRuleContext(CyboxPatternParser.ComparisonExpressionContext,0)
+            return self.getTypedRuleContext(STIXPatternParser.ComparisonExpressionContext,0)
 
         def RBRACK(self):
-            return self.getToken(CyboxPatternParser.RBRACK, 0)
+            return self.getToken(STIXPatternParser.RBRACK, 0)
 
         def enterRule(self, listener):
             if hasattr(listener, "enterObservationExpressionSimple"):
@@ -563,17 +563,17 @@ class CyboxPatternParser ( Parser ):
 
     class ObservationExpressionCompoundContext(ObservationExpressionContext):
 
-        def __init__(self, parser, ctx): # actually a CyboxPatternParser.ObservationExpressionContext)
-            super(CyboxPatternParser.ObservationExpressionCompoundContext, self).__init__(parser)
+        def __init__(self, parser, ctx): # actually a STIXPatternParser.ObservationExpressionContext)
+            super(STIXPatternParser.ObservationExpressionCompoundContext, self).__init__(parser)
             self.copyFrom(ctx)
 
         def LPAREN(self):
-            return self.getToken(CyboxPatternParser.LPAREN, 0)
+            return self.getToken(STIXPatternParser.LPAREN, 0)
         def observationExpressions(self):
-            return self.getTypedRuleContext(CyboxPatternParser.ObservationExpressionsContext,0)
+            return self.getTypedRuleContext(STIXPatternParser.ObservationExpressionsContext,0)
 
         def RPAREN(self):
-            return self.getToken(CyboxPatternParser.RPAREN, 0)
+            return self.getToken(STIXPatternParser.RPAREN, 0)
 
         def enterRule(self, listener):
             if hasattr(listener, "enterObservationExpressionCompound"):
@@ -586,15 +586,15 @@ class CyboxPatternParser ( Parser ):
 
     class ObservationExpressionWithinContext(ObservationExpressionContext):
 
-        def __init__(self, parser, ctx): # actually a CyboxPatternParser.ObservationExpressionContext)
-            super(CyboxPatternParser.ObservationExpressionWithinContext, self).__init__(parser)
+        def __init__(self, parser, ctx): # actually a STIXPatternParser.ObservationExpressionContext)
+            super(STIXPatternParser.ObservationExpressionWithinContext, self).__init__(parser)
             self.copyFrom(ctx)
 
         def observationExpression(self):
-            return self.getTypedRuleContext(CyboxPatternParser.ObservationExpressionContext,0)
+            return self.getTypedRuleContext(STIXPatternParser.ObservationExpressionContext,0)
 
         def withinQualifier(self):
-            return self.getTypedRuleContext(CyboxPatternParser.WithinQualifierContext,0)
+            return self.getTypedRuleContext(STIXPatternParser.WithinQualifierContext,0)
 
 
         def enterRule(self, listener):
@@ -608,15 +608,15 @@ class CyboxPatternParser ( Parser ):
 
     class ObservationExpressionStartStopContext(ObservationExpressionContext):
 
-        def __init__(self, parser, ctx): # actually a CyboxPatternParser.ObservationExpressionContext)
-            super(CyboxPatternParser.ObservationExpressionStartStopContext, self).__init__(parser)
+        def __init__(self, parser, ctx): # actually a STIXPatternParser.ObservationExpressionContext)
+            super(STIXPatternParser.ObservationExpressionStartStopContext, self).__init__(parser)
             self.copyFrom(ctx)
 
         def observationExpression(self):
-            return self.getTypedRuleContext(CyboxPatternParser.ObservationExpressionContext,0)
+            return self.getTypedRuleContext(STIXPatternParser.ObservationExpressionContext,0)
 
         def startStopQualifier(self):
-            return self.getTypedRuleContext(CyboxPatternParser.StartStopQualifierContext,0)
+            return self.getTypedRuleContext(STIXPatternParser.StartStopQualifierContext,0)
 
 
         def enterRule(self, listener):
@@ -632,7 +632,7 @@ class CyboxPatternParser ( Parser ):
     def observationExpression(self, _p=0):
         _parentctx = self._ctx
         _parentState = self.state
-        localctx = CyboxPatternParser.ObservationExpressionContext(self, self._ctx, _parentState)
+        localctx = STIXPatternParser.ObservationExpressionContext(self, self._ctx, _parentState)
         _prevctx = localctx
         _startState = 8
         self.enterRecursionRule(localctx, 8, self.RULE_observationExpression, _p)
@@ -640,28 +640,28 @@ class CyboxPatternParser ( Parser ):
             self.enterOuterAlt(localctx, 1)
             self.state = 82
             token = self._input.LA(1)
-            if token in [CyboxPatternParser.LBRACK]:
-                localctx = CyboxPatternParser.ObservationExpressionSimpleContext(self, localctx)
+            if token in [STIXPatternParser.LBRACK]:
+                localctx = STIXPatternParser.ObservationExpressionSimpleContext(self, localctx)
                 self._ctx = localctx
                 _prevctx = localctx
 
                 self.state = 74
-                self.match(CyboxPatternParser.LBRACK)
+                self.match(STIXPatternParser.LBRACK)
                 self.state = 75
                 self.comparisonExpression(0)
                 self.state = 76
-                self.match(CyboxPatternParser.RBRACK)
+                self.match(STIXPatternParser.RBRACK)
 
-            elif token in [CyboxPatternParser.LPAREN]:
-                localctx = CyboxPatternParser.ObservationExpressionCompoundContext(self, localctx)
+            elif token in [STIXPatternParser.LPAREN]:
+                localctx = STIXPatternParser.ObservationExpressionCompoundContext(self, localctx)
                 self._ctx = localctx
                 _prevctx = localctx
                 self.state = 78
-                self.match(CyboxPatternParser.LPAREN)
+                self.match(STIXPatternParser.LPAREN)
                 self.state = 79
                 self.observationExpressions(0)
                 self.state = 80
-                self.match(CyboxPatternParser.RPAREN)
+                self.match(STIXPatternParser.RPAREN)
 
             else:
                 raise NoViableAltException(self)
@@ -679,7 +679,7 @@ class CyboxPatternParser ( Parser ):
                     self._errHandler.sync(self);
                     la_ = self._interp.adaptivePredict(self._input,4,self._ctx)
                     if la_ == 1:
-                        localctx = CyboxPatternParser.ObservationExpressionStartStopContext(self, CyboxPatternParser.ObservationExpressionContext(self, _parentctx, _parentState))
+                        localctx = STIXPatternParser.ObservationExpressionStartStopContext(self, STIXPatternParser.ObservationExpressionContext(self, _parentctx, _parentState))
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_observationExpression)
                         self.state = 84
                         if not self.precpred(self._ctx, 3):
@@ -690,7 +690,7 @@ class CyboxPatternParser ( Parser ):
                         pass
 
                     elif la_ == 2:
-                        localctx = CyboxPatternParser.ObservationExpressionWithinContext(self, CyboxPatternParser.ObservationExpressionContext(self, _parentctx, _parentState))
+                        localctx = STIXPatternParser.ObservationExpressionWithinContext(self, STIXPatternParser.ObservationExpressionContext(self, _parentctx, _parentState))
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_observationExpression)
                         self.state = 86
                         if not self.precpred(self._ctx, 2):
@@ -701,7 +701,7 @@ class CyboxPatternParser ( Parser ):
                         pass
 
                     elif la_ == 3:
-                        localctx = CyboxPatternParser.ObservationExpressionRepeatedContext(self, CyboxPatternParser.ObservationExpressionContext(self, _parentctx, _parentState))
+                        localctx = STIXPatternParser.ObservationExpressionRepeatedContext(self, STIXPatternParser.ObservationExpressionContext(self, _parentctx, _parentState))
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_observationExpression)
                         self.state = 88
                         if not self.precpred(self._ctx, 1):
@@ -727,25 +727,25 @@ class CyboxPatternParser ( Parser ):
     class ComparisonExpressionContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
-            super(CyboxPatternParser.ComparisonExpressionContext, self).__init__(parent, invokingState)
+            super(STIXPatternParser.ComparisonExpressionContext, self).__init__(parent, invokingState)
             self.parser = parser
 
         def comparisonExpressionAnd(self):
-            return self.getTypedRuleContext(CyboxPatternParser.ComparisonExpressionAndContext,0)
+            return self.getTypedRuleContext(STIXPatternParser.ComparisonExpressionAndContext,0)
 
 
         def comparisonExpression(self, i=None):
             if i is None:
-                return self.getTypedRuleContexts(CyboxPatternParser.ComparisonExpressionContext)
+                return self.getTypedRuleContexts(STIXPatternParser.ComparisonExpressionContext)
             else:
-                return self.getTypedRuleContext(CyboxPatternParser.ComparisonExpressionContext,i)
+                return self.getTypedRuleContext(STIXPatternParser.ComparisonExpressionContext,i)
 
 
         def OR(self):
-            return self.getToken(CyboxPatternParser.OR, 0)
+            return self.getToken(STIXPatternParser.OR, 0)
 
         def getRuleIndex(self):
-            return CyboxPatternParser.RULE_comparisonExpression
+            return STIXPatternParser.RULE_comparisonExpression
 
         def enterRule(self, listener):
             if hasattr(listener, "enterComparisonExpression"):
@@ -760,7 +760,7 @@ class CyboxPatternParser ( Parser ):
     def comparisonExpression(self, _p=0):
         _parentctx = self._ctx
         _parentState = self.state
-        localctx = CyboxPatternParser.ComparisonExpressionContext(self, self._ctx, _parentState)
+        localctx = STIXPatternParser.ComparisonExpressionContext(self, self._ctx, _parentState)
         _prevctx = localctx
         _startState = 10
         self.enterRecursionRule(localctx, 10, self.RULE_comparisonExpression, _p)
@@ -777,14 +777,14 @@ class CyboxPatternParser ( Parser ):
                     if self._parseListeners is not None:
                         self.triggerExitRuleEvent()
                     _prevctx = localctx
-                    localctx = CyboxPatternParser.ComparisonExpressionContext(self, _parentctx, _parentState)
+                    localctx = STIXPatternParser.ComparisonExpressionContext(self, _parentctx, _parentState)
                     self.pushNewRecursionContext(localctx, _startState, self.RULE_comparisonExpression)
                     self.state = 98
                     if not self.precpred(self._ctx, 2):
                         from antlr4.error.Errors import FailedPredicateException
                         raise FailedPredicateException(self, "self.precpred(self._ctx, 2)")
                     self.state = 99
-                    self.match(CyboxPatternParser.OR)
+                    self.match(STIXPatternParser.OR)
                     self.state = 100
                     self.comparisonExpression(3) 
                 self.state = 105
@@ -802,25 +802,25 @@ class CyboxPatternParser ( Parser ):
     class ComparisonExpressionAndContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
-            super(CyboxPatternParser.ComparisonExpressionAndContext, self).__init__(parent, invokingState)
+            super(STIXPatternParser.ComparisonExpressionAndContext, self).__init__(parent, invokingState)
             self.parser = parser
 
         def propTest(self):
-            return self.getTypedRuleContext(CyboxPatternParser.PropTestContext,0)
+            return self.getTypedRuleContext(STIXPatternParser.PropTestContext,0)
 
 
         def comparisonExpressionAnd(self, i=None):
             if i is None:
-                return self.getTypedRuleContexts(CyboxPatternParser.ComparisonExpressionAndContext)
+                return self.getTypedRuleContexts(STIXPatternParser.ComparisonExpressionAndContext)
             else:
-                return self.getTypedRuleContext(CyboxPatternParser.ComparisonExpressionAndContext,i)
+                return self.getTypedRuleContext(STIXPatternParser.ComparisonExpressionAndContext,i)
 
 
         def AND(self):
-            return self.getToken(CyboxPatternParser.AND, 0)
+            return self.getToken(STIXPatternParser.AND, 0)
 
         def getRuleIndex(self):
-            return CyboxPatternParser.RULE_comparisonExpressionAnd
+            return STIXPatternParser.RULE_comparisonExpressionAnd
 
         def enterRule(self, listener):
             if hasattr(listener, "enterComparisonExpressionAnd"):
@@ -835,7 +835,7 @@ class CyboxPatternParser ( Parser ):
     def comparisonExpressionAnd(self, _p=0):
         _parentctx = self._ctx
         _parentState = self.state
-        localctx = CyboxPatternParser.ComparisonExpressionAndContext(self, self._ctx, _parentState)
+        localctx = STIXPatternParser.ComparisonExpressionAndContext(self, self._ctx, _parentState)
         _prevctx = localctx
         _startState = 12
         self.enterRecursionRule(localctx, 12, self.RULE_comparisonExpressionAnd, _p)
@@ -852,14 +852,14 @@ class CyboxPatternParser ( Parser ):
                     if self._parseListeners is not None:
                         self.triggerExitRuleEvent()
                     _prevctx = localctx
-                    localctx = CyboxPatternParser.ComparisonExpressionAndContext(self, _parentctx, _parentState)
+                    localctx = STIXPatternParser.ComparisonExpressionAndContext(self, _parentctx, _parentState)
                     self.pushNewRecursionContext(localctx, _startState, self.RULE_comparisonExpressionAnd)
                     self.state = 109
                     if not self.precpred(self._ctx, 2):
                         from antlr4.error.Errors import FailedPredicateException
                         raise FailedPredicateException(self, "self.precpred(self._ctx, 2)")
                     self.state = 110
-                    self.match(CyboxPatternParser.AND)
+                    self.match(STIXPatternParser.AND)
                     self.state = 111
                     self.comparisonExpressionAnd(3) 
                 self.state = 116
@@ -877,34 +877,34 @@ class CyboxPatternParser ( Parser ):
     class PropTestContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
-            super(CyboxPatternParser.PropTestContext, self).__init__(parent, invokingState)
+            super(STIXPatternParser.PropTestContext, self).__init__(parent, invokingState)
             self.parser = parser
 
 
         def getRuleIndex(self):
-            return CyboxPatternParser.RULE_propTest
+            return STIXPatternParser.RULE_propTest
 
      
         def copyFrom(self, ctx):
-            super(CyboxPatternParser.PropTestContext, self).copyFrom(ctx)
+            super(STIXPatternParser.PropTestContext, self).copyFrom(ctx)
 
 
 
     class PropTestRegexContext(PropTestContext):
 
-        def __init__(self, parser, ctx): # actually a CyboxPatternParser.PropTestContext)
-            super(CyboxPatternParser.PropTestRegexContext, self).__init__(parser)
+        def __init__(self, parser, ctx): # actually a STIXPatternParser.PropTestContext)
+            super(STIXPatternParser.PropTestRegexContext, self).__init__(parser)
             self.copyFrom(ctx)
 
         def objectPath(self):
-            return self.getTypedRuleContext(CyboxPatternParser.ObjectPathContext,0)
+            return self.getTypedRuleContext(STIXPatternParser.ObjectPathContext,0)
 
         def MATCHES(self):
-            return self.getToken(CyboxPatternParser.MATCHES, 0)
+            return self.getToken(STIXPatternParser.MATCHES, 0)
         def RegexLiteral(self):
-            return self.getToken(CyboxPatternParser.RegexLiteral, 0)
+            return self.getToken(STIXPatternParser.RegexLiteral, 0)
         def NOT(self):
-            return self.getToken(CyboxPatternParser.NOT, 0)
+            return self.getToken(STIXPatternParser.NOT, 0)
 
         def enterRule(self, listener):
             if hasattr(listener, "enterPropTestRegex"):
@@ -917,24 +917,24 @@ class CyboxPatternParser ( Parser ):
 
     class PropTestOrderContext(PropTestContext):
 
-        def __init__(self, parser, ctx): # actually a CyboxPatternParser.PropTestContext)
-            super(CyboxPatternParser.PropTestOrderContext, self).__init__(parser)
+        def __init__(self, parser, ctx): # actually a STIXPatternParser.PropTestContext)
+            super(STIXPatternParser.PropTestOrderContext, self).__init__(parser)
             self.copyFrom(ctx)
 
         def objectPath(self):
-            return self.getTypedRuleContext(CyboxPatternParser.ObjectPathContext,0)
+            return self.getTypedRuleContext(STIXPatternParser.ObjectPathContext,0)
 
         def orderableLiteral(self):
-            return self.getTypedRuleContext(CyboxPatternParser.OrderableLiteralContext,0)
+            return self.getTypedRuleContext(STIXPatternParser.OrderableLiteralContext,0)
 
         def GT(self):
-            return self.getToken(CyboxPatternParser.GT, 0)
+            return self.getToken(STIXPatternParser.GT, 0)
         def LT(self):
-            return self.getToken(CyboxPatternParser.LT, 0)
+            return self.getToken(STIXPatternParser.LT, 0)
         def GE(self):
-            return self.getToken(CyboxPatternParser.GE, 0)
+            return self.getToken(STIXPatternParser.GE, 0)
         def LE(self):
-            return self.getToken(CyboxPatternParser.LE, 0)
+            return self.getToken(STIXPatternParser.LE, 0)
 
         def enterRule(self, listener):
             if hasattr(listener, "enterPropTestOrder"):
@@ -947,19 +947,19 @@ class CyboxPatternParser ( Parser ):
 
     class PropTestLikeContext(PropTestContext):
 
-        def __init__(self, parser, ctx): # actually a CyboxPatternParser.PropTestContext)
-            super(CyboxPatternParser.PropTestLikeContext, self).__init__(parser)
+        def __init__(self, parser, ctx): # actually a STIXPatternParser.PropTestContext)
+            super(STIXPatternParser.PropTestLikeContext, self).__init__(parser)
             self.copyFrom(ctx)
 
         def objectPath(self):
-            return self.getTypedRuleContext(CyboxPatternParser.ObjectPathContext,0)
+            return self.getTypedRuleContext(STIXPatternParser.ObjectPathContext,0)
 
         def LIKE(self):
-            return self.getToken(CyboxPatternParser.LIKE, 0)
+            return self.getToken(STIXPatternParser.LIKE, 0)
         def StringLiteral(self):
-            return self.getToken(CyboxPatternParser.StringLiteral, 0)
+            return self.getToken(STIXPatternParser.StringLiteral, 0)
         def NOT(self):
-            return self.getToken(CyboxPatternParser.NOT, 0)
+            return self.getToken(STIXPatternParser.NOT, 0)
 
         def enterRule(self, listener):
             if hasattr(listener, "enterPropTestLike"):
@@ -972,20 +972,20 @@ class CyboxPatternParser ( Parser ):
 
     class PropTestEqualContext(PropTestContext):
 
-        def __init__(self, parser, ctx): # actually a CyboxPatternParser.PropTestContext)
-            super(CyboxPatternParser.PropTestEqualContext, self).__init__(parser)
+        def __init__(self, parser, ctx): # actually a STIXPatternParser.PropTestContext)
+            super(STIXPatternParser.PropTestEqualContext, self).__init__(parser)
             self.copyFrom(ctx)
 
         def objectPath(self):
-            return self.getTypedRuleContext(CyboxPatternParser.ObjectPathContext,0)
+            return self.getTypedRuleContext(STIXPatternParser.ObjectPathContext,0)
 
         def primitiveLiteral(self):
-            return self.getTypedRuleContext(CyboxPatternParser.PrimitiveLiteralContext,0)
+            return self.getTypedRuleContext(STIXPatternParser.PrimitiveLiteralContext,0)
 
         def EQ(self):
-            return self.getToken(CyboxPatternParser.EQ, 0)
+            return self.getToken(STIXPatternParser.EQ, 0)
         def NEQ(self):
-            return self.getToken(CyboxPatternParser.NEQ, 0)
+            return self.getToken(STIXPatternParser.NEQ, 0)
 
         def enterRule(self, listener):
             if hasattr(listener, "enterPropTestEqual"):
@@ -998,20 +998,20 @@ class CyboxPatternParser ( Parser ):
 
     class PropTestSetContext(PropTestContext):
 
-        def __init__(self, parser, ctx): # actually a CyboxPatternParser.PropTestContext)
-            super(CyboxPatternParser.PropTestSetContext, self).__init__(parser)
+        def __init__(self, parser, ctx): # actually a STIXPatternParser.PropTestContext)
+            super(STIXPatternParser.PropTestSetContext, self).__init__(parser)
             self.copyFrom(ctx)
 
         def objectPath(self):
-            return self.getTypedRuleContext(CyboxPatternParser.ObjectPathContext,0)
+            return self.getTypedRuleContext(STIXPatternParser.ObjectPathContext,0)
 
         def IN(self):
-            return self.getToken(CyboxPatternParser.IN, 0)
+            return self.getToken(STIXPatternParser.IN, 0)
         def setLiteral(self):
-            return self.getTypedRuleContext(CyboxPatternParser.SetLiteralContext,0)
+            return self.getTypedRuleContext(STIXPatternParser.SetLiteralContext,0)
 
         def NOT(self):
-            return self.getToken(CyboxPatternParser.NOT, 0)
+            return self.getToken(STIXPatternParser.NOT, 0)
 
         def enterRule(self, listener):
             if hasattr(listener, "enterPropTestSet"):
@@ -1024,19 +1024,19 @@ class CyboxPatternParser ( Parser ):
 
     class PropTestIsSubsetContext(PropTestContext):
 
-        def __init__(self, parser, ctx): # actually a CyboxPatternParser.PropTestContext)
-            super(CyboxPatternParser.PropTestIsSubsetContext, self).__init__(parser)
+        def __init__(self, parser, ctx): # actually a STIXPatternParser.PropTestContext)
+            super(STIXPatternParser.PropTestIsSubsetContext, self).__init__(parser)
             self.copyFrom(ctx)
 
         def objectPath(self):
-            return self.getTypedRuleContext(CyboxPatternParser.ObjectPathContext,0)
+            return self.getTypedRuleContext(STIXPatternParser.ObjectPathContext,0)
 
         def ISSUBSET(self):
-            return self.getToken(CyboxPatternParser.ISSUBSET, 0)
+            return self.getToken(STIXPatternParser.ISSUBSET, 0)
         def StringLiteral(self):
-            return self.getToken(CyboxPatternParser.StringLiteral, 0)
+            return self.getToken(STIXPatternParser.StringLiteral, 0)
         def NOT(self):
-            return self.getToken(CyboxPatternParser.NOT, 0)
+            return self.getToken(STIXPatternParser.NOT, 0)
 
         def enterRule(self, listener):
             if hasattr(listener, "enterPropTestIsSubset"):
@@ -1049,17 +1049,17 @@ class CyboxPatternParser ( Parser ):
 
     class PropTestParenContext(PropTestContext):
 
-        def __init__(self, parser, ctx): # actually a CyboxPatternParser.PropTestContext)
-            super(CyboxPatternParser.PropTestParenContext, self).__init__(parser)
+        def __init__(self, parser, ctx): # actually a STIXPatternParser.PropTestContext)
+            super(STIXPatternParser.PropTestParenContext, self).__init__(parser)
             self.copyFrom(ctx)
 
         def LPAREN(self):
-            return self.getToken(CyboxPatternParser.LPAREN, 0)
+            return self.getToken(STIXPatternParser.LPAREN, 0)
         def comparisonExpression(self):
-            return self.getTypedRuleContext(CyboxPatternParser.ComparisonExpressionContext,0)
+            return self.getTypedRuleContext(STIXPatternParser.ComparisonExpressionContext,0)
 
         def RPAREN(self):
-            return self.getToken(CyboxPatternParser.RPAREN, 0)
+            return self.getToken(STIXPatternParser.RPAREN, 0)
 
         def enterRule(self, listener):
             if hasattr(listener, "enterPropTestParen"):
@@ -1072,19 +1072,19 @@ class CyboxPatternParser ( Parser ):
 
     class PropTestIsSupersetContext(PropTestContext):
 
-        def __init__(self, parser, ctx): # actually a CyboxPatternParser.PropTestContext)
-            super(CyboxPatternParser.PropTestIsSupersetContext, self).__init__(parser)
+        def __init__(self, parser, ctx): # actually a STIXPatternParser.PropTestContext)
+            super(STIXPatternParser.PropTestIsSupersetContext, self).__init__(parser)
             self.copyFrom(ctx)
 
         def objectPath(self):
-            return self.getTypedRuleContext(CyboxPatternParser.ObjectPathContext,0)
+            return self.getTypedRuleContext(STIXPatternParser.ObjectPathContext,0)
 
         def ISSUPERSET(self):
-            return self.getToken(CyboxPatternParser.ISSUPERSET, 0)
+            return self.getToken(STIXPatternParser.ISSUPERSET, 0)
         def StringLiteral(self):
-            return self.getToken(CyboxPatternParser.StringLiteral, 0)
+            return self.getToken(STIXPatternParser.StringLiteral, 0)
         def NOT(self):
-            return self.getToken(CyboxPatternParser.NOT, 0)
+            return self.getToken(STIXPatternParser.NOT, 0)
 
         def enterRule(self, listener):
             if hasattr(listener, "enterPropTestIsSuperset"):
@@ -1098,7 +1098,7 @@ class CyboxPatternParser ( Parser ):
 
     def propTest(self):
 
-        localctx = CyboxPatternParser.PropTestContext(self, self._ctx, self.state)
+        localctx = STIXPatternParser.PropTestContext(self, self._ctx, self.state)
         self.enterRule(localctx, 14, self.RULE_propTest)
         self._la = 0 # Token type
         try:
@@ -1106,13 +1106,13 @@ class CyboxPatternParser ( Parser ):
             self._errHandler.sync(self);
             la_ = self._interp.adaptivePredict(self._input,13,self._ctx)
             if la_ == 1:
-                localctx = CyboxPatternParser.PropTestEqualContext(self, localctx)
+                localctx = STIXPatternParser.PropTestEqualContext(self, localctx)
                 self.enterOuterAlt(localctx, 1)
                 self.state = 117
                 self.objectPath()
                 self.state = 118
                 _la = self._input.LA(1)
-                if not(_la==CyboxPatternParser.EQ or _la==CyboxPatternParser.NEQ):
+                if not(_la==STIXPatternParser.EQ or _la==STIXPatternParser.NEQ):
                     self._errHandler.recoverInline(self)
                 else:
                     self.consume()
@@ -1121,13 +1121,13 @@ class CyboxPatternParser ( Parser ):
                 pass
 
             elif la_ == 2:
-                localctx = CyboxPatternParser.PropTestOrderContext(self, localctx)
+                localctx = STIXPatternParser.PropTestOrderContext(self, localctx)
                 self.enterOuterAlt(localctx, 2)
                 self.state = 121
                 self.objectPath()
                 self.state = 122
                 _la = self._input.LA(1)
-                if not((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << CyboxPatternParser.LT) | (1 << CyboxPatternParser.LE) | (1 << CyboxPatternParser.GT) | (1 << CyboxPatternParser.GE))) != 0)):
+                if not((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << STIXPatternParser.LT) | (1 << STIXPatternParser.LE) | (1 << STIXPatternParser.GT) | (1 << STIXPatternParser.GE))) != 0)):
                     self._errHandler.recoverInline(self)
                 else:
                     self.consume()
@@ -1136,104 +1136,104 @@ class CyboxPatternParser ( Parser ):
                 pass
 
             elif la_ == 3:
-                localctx = CyboxPatternParser.PropTestSetContext(self, localctx)
+                localctx = STIXPatternParser.PropTestSetContext(self, localctx)
                 self.enterOuterAlt(localctx, 3)
                 self.state = 125
                 self.objectPath()
                 self.state = 127
                 _la = self._input.LA(1)
-                if _la==CyboxPatternParser.NOT:
+                if _la==STIXPatternParser.NOT:
                     self.state = 126
-                    self.match(CyboxPatternParser.NOT)
+                    self.match(STIXPatternParser.NOT)
 
 
                 self.state = 129
-                self.match(CyboxPatternParser.IN)
+                self.match(STIXPatternParser.IN)
                 self.state = 130
                 self.setLiteral()
                 pass
 
             elif la_ == 4:
-                localctx = CyboxPatternParser.PropTestLikeContext(self, localctx)
+                localctx = STIXPatternParser.PropTestLikeContext(self, localctx)
                 self.enterOuterAlt(localctx, 4)
                 self.state = 132
                 self.objectPath()
                 self.state = 134
                 _la = self._input.LA(1)
-                if _la==CyboxPatternParser.NOT:
+                if _la==STIXPatternParser.NOT:
                     self.state = 133
-                    self.match(CyboxPatternParser.NOT)
+                    self.match(STIXPatternParser.NOT)
 
 
                 self.state = 136
-                self.match(CyboxPatternParser.LIKE)
+                self.match(STIXPatternParser.LIKE)
                 self.state = 137
-                self.match(CyboxPatternParser.StringLiteral)
+                self.match(STIXPatternParser.StringLiteral)
                 pass
 
             elif la_ == 5:
-                localctx = CyboxPatternParser.PropTestRegexContext(self, localctx)
+                localctx = STIXPatternParser.PropTestRegexContext(self, localctx)
                 self.enterOuterAlt(localctx, 5)
                 self.state = 139
                 self.objectPath()
                 self.state = 141
                 _la = self._input.LA(1)
-                if _la==CyboxPatternParser.NOT:
+                if _la==STIXPatternParser.NOT:
                     self.state = 140
-                    self.match(CyboxPatternParser.NOT)
+                    self.match(STIXPatternParser.NOT)
 
 
                 self.state = 143
-                self.match(CyboxPatternParser.MATCHES)
+                self.match(STIXPatternParser.MATCHES)
                 self.state = 144
-                self.match(CyboxPatternParser.RegexLiteral)
+                self.match(STIXPatternParser.RegexLiteral)
                 pass
 
             elif la_ == 6:
-                localctx = CyboxPatternParser.PropTestIsSubsetContext(self, localctx)
+                localctx = STIXPatternParser.PropTestIsSubsetContext(self, localctx)
                 self.enterOuterAlt(localctx, 6)
                 self.state = 146
                 self.objectPath()
                 self.state = 148
                 _la = self._input.LA(1)
-                if _la==CyboxPatternParser.NOT:
+                if _la==STIXPatternParser.NOT:
                     self.state = 147
-                    self.match(CyboxPatternParser.NOT)
+                    self.match(STIXPatternParser.NOT)
 
 
                 self.state = 150
-                self.match(CyboxPatternParser.ISSUBSET)
+                self.match(STIXPatternParser.ISSUBSET)
                 self.state = 151
-                self.match(CyboxPatternParser.StringLiteral)
+                self.match(STIXPatternParser.StringLiteral)
                 pass
 
             elif la_ == 7:
-                localctx = CyboxPatternParser.PropTestIsSupersetContext(self, localctx)
+                localctx = STIXPatternParser.PropTestIsSupersetContext(self, localctx)
                 self.enterOuterAlt(localctx, 7)
                 self.state = 153
                 self.objectPath()
                 self.state = 155
                 _la = self._input.LA(1)
-                if _la==CyboxPatternParser.NOT:
+                if _la==STIXPatternParser.NOT:
                     self.state = 154
-                    self.match(CyboxPatternParser.NOT)
+                    self.match(STIXPatternParser.NOT)
 
 
                 self.state = 157
-                self.match(CyboxPatternParser.ISSUPERSET)
+                self.match(STIXPatternParser.ISSUPERSET)
                 self.state = 158
-                self.match(CyboxPatternParser.StringLiteral)
+                self.match(STIXPatternParser.StringLiteral)
                 pass
 
             elif la_ == 8:
-                localctx = CyboxPatternParser.PropTestParenContext(self, localctx)
+                localctx = STIXPatternParser.PropTestParenContext(self, localctx)
                 self.enterOuterAlt(localctx, 8)
                 self.state = 160
-                self.match(CyboxPatternParser.LPAREN)
+                self.match(STIXPatternParser.LPAREN)
                 self.state = 161
                 self.comparisonExpression(0)
                 self.state = 162
-                self.match(CyboxPatternParser.RPAREN)
+                self.match(STIXPatternParser.RPAREN)
                 pass
 
 
@@ -1248,23 +1248,23 @@ class CyboxPatternParser ( Parser ):
     class StartStopQualifierContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
-            super(CyboxPatternParser.StartStopQualifierContext, self).__init__(parent, invokingState)
+            super(STIXPatternParser.StartStopQualifierContext, self).__init__(parent, invokingState)
             self.parser = parser
 
         def START(self):
-            return self.getToken(CyboxPatternParser.START, 0)
+            return self.getToken(STIXPatternParser.START, 0)
 
         def StringLiteral(self, i=None):
             if i is None:
-                return self.getTokens(CyboxPatternParser.StringLiteral)
+                return self.getTokens(STIXPatternParser.StringLiteral)
             else:
-                return self.getToken(CyboxPatternParser.StringLiteral, i)
+                return self.getToken(STIXPatternParser.StringLiteral, i)
 
         def STOP(self):
-            return self.getToken(CyboxPatternParser.STOP, 0)
+            return self.getToken(STIXPatternParser.STOP, 0)
 
         def getRuleIndex(self):
-            return CyboxPatternParser.RULE_startStopQualifier
+            return STIXPatternParser.RULE_startStopQualifier
 
         def enterRule(self, listener):
             if hasattr(listener, "enterStartStopQualifier"):
@@ -1279,18 +1279,18 @@ class CyboxPatternParser ( Parser ):
 
     def startStopQualifier(self):
 
-        localctx = CyboxPatternParser.StartStopQualifierContext(self, self._ctx, self.state)
+        localctx = STIXPatternParser.StartStopQualifierContext(self, self._ctx, self.state)
         self.enterRule(localctx, 16, self.RULE_startStopQualifier)
         try:
             self.enterOuterAlt(localctx, 1)
             self.state = 166
-            self.match(CyboxPatternParser.START)
+            self.match(STIXPatternParser.START)
             self.state = 167
-            self.match(CyboxPatternParser.StringLiteral)
+            self.match(STIXPatternParser.StringLiteral)
             self.state = 168
-            self.match(CyboxPatternParser.STOP)
+            self.match(STIXPatternParser.STOP)
             self.state = 169
-            self.match(CyboxPatternParser.StringLiteral)
+            self.match(STIXPatternParser.StringLiteral)
         except RecognitionException as re:
             localctx.exception = re
             self._errHandler.reportError(self, re)
@@ -1302,21 +1302,21 @@ class CyboxPatternParser ( Parser ):
     class WithinQualifierContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
-            super(CyboxPatternParser.WithinQualifierContext, self).__init__(parent, invokingState)
+            super(STIXPatternParser.WithinQualifierContext, self).__init__(parent, invokingState)
             self.parser = parser
 
         def WITHIN(self):
-            return self.getToken(CyboxPatternParser.WITHIN, 0)
+            return self.getToken(STIXPatternParser.WITHIN, 0)
 
         def IntLiteral(self):
-            return self.getToken(CyboxPatternParser.IntLiteral, 0)
+            return self.getToken(STIXPatternParser.IntLiteral, 0)
 
         def timeUnit(self):
-            return self.getTypedRuleContext(CyboxPatternParser.TimeUnitContext,0)
+            return self.getTypedRuleContext(STIXPatternParser.TimeUnitContext,0)
 
 
         def getRuleIndex(self):
-            return CyboxPatternParser.RULE_withinQualifier
+            return STIXPatternParser.RULE_withinQualifier
 
         def enterRule(self, listener):
             if hasattr(listener, "enterWithinQualifier"):
@@ -1331,14 +1331,14 @@ class CyboxPatternParser ( Parser ):
 
     def withinQualifier(self):
 
-        localctx = CyboxPatternParser.WithinQualifierContext(self, self._ctx, self.state)
+        localctx = STIXPatternParser.WithinQualifierContext(self, self._ctx, self.state)
         self.enterRule(localctx, 18, self.RULE_withinQualifier)
         try:
             self.enterOuterAlt(localctx, 1)
             self.state = 171
-            self.match(CyboxPatternParser.WITHIN)
+            self.match(STIXPatternParser.WITHIN)
             self.state = 172
-            self.match(CyboxPatternParser.IntLiteral)
+            self.match(STIXPatternParser.IntLiteral)
             self.state = 173
             self.timeUnit()
         except RecognitionException as re:
@@ -1352,20 +1352,20 @@ class CyboxPatternParser ( Parser ):
     class RepeatedQualifierContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
-            super(CyboxPatternParser.RepeatedQualifierContext, self).__init__(parent, invokingState)
+            super(STIXPatternParser.RepeatedQualifierContext, self).__init__(parent, invokingState)
             self.parser = parser
 
         def REPEATS(self):
-            return self.getToken(CyboxPatternParser.REPEATS, 0)
+            return self.getToken(STIXPatternParser.REPEATS, 0)
 
         def IntLiteral(self):
-            return self.getToken(CyboxPatternParser.IntLiteral, 0)
+            return self.getToken(STIXPatternParser.IntLiteral, 0)
 
         def TIMES(self):
-            return self.getToken(CyboxPatternParser.TIMES, 0)
+            return self.getToken(STIXPatternParser.TIMES, 0)
 
         def getRuleIndex(self):
-            return CyboxPatternParser.RULE_repeatedQualifier
+            return STIXPatternParser.RULE_repeatedQualifier
 
         def enterRule(self, listener):
             if hasattr(listener, "enterRepeatedQualifier"):
@@ -1380,16 +1380,16 @@ class CyboxPatternParser ( Parser ):
 
     def repeatedQualifier(self):
 
-        localctx = CyboxPatternParser.RepeatedQualifierContext(self, self._ctx, self.state)
+        localctx = STIXPatternParser.RepeatedQualifierContext(self, self._ctx, self.state)
         self.enterRule(localctx, 20, self.RULE_repeatedQualifier)
         try:
             self.enterOuterAlt(localctx, 1)
             self.state = 175
-            self.match(CyboxPatternParser.REPEATS)
+            self.match(STIXPatternParser.REPEATS)
             self.state = 176
-            self.match(CyboxPatternParser.IntLiteral)
+            self.match(STIXPatternParser.IntLiteral)
             self.state = 177
-            self.match(CyboxPatternParser.TIMES)
+            self.match(STIXPatternParser.TIMES)
         except RecognitionException as re:
             localctx.exception = re
             self._errHandler.reportError(self, re)
@@ -1401,26 +1401,26 @@ class CyboxPatternParser ( Parser ):
     class ObjectPathContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
-            super(CyboxPatternParser.ObjectPathContext, self).__init__(parent, invokingState)
+            super(STIXPatternParser.ObjectPathContext, self).__init__(parent, invokingState)
             self.parser = parser
 
         def objectType(self):
-            return self.getTypedRuleContext(CyboxPatternParser.ObjectTypeContext,0)
+            return self.getTypedRuleContext(STIXPatternParser.ObjectTypeContext,0)
 
 
         def COLON(self):
-            return self.getToken(CyboxPatternParser.COLON, 0)
+            return self.getToken(STIXPatternParser.COLON, 0)
 
         def firstPathComponent(self):
-            return self.getTypedRuleContext(CyboxPatternParser.FirstPathComponentContext,0)
+            return self.getTypedRuleContext(STIXPatternParser.FirstPathComponentContext,0)
 
 
         def objectPathComponent(self):
-            return self.getTypedRuleContext(CyboxPatternParser.ObjectPathComponentContext,0)
+            return self.getTypedRuleContext(STIXPatternParser.ObjectPathComponentContext,0)
 
 
         def getRuleIndex(self):
-            return CyboxPatternParser.RULE_objectPath
+            return STIXPatternParser.RULE_objectPath
 
         def enterRule(self, listener):
             if hasattr(listener, "enterObjectPath"):
@@ -1435,7 +1435,7 @@ class CyboxPatternParser ( Parser ):
 
     def objectPath(self):
 
-        localctx = CyboxPatternParser.ObjectPathContext(self, self._ctx, self.state)
+        localctx = STIXPatternParser.ObjectPathContext(self, self._ctx, self.state)
         self.enterRule(localctx, 22, self.RULE_objectPath)
         self._la = 0 # Token type
         try:
@@ -1443,12 +1443,12 @@ class CyboxPatternParser ( Parser ):
             self.state = 179
             self.objectType()
             self.state = 180
-            self.match(CyboxPatternParser.COLON)
+            self.match(STIXPatternParser.COLON)
             self.state = 181
             self.firstPathComponent()
             self.state = 183
             _la = self._input.LA(1)
-            if _la==CyboxPatternParser.DOT or _la==CyboxPatternParser.LBRACK:
+            if _la==STIXPatternParser.DOT or _la==STIXPatternParser.LBRACK:
                 self.state = 182
                 self.objectPathComponent(0)
 
@@ -1464,14 +1464,14 @@ class CyboxPatternParser ( Parser ):
     class ObjectTypeContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
-            super(CyboxPatternParser.ObjectTypeContext, self).__init__(parent, invokingState)
+            super(STIXPatternParser.ObjectTypeContext, self).__init__(parent, invokingState)
             self.parser = parser
 
         def Identifier(self):
-            return self.getToken(CyboxPatternParser.Identifier, 0)
+            return self.getToken(STIXPatternParser.Identifier, 0)
 
         def getRuleIndex(self):
-            return CyboxPatternParser.RULE_objectType
+            return STIXPatternParser.RULE_objectType
 
         def enterRule(self, listener):
             if hasattr(listener, "enterObjectType"):
@@ -1486,12 +1486,12 @@ class CyboxPatternParser ( Parser ):
 
     def objectType(self):
 
-        localctx = CyboxPatternParser.ObjectTypeContext(self, self._ctx, self.state)
+        localctx = STIXPatternParser.ObjectTypeContext(self, self._ctx, self.state)
         self.enterRule(localctx, 24, self.RULE_objectType)
         try:
             self.enterOuterAlt(localctx, 1)
             self.state = 185
-            self.match(CyboxPatternParser.Identifier)
+            self.match(STIXPatternParser.Identifier)
         except RecognitionException as re:
             localctx.exception = re
             self._errHandler.reportError(self, re)
@@ -1503,14 +1503,14 @@ class CyboxPatternParser ( Parser ):
     class FirstPathComponentContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
-            super(CyboxPatternParser.FirstPathComponentContext, self).__init__(parent, invokingState)
+            super(STIXPatternParser.FirstPathComponentContext, self).__init__(parent, invokingState)
             self.parser = parser
 
         def Identifier(self):
-            return self.getToken(CyboxPatternParser.Identifier, 0)
+            return self.getToken(STIXPatternParser.Identifier, 0)
 
         def getRuleIndex(self):
-            return CyboxPatternParser.RULE_firstPathComponent
+            return STIXPatternParser.RULE_firstPathComponent
 
         def enterRule(self, listener):
             if hasattr(listener, "enterFirstPathComponent"):
@@ -1525,12 +1525,12 @@ class CyboxPatternParser ( Parser ):
 
     def firstPathComponent(self):
 
-        localctx = CyboxPatternParser.FirstPathComponentContext(self, self._ctx, self.state)
+        localctx = STIXPatternParser.FirstPathComponentContext(self, self._ctx, self.state)
         self.enterRule(localctx, 26, self.RULE_firstPathComponent)
         try:
             self.enterOuterAlt(localctx, 1)
             self.state = 187
-            self.match(CyboxPatternParser.Identifier)
+            self.match(STIXPatternParser.Identifier)
         except RecognitionException as re:
             localctx.exception = re
             self._errHandler.reportError(self, re)
@@ -1542,32 +1542,32 @@ class CyboxPatternParser ( Parser ):
     class ObjectPathComponentContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
-            super(CyboxPatternParser.ObjectPathComponentContext, self).__init__(parent, invokingState)
+            super(STIXPatternParser.ObjectPathComponentContext, self).__init__(parent, invokingState)
             self.parser = parser
 
 
         def getRuleIndex(self):
-            return CyboxPatternParser.RULE_objectPathComponent
+            return STIXPatternParser.RULE_objectPathComponent
 
      
         def copyFrom(self, ctx):
-            super(CyboxPatternParser.ObjectPathComponentContext, self).copyFrom(ctx)
+            super(STIXPatternParser.ObjectPathComponentContext, self).copyFrom(ctx)
 
 
     class IndexPathStepContext(ObjectPathComponentContext):
 
-        def __init__(self, parser, ctx): # actually a CyboxPatternParser.ObjectPathComponentContext)
-            super(CyboxPatternParser.IndexPathStepContext, self).__init__(parser)
+        def __init__(self, parser, ctx): # actually a STIXPatternParser.ObjectPathComponentContext)
+            super(STIXPatternParser.IndexPathStepContext, self).__init__(parser)
             self.copyFrom(ctx)
 
         def LBRACK(self):
-            return self.getToken(CyboxPatternParser.LBRACK, 0)
+            return self.getToken(STIXPatternParser.LBRACK, 0)
         def RBRACK(self):
-            return self.getToken(CyboxPatternParser.RBRACK, 0)
+            return self.getToken(STIXPatternParser.RBRACK, 0)
         def IntLiteral(self):
-            return self.getToken(CyboxPatternParser.IntLiteral, 0)
+            return self.getToken(STIXPatternParser.IntLiteral, 0)
         def ASTERISK(self):
-            return self.getToken(CyboxPatternParser.ASTERISK, 0)
+            return self.getToken(STIXPatternParser.ASTERISK, 0)
 
         def enterRule(self, listener):
             if hasattr(listener, "enterIndexPathStep"):
@@ -1580,15 +1580,15 @@ class CyboxPatternParser ( Parser ):
 
     class PathStepContext(ObjectPathComponentContext):
 
-        def __init__(self, parser, ctx): # actually a CyboxPatternParser.ObjectPathComponentContext)
-            super(CyboxPatternParser.PathStepContext, self).__init__(parser)
+        def __init__(self, parser, ctx): # actually a STIXPatternParser.ObjectPathComponentContext)
+            super(STIXPatternParser.PathStepContext, self).__init__(parser)
             self.copyFrom(ctx)
 
         def objectPathComponent(self, i=None):
             if i is None:
-                return self.getTypedRuleContexts(CyboxPatternParser.ObjectPathComponentContext)
+                return self.getTypedRuleContexts(STIXPatternParser.ObjectPathComponentContext)
             else:
-                return self.getTypedRuleContext(CyboxPatternParser.ObjectPathComponentContext,i)
+                return self.getTypedRuleContext(STIXPatternParser.ObjectPathComponentContext,i)
 
 
         def enterRule(self, listener):
@@ -1602,12 +1602,12 @@ class CyboxPatternParser ( Parser ):
 
     class KeyPathStepContext(ObjectPathComponentContext):
 
-        def __init__(self, parser, ctx): # actually a CyboxPatternParser.ObjectPathComponentContext)
-            super(CyboxPatternParser.KeyPathStepContext, self).__init__(parser)
+        def __init__(self, parser, ctx): # actually a STIXPatternParser.ObjectPathComponentContext)
+            super(STIXPatternParser.KeyPathStepContext, self).__init__(parser)
             self.copyFrom(ctx)
 
         def Identifier(self):
-            return self.getToken(CyboxPatternParser.Identifier, 0)
+            return self.getToken(STIXPatternParser.Identifier, 0)
 
         def enterRule(self, listener):
             if hasattr(listener, "enterKeyPathStep"):
@@ -1622,7 +1622,7 @@ class CyboxPatternParser ( Parser ):
     def objectPathComponent(self, _p=0):
         _parentctx = self._ctx
         _parentState = self.state
-        localctx = CyboxPatternParser.ObjectPathComponentContext(self, self._ctx, _parentState)
+        localctx = STIXPatternParser.ObjectPathComponentContext(self, self._ctx, _parentState)
         _prevctx = localctx
         _startState = 28
         self.enterRecursionRule(localctx, 28, self.RULE_objectPathComponent, _p)
@@ -1631,30 +1631,30 @@ class CyboxPatternParser ( Parser ):
             self.enterOuterAlt(localctx, 1)
             self.state = 195
             token = self._input.LA(1)
-            if token in [CyboxPatternParser.DOT]:
-                localctx = CyboxPatternParser.KeyPathStepContext(self, localctx)
+            if token in [STIXPatternParser.DOT]:
+                localctx = STIXPatternParser.KeyPathStepContext(self, localctx)
                 self._ctx = localctx
                 _prevctx = localctx
 
                 self.state = 190
-                self.match(CyboxPatternParser.DOT)
+                self.match(STIXPatternParser.DOT)
                 self.state = 191
-                self.match(CyboxPatternParser.Identifier)
+                self.match(STIXPatternParser.Identifier)
 
-            elif token in [CyboxPatternParser.LBRACK]:
-                localctx = CyboxPatternParser.IndexPathStepContext(self, localctx)
+            elif token in [STIXPatternParser.LBRACK]:
+                localctx = STIXPatternParser.IndexPathStepContext(self, localctx)
                 self._ctx = localctx
                 _prevctx = localctx
                 self.state = 192
-                self.match(CyboxPatternParser.LBRACK)
+                self.match(STIXPatternParser.LBRACK)
                 self.state = 193
                 _la = self._input.LA(1)
-                if not(_la==CyboxPatternParser.IntLiteral or _la==CyboxPatternParser.ASTERISK):
+                if not(_la==STIXPatternParser.IntLiteral or _la==STIXPatternParser.ASTERISK):
                     self._errHandler.recoverInline(self)
                 else:
                     self.consume()
                 self.state = 194
-                self.match(CyboxPatternParser.RBRACK)
+                self.match(STIXPatternParser.RBRACK)
 
             else:
                 raise NoViableAltException(self)
@@ -1668,7 +1668,7 @@ class CyboxPatternParser ( Parser ):
                     if self._parseListeners is not None:
                         self.triggerExitRuleEvent()
                     _prevctx = localctx
-                    localctx = CyboxPatternParser.PathStepContext(self, CyboxPatternParser.ObjectPathComponentContext(self, _parentctx, _parentState))
+                    localctx = STIXPatternParser.PathStepContext(self, STIXPatternParser.ObjectPathComponentContext(self, _parentctx, _parentState))
                     self.pushNewRecursionContext(localctx, _startState, self.RULE_objectPathComponent)
                     self.state = 197
                     if not self.precpred(self._ctx, 3):
@@ -1691,30 +1691,30 @@ class CyboxPatternParser ( Parser ):
     class SetLiteralContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
-            super(CyboxPatternParser.SetLiteralContext, self).__init__(parent, invokingState)
+            super(STIXPatternParser.SetLiteralContext, self).__init__(parent, invokingState)
             self.parser = parser
 
         def LPAREN(self):
-            return self.getToken(CyboxPatternParser.LPAREN, 0)
+            return self.getToken(STIXPatternParser.LPAREN, 0)
 
         def RPAREN(self):
-            return self.getToken(CyboxPatternParser.RPAREN, 0)
+            return self.getToken(STIXPatternParser.RPAREN, 0)
 
         def primitiveLiteral(self, i=None):
             if i is None:
-                return self.getTypedRuleContexts(CyboxPatternParser.PrimitiveLiteralContext)
+                return self.getTypedRuleContexts(STIXPatternParser.PrimitiveLiteralContext)
             else:
-                return self.getTypedRuleContext(CyboxPatternParser.PrimitiveLiteralContext,i)
+                return self.getTypedRuleContext(STIXPatternParser.PrimitiveLiteralContext,i)
 
 
         def COMMA(self, i=None):
             if i is None:
-                return self.getTokens(CyboxPatternParser.COMMA)
+                return self.getTokens(STIXPatternParser.COMMA)
             else:
-                return self.getToken(CyboxPatternParser.COMMA, i)
+                return self.getToken(STIXPatternParser.COMMA, i)
 
         def getRuleIndex(self):
-            return CyboxPatternParser.RULE_setLiteral
+            return STIXPatternParser.RULE_setLiteral
 
         def enterRule(self, listener):
             if hasattr(listener, "enterSetLiteral"):
@@ -1729,7 +1729,7 @@ class CyboxPatternParser ( Parser ):
 
     def setLiteral(self):
 
-        localctx = CyboxPatternParser.SetLiteralContext(self, self._ctx, self.state)
+        localctx = STIXPatternParser.SetLiteralContext(self, self._ctx, self.state)
         self.enterRule(localctx, 30, self.RULE_setLiteral)
         self._la = 0 # Token type
         try:
@@ -1739,23 +1739,23 @@ class CyboxPatternParser ( Parser ):
             if la_ == 1:
                 self.enterOuterAlt(localctx, 1)
                 self.state = 204
-                self.match(CyboxPatternParser.LPAREN)
+                self.match(STIXPatternParser.LPAREN)
                 self.state = 205
-                self.match(CyboxPatternParser.RPAREN)
+                self.match(STIXPatternParser.RPAREN)
                 pass
 
             elif la_ == 2:
                 self.enterOuterAlt(localctx, 2)
                 self.state = 206
-                self.match(CyboxPatternParser.LPAREN)
+                self.match(STIXPatternParser.LPAREN)
                 self.state = 207
                 self.primitiveLiteral()
                 self.state = 212
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                while _la==CyboxPatternParser.COMMA:
+                while _la==STIXPatternParser.COMMA:
                     self.state = 208
-                    self.match(CyboxPatternParser.COMMA)
+                    self.match(STIXPatternParser.COMMA)
                     self.state = 209
                     self.primitiveLiteral()
                     self.state = 214
@@ -1763,7 +1763,7 @@ class CyboxPatternParser ( Parser ):
                     _la = self._input.LA(1)
 
                 self.state = 215
-                self.match(CyboxPatternParser.RPAREN)
+                self.match(STIXPatternParser.RPAREN)
                 pass
 
 
@@ -1778,21 +1778,21 @@ class CyboxPatternParser ( Parser ):
     class PrimitiveLiteralContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
-            super(CyboxPatternParser.PrimitiveLiteralContext, self).__init__(parent, invokingState)
+            super(STIXPatternParser.PrimitiveLiteralContext, self).__init__(parent, invokingState)
             self.parser = parser
 
         def orderableLiteral(self):
-            return self.getTypedRuleContext(CyboxPatternParser.OrderableLiteralContext,0)
+            return self.getTypedRuleContext(STIXPatternParser.OrderableLiteralContext,0)
 
 
         def BoolLiteral(self):
-            return self.getToken(CyboxPatternParser.BoolLiteral, 0)
+            return self.getToken(STIXPatternParser.BoolLiteral, 0)
 
         def NULL(self):
-            return self.getToken(CyboxPatternParser.NULL, 0)
+            return self.getToken(STIXPatternParser.NULL, 0)
 
         def getRuleIndex(self):
-            return CyboxPatternParser.RULE_primitiveLiteral
+            return STIXPatternParser.RULE_primitiveLiteral
 
         def enterRule(self, listener):
             if hasattr(listener, "enterPrimitiveLiteral"):
@@ -1807,25 +1807,25 @@ class CyboxPatternParser ( Parser ):
 
     def primitiveLiteral(self):
 
-        localctx = CyboxPatternParser.PrimitiveLiteralContext(self, self._ctx, self.state)
+        localctx = STIXPatternParser.PrimitiveLiteralContext(self, self._ctx, self.state)
         self.enterRule(localctx, 32, self.RULE_primitiveLiteral)
         try:
             self.state = 222
             token = self._input.LA(1)
-            if token in [CyboxPatternParser.IntLiteral, CyboxPatternParser.FloatLiteral, CyboxPatternParser.HexLiteral, CyboxPatternParser.BinaryLiteral, CyboxPatternParser.StringLiteral, CyboxPatternParser.TimestampLiteral]:
+            if token in [STIXPatternParser.IntLiteral, STIXPatternParser.FloatLiteral, STIXPatternParser.HexLiteral, STIXPatternParser.BinaryLiteral, STIXPatternParser.StringLiteral, STIXPatternParser.TimestampLiteral]:
                 self.enterOuterAlt(localctx, 1)
                 self.state = 219
                 self.orderableLiteral()
 
-            elif token in [CyboxPatternParser.BoolLiteral]:
+            elif token in [STIXPatternParser.BoolLiteral]:
                 self.enterOuterAlt(localctx, 2)
                 self.state = 220
-                self.match(CyboxPatternParser.BoolLiteral)
+                self.match(STIXPatternParser.BoolLiteral)
 
-            elif token in [CyboxPatternParser.NULL]:
+            elif token in [STIXPatternParser.NULL]:
                 self.enterOuterAlt(localctx, 3)
                 self.state = 221
-                self.match(CyboxPatternParser.NULL)
+                self.match(STIXPatternParser.NULL)
 
             else:
                 raise NoViableAltException(self)
@@ -1841,29 +1841,29 @@ class CyboxPatternParser ( Parser ):
     class OrderableLiteralContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
-            super(CyboxPatternParser.OrderableLiteralContext, self).__init__(parent, invokingState)
+            super(STIXPatternParser.OrderableLiteralContext, self).__init__(parent, invokingState)
             self.parser = parser
 
         def IntLiteral(self):
-            return self.getToken(CyboxPatternParser.IntLiteral, 0)
+            return self.getToken(STIXPatternParser.IntLiteral, 0)
 
         def FloatLiteral(self):
-            return self.getToken(CyboxPatternParser.FloatLiteral, 0)
+            return self.getToken(STIXPatternParser.FloatLiteral, 0)
 
         def StringLiteral(self):
-            return self.getToken(CyboxPatternParser.StringLiteral, 0)
+            return self.getToken(STIXPatternParser.StringLiteral, 0)
 
         def BinaryLiteral(self):
-            return self.getToken(CyboxPatternParser.BinaryLiteral, 0)
+            return self.getToken(STIXPatternParser.BinaryLiteral, 0)
 
         def HexLiteral(self):
-            return self.getToken(CyboxPatternParser.HexLiteral, 0)
+            return self.getToken(STIXPatternParser.HexLiteral, 0)
 
         def TimestampLiteral(self):
-            return self.getToken(CyboxPatternParser.TimestampLiteral, 0)
+            return self.getToken(STIXPatternParser.TimestampLiteral, 0)
 
         def getRuleIndex(self):
-            return CyboxPatternParser.RULE_orderableLiteral
+            return STIXPatternParser.RULE_orderableLiteral
 
         def enterRule(self, listener):
             if hasattr(listener, "enterOrderableLiteral"):
@@ -1878,14 +1878,14 @@ class CyboxPatternParser ( Parser ):
 
     def orderableLiteral(self):
 
-        localctx = CyboxPatternParser.OrderableLiteralContext(self, self._ctx, self.state)
+        localctx = STIXPatternParser.OrderableLiteralContext(self, self._ctx, self.state)
         self.enterRule(localctx, 34, self.RULE_orderableLiteral)
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
             self.state = 224
             _la = self._input.LA(1)
-            if not((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << CyboxPatternParser.IntLiteral) | (1 << CyboxPatternParser.FloatLiteral) | (1 << CyboxPatternParser.HexLiteral) | (1 << CyboxPatternParser.BinaryLiteral) | (1 << CyboxPatternParser.StringLiteral) | (1 << CyboxPatternParser.TimestampLiteral))) != 0)):
+            if not((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << STIXPatternParser.IntLiteral) | (1 << STIXPatternParser.FloatLiteral) | (1 << STIXPatternParser.HexLiteral) | (1 << STIXPatternParser.BinaryLiteral) | (1 << STIXPatternParser.StringLiteral) | (1 << STIXPatternParser.TimestampLiteral))) != 0)):
                 self._errHandler.recoverInline(self)
             else:
                 self.consume()
@@ -1900,32 +1900,32 @@ class CyboxPatternParser ( Parser ):
     class TimeUnitContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
-            super(CyboxPatternParser.TimeUnitContext, self).__init__(parent, invokingState)
+            super(STIXPatternParser.TimeUnitContext, self).__init__(parent, invokingState)
             self.parser = parser
 
         def MILLISECONDS(self):
-            return self.getToken(CyboxPatternParser.MILLISECONDS, 0)
+            return self.getToken(STIXPatternParser.MILLISECONDS, 0)
 
         def SECONDS(self):
-            return self.getToken(CyboxPatternParser.SECONDS, 0)
+            return self.getToken(STIXPatternParser.SECONDS, 0)
 
         def MINUTES(self):
-            return self.getToken(CyboxPatternParser.MINUTES, 0)
+            return self.getToken(STIXPatternParser.MINUTES, 0)
 
         def HOURS(self):
-            return self.getToken(CyboxPatternParser.HOURS, 0)
+            return self.getToken(STIXPatternParser.HOURS, 0)
 
         def DAYS(self):
-            return self.getToken(CyboxPatternParser.DAYS, 0)
+            return self.getToken(STIXPatternParser.DAYS, 0)
 
         def MONTHS(self):
-            return self.getToken(CyboxPatternParser.MONTHS, 0)
+            return self.getToken(STIXPatternParser.MONTHS, 0)
 
         def YEARS(self):
-            return self.getToken(CyboxPatternParser.YEARS, 0)
+            return self.getToken(STIXPatternParser.YEARS, 0)
 
         def getRuleIndex(self):
-            return CyboxPatternParser.RULE_timeUnit
+            return STIXPatternParser.RULE_timeUnit
 
         def enterRule(self, listener):
             if hasattr(listener, "enterTimeUnit"):
@@ -1940,14 +1940,14 @@ class CyboxPatternParser ( Parser ):
 
     def timeUnit(self):
 
-        localctx = CyboxPatternParser.TimeUnitContext(self, self._ctx, self.state)
+        localctx = STIXPatternParser.TimeUnitContext(self, self._ctx, self.state)
         self.enterRule(localctx, 36, self.RULE_timeUnit)
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
             self.state = 226
             _la = self._input.LA(1)
-            if not((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << CyboxPatternParser.MILLISECONDS) | (1 << CyboxPatternParser.SECONDS) | (1 << CyboxPatternParser.MINUTES) | (1 << CyboxPatternParser.HOURS) | (1 << CyboxPatternParser.DAYS) | (1 << CyboxPatternParser.MONTHS) | (1 << CyboxPatternParser.YEARS))) != 0)):
+            if not((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << STIXPatternParser.MILLISECONDS) | (1 << STIXPatternParser.SECONDS) | (1 << STIXPatternParser.MINUTES) | (1 << STIXPatternParser.HOURS) | (1 << STIXPatternParser.DAYS) | (1 << STIXPatternParser.MONTHS) | (1 << STIXPatternParser.YEARS))) != 0)):
                 self._errHandler.recoverInline(self)
             else:
                 self.consume()

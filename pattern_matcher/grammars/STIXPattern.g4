@@ -1,5 +1,5 @@
 
-grammar CyboxPattern;
+grammar STIXPattern;
 
 pattern
   : observationExpressions
