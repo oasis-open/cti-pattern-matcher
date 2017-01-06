@@ -21,9 +21,9 @@ import antlr4
 import antlr4.error.Errors
 import antlr4.error.ErrorListener
 
-from pattern_matcher.grammars.STIXPatternListener import STIXPatternListener
-from pattern_matcher.grammars.STIXPatternLexer import STIXPatternLexer
-from pattern_matcher.grammars.STIXPatternParser import STIXPatternParser
+from stix2matcher.grammars.STIXPatternListener import STIXPatternListener
+from stix2matcher.grammars.STIXPatternLexer import STIXPatternLexer
+from stix2matcher.grammars.STIXPatternParser import STIXPatternParser
 
 
 # TODO: convert to using STIX Observed Data. See

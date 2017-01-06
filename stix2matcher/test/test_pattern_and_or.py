@@ -2,7 +2,7 @@ import datetime
 import dateutil.tz
 import pytest
 
-from pattern_matcher.matcher import match
+from stix2matcher.matcher import match
 
 _observations = [
     {

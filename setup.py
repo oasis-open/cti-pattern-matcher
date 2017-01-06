@@ -1,8 +1,8 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='pattern-matcher',
-    version="1.0.0",
+    name='stix2-matcher',
+    version="0.1.0",
     packages=find_packages(),
     description='Match STIX content against STIX patterns',
     install_requires=[
@@ -14,5 +14,10 @@ setup(
     ],
     tests_require=[
         "pytest>=2.9.2"
-    ]
+    ],
+    entry_points={
+        'console_scripts': [
+            'stix2-matcher = stix2matcher.matcher:main',
+        ],
+    },
 )

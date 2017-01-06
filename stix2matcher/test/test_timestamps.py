@@ -1,9 +1,9 @@
-
-import pytest
 import datetime
-import dateutil.tz
 
-from pattern_matcher.matcher import match, MatcherException
+import dateutil.tz
+import pytest
+
+from stix2matcher.matcher import match, MatcherException
 
 _observations = [
     {

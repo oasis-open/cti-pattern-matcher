@@ -1,7 +1,9 @@
 import datetime
+
 import dateutil.tz
-import pattern_matcher.matcher
 import pytest
+
+from stix2matcher.matcher import match
 
 
 _observations = [
@@ -48,7 +50,7 @@ _timestamps = [datetime.datetime.now(dateutil.tz.tzutc())] * len(_observations)
     "[binary_test:bin_hex = '\x01\x02\x03\x04']",
 ])
 def test_binary_match(pattern):
-    assert pattern_matcher.matcher.match(pattern, _observations, _timestamps)
+    assert match(pattern, _observations, _timestamps)
 
 
 @pytest.mark.parametrize("pattern", [
@@ -67,5 +69,4 @@ def test_binary_match(pattern):
     u"[binary_test:name_u < b'YWxpY2U=']",
 ])
 def test_binary_nomatch(pattern):
-    assert not pattern_matcher.matcher.match(pattern, _observations,
-                                             _timestamps)
+    assert not match(pattern, _observations, _timestamps)

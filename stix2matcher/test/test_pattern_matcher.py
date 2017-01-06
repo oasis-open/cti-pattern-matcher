@@ -1,13 +1,14 @@
 '''
-Test cases for pattern_matcher.py.
+Test cases for matcher.py.
 '''
 import datetime
-import dateutil.tz
 import json
 import os
+
+import dateutil.tz
 import pytest
 
-from pattern_matcher.matcher import match
+from stix2matcher.matcher import match
 
 
 THIS_DIR = os.path.dirname(__file__)

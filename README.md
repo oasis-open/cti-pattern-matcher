@@ -16,26 +16,41 @@ The pattern-matcher is a prototype software tool for matching STIX Observed Data
 
 ## Installation
 
-To install pattern-matcher, first install all required dependencies, then run `python setup.py install` in the root of this repository. 
+To install pattern-matcher, first install all required dependencies, then run `python setup.py install` in the root of this repository.
 
 ## Usage
-Run the `pattern_matcher.py` script in this repository, and follow directions. For example:
+Installing the package creates a `stix2-matcher` script:
 
-```bash
-$ python pattern_matcher.py
+```
+$ stix2-matcher -h
+usage: stix2-matcher [-h] -p PATTERNS -f FILE [-t TIMESTAMPS] [-e ENCODING]
+                     [-v]
 
-Enter a CybOX pattern:
-file-object:hashes.sha-256 = 'aec070645fe53ee3b3763059376134f058cc337247c978add178b6ccdfb0019f'
+Match STIX Patterns to STIX Observed Data
 
-Enter the name of json file containing a CybOX object or container:
-test\0pass.json
-
-PASS: file-object:hashes.sha-256 = 'aec070645fe53ee3b3763059376134f058cc337247c978add178b6ccdfb0019f'
+optional arguments:
+  -h, --help            show this help message and exit
+  -p PATTERNS, --patterns PATTERNS
+                        Specify a file containing STIX Patterns, one per line.
+  -f FILE, --file FILE  A file containing JSON list of CybOX containers to
+                        match against.
+  -t TIMESTAMPS, --timestamps TIMESTAMPS
+                        Specify a file with ISO-formatted timestamps, one per
+                        line. If given, this must have at least as many
+                        timestamps as there are containers (extras will be
+                        ignored). If not given, all containers will be
+                        assigned the current time.
+  -e ENCODING, --encoding ENCODING
+                        Set encoding used for reading container, pattern, and
+                        timestamp files. Must be an encoding name Python
+                        understands. Default is utf8.
+  -v, --verbose         Be verbose
 ```
 
 ## Testing
 
-To run the automated tests, execute `py.test` from inside the `test` directory.
+The STIX Pattern Matcher's test suite can be run with
+[pytest](http://pytest.org).
 
 ## Governance
 
