@@ -22,7 +22,7 @@ def get_object_from_file(filename):
 TEST = 'testcases/'
 
 ###############################################################################
-# TEST CASES FROM CYBOX 3.0 SPEC
+# TEST CASES FROM STIX Patterning Spec
 ###############################################################################
 
 TEST_CASES = [
@@ -76,10 +76,7 @@ PASS_CASES = [(TEST_CASES[0], TEST + '0pass.json'),
 
 @pytest.mark.parametrize("pattern, filename", PASS_CASES)
 def test_pass_patterns(pattern, filename):
-    '''
-    Match patterns against files containing valid CybOX objects which
-    should pass.
-    '''
+    """Ensure matcher correctly matches matching data."""
     pass_test = False
     # dummy timestamp for now
     now = datetime.datetime.now(dateutil.tz.tzutc())
@@ -116,10 +113,7 @@ FAIL_CASES = [(TEST_CASES[0], TEST + '0fail1.json'),
 
 @pytest.mark.parametrize("pattern, filename", FAIL_CASES)
 def test_fail_patterns(pattern, filename):
-    '''
-    Match patterns against files containing valid CybOX objects which
-    should fail.
-    '''
+    """Ensure matcher correctly fails to match non-matching data."""
     pass_test = False
     # dummy timestamp for now
     now = datetime.datetime.now(dateutil.tz.tzutc())

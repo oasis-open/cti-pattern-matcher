@@ -26,6 +26,9 @@ from pattern_matcher.grammars.STIXPatternLexer import STIXPatternLexer
 from pattern_matcher.grammars.STIXPatternParser import STIXPatternParser
 
 
+# TODO: convert to using STIX Observed Data. See
+# https://github.com/oasis-open/cti-pattern-matcher/issues/11
+
 # Example cybox-container.  Note that these have no timestamps.
 # Those are assigned externally to CybOX.  A container plus a
 # timestamp is an "observation".
@@ -255,18 +258,18 @@ class TypeMismatchException(MatcherException):
     """Represents some kind of type mismatch when evaluating a pattern
     against some data.
     """
-    def __init__(self, cmp_op, type_from_cybox_json, literal_type):
+    def __init__(self, cmp_op, type_from_stix_json, literal_type):
         """
         Initialize the exception object.
 
         :param cmp_op: The comparison operator as a string, e.g. "<="
-        :param type_from_cybox_json: A python type instance
+        :param type_from_stix_json: A python type instance
         :param literal_type: A token type (which is an int)
         """
         super(TypeMismatchException, self).__init__(
             u"Type mismatch in '{}' operation: json={}, pattern={}".format(
                 cmp_op,
-                type_from_cybox_json,
+                type_from_stix_json,
                 STIXPatternParser.symbolicNames[literal_type]
             )
         )
@@ -332,12 +335,12 @@ def _process_prop_suffix(prop_name, value):
 
 def _step_into_objs(objs, step):
     """
-    'objs' is a list of cybox (sub)structures.  'step' describes a
-    step into the structure, relative to the top level: if an int, we
-    assume the top level is a list, and the int is a list index.  If
-    a string, assume the top level is a dict, and the string is a key.
-    If a structure is such that the step can't be taken (e.g. the dict
-    doesn't have the particular key), filter the value from the list.
+    'objs' is a list of Cyber Observable object (sub)structures.  'step'
+    describes a step into the structure, relative to the top level: if an int,
+    we assume the top level is a list, and the int is a list index.  If a
+    string, assume the top level is a dict, and the string is a key.  If a
+    structure is such that the step can't be taken (e.g. the dict doesn't have
+    the particular key), filter the value from the list.
 
     This will also automatically convert values of specially suffixed
     properties into the proper type.  See _process_prop_suffix().
@@ -346,83 +349,84 @@ def _step_into_objs(objs, step):
        any structures which couldn't be stepped into.
     """
 
-    stepped_cybox_objs = []
+    stepped_cyber_obs_objs = []
     if isinstance(step, int):
         for obj in objs:
             if isinstance(obj, list) and step < len(obj):
-                stepped_cybox_objs.append(obj[step])
+                stepped_cyber_obs_objs.append(obj[step])
             # can't index non-lists
     elif isinstance(step, six.text_type):
         for obj in objs:
             if isinstance(obj, dict) and step in obj:
                 processed_value = _process_prop_suffix(step, obj[step])
-                stepped_cybox_objs.append(processed_value)
+                stepped_cyber_obs_objs.append(processed_value)
             # can't do key lookup in non-dicts
 
     else:
         raise MatcherInternalError(
             u"Unsupported step type: {}".format(type(step)))
 
-    return stepped_cybox_objs
+    return stepped_cyber_obs_objs
 
 
 def _step_filter_observations(observations, step):
     """
     A helper for the listener.  Given a particular structure in 'observations'
-    (see exitObjectType(), exitFirstPathComponent()), representing a set
-    of observations and partial path stepping state, do a pass over all the
-    observations, attempting to take the given step on all of their cybox
-    objects (or partial cybox object structures).
+    (see exitObjectType(), exitFirstPathComponent()), representing a set of
+    observations and partial path stepping state, do a pass over all the
+    observations, attempting to take the given step on all of their Cyber
+    Observable objects (or partial Cyber Observable object structures).
 
     :return: a filtered observation map: it includes those for which at
-      least one contained cybox object was successfully stepped.  If none
-      of an observation's cybox objects could be successfully stepped,
+      least one contained Cyber Observable object was successfully stepped.  If none
+      of an observation's Cyber Observable objects could be successfully stepped,
       the observation is dropped.
     """
 
     filtered_obs_map = {}
-    for obs_idx, cybox_obj_map in six.iteritems(observations):
-        filtered_cybox_obj_map = {}
-        for cybox_obj_id, cybox_objs in six.iteritems(cybox_obj_map):
-            filtered_cybox_obj_list = _step_into_objs(cybox_objs, step)
+    for obs_idx, cyber_obs_obj_map in six.iteritems(observations):
+        filtered_cyber_obs_obj_map = {}
+        for cyber_obs_obj_id, cyber_obs_objs in six.iteritems(cyber_obs_obj_map):
+            filtered_cyber_obs_obj_list = _step_into_objs(cyber_obs_objs, step)
 
-            if len(filtered_cybox_obj_list) > 0:
-                filtered_cybox_obj_map[cybox_obj_id] = filtered_cybox_obj_list
+            if len(filtered_cyber_obs_obj_list) > 0:
+                filtered_cyber_obs_obj_map[cyber_obs_obj_id] = filtered_cyber_obs_obj_list
 
-        if len(filtered_cybox_obj_map) > 0:
-            filtered_obs_map[obs_idx] = filtered_cybox_obj_map
+        if len(filtered_cyber_obs_obj_map) > 0:
+            filtered_obs_map[obs_idx] = filtered_cyber_obs_obj_map
 
     return filtered_obs_map
 
 
 def _step_filter_observations_index_star(observations):
     """
-    Does an index "star" step, i.e. "[*]".  This will pull out all elements
-    of the list as if they were parts of separate cybox objects, which
+    Does an index "star" step, i.e. "[*]".  This will pull out all elements of
+    the list as if they were parts of separate Cyber Observable objects, which
     has the desired effect for matching: if any list elements match the
     remainder of the pattern, they are selected for the subsequent property
-    test.  As usual, non-lists at this point are dropped, and observations
-    for whom all cybox (sub)structure was dropped, are also dropped.
+    test.  As usual, non-lists at this point are dropped, and observations for
+    whom all Cyber Observable object (sub)structure was dropped, are also
+    dropped.
 
     See also _step_filter_observations().
     """
 
     filtered_obs_map = {}
-    for obs_idx, cybox_obj_map in six.iteritems(observations):
-        filtered_cybox_obj_map = {}
-        for cybox_obj_id, cybox_objs in six.iteritems(cybox_obj_map):
-            stepped_cybox_objs = []
-            for cybox_obj in cybox_objs:
-                if not isinstance(cybox_obj, list):
+    for obs_idx, cyber_obs_obj_map in six.iteritems(observations):
+        filtered_cyber_obs_obj_map = {}
+        for cyber_obs_obj_id, cyber_obs_objs in six.iteritems(cyber_obs_obj_map):
+            stepped_cyber_obs_objs = []
+            for cyber_obs_obj in cyber_obs_objs:
+                if not isinstance(cyber_obs_obj, list):
                     continue
 
-                stepped_cybox_objs.extend(cybox_obj)
+                stepped_cyber_obs_objs.extend(cyber_obs_obj)
 
-            if len(stepped_cybox_objs) > 0:
-                filtered_cybox_obj_map[cybox_obj_id] = stepped_cybox_objs
+            if len(stepped_cyber_obs_objs) > 0:
+                filtered_cyber_obs_obj_map[cyber_obs_obj_id] = stepped_cyber_obs_objs
 
-        if filtered_cybox_obj_map:
-            filtered_obs_map[obs_idx] = filtered_cybox_obj_map
+        if filtered_cyber_obs_obj_map:
+            filtered_obs_map[obs_idx] = filtered_cyber_obs_obj_map
 
     return filtered_obs_map
 
@@ -646,24 +650,24 @@ def _timestamps_within(timestamps, duration):
     return result
 
 
-def _dereference_cybox_objs(cybox_objs, cybox_obj_references, ref_prop_name):
+def _dereference_cyber_obs_objs(cyber_obs_objs, cyber_obs_obj_references, ref_prop_name):
     """
-    Dereferences a sequence of cybox object references.  Returns a list of
+    Dereferences a sequence of Cyber Observable object references.  Returns a list of
     the referenced objects.  If a reference does not resolve, it is not
     treated as an error, it is ignored.
 
-    :param cybox_objs: The context for reference resolution.  This is a mapping
-        from cybox object ID to cybox object, i.e. the "objects" property of
+    :param cyber_obs_objs: The context for reference resolution.  This is a mapping
+        from Cyber Observable object ID to Cyber Observable object, i.e. the "objects" property of
         a container.
-    :param cybox_obj_references: An iterable of cybox object references.  These
+    :param cyber_obs_obj_references: An iterable of Cyber Observable object references.  These
         must all be strings, otherwise an exception is raised.
     :param ref_prop_name: For better error messages, the reference property
         being processed.
-    :return: A list of the referenced cybox objects.  This could be fewer than
+    :return: A list of the referenced Cyber Observable objects.  This could be fewer than
         the number of references, if some references didn't resolve.
     """
-    dereferenced_cybox_objs = []
-    for referenced_obj_id in cybox_obj_references:
+    dereferenced_cyber_obs_objs = []
+    for referenced_obj_id in cyber_obs_obj_references:
         if not isinstance(referenced_obj_id, six.text_type):
             raise MatcherException(
                 u"{} value of reference property '{}' was not "
@@ -674,10 +678,10 @@ def _dereference_cybox_objs(cybox_objs, cybox_obj_references, ref_prop_name):
                     ref_prop_name, referenced_obj_id
                 ))
 
-        if referenced_obj_id in cybox_objs:
-            dereferenced_cybox_objs.append(cybox_objs[referenced_obj_id])
+        if referenced_obj_id in cyber_obs_objs:
+            dereferenced_cyber_obs_objs.append(cyber_obs_objs[referenced_obj_id])
 
-    return dereferenced_cybox_objs
+    return dereferenced_cyber_obs_objs
 
 
 def _obs_map_prop_test(obs_map, predicate):
@@ -698,15 +702,15 @@ def _obs_map_prop_test(obs_map, predicate):
     The structure of the result of a property test is:
 
     {
-      obs_idx: {cybox_obj_id1, cybox_obj_id2, ...},
-      obs_idx: {cybox_obj_id1, cybox_obj_id2, ...},
+      obs_idx: {cyber_obs_obj_id1, cyber_obs_obj_id2, ...},
+      obs_idx: {cyber_obs_obj_id1, cyber_obs_obj_id2, ...},
       etc...
     }
 
-    I.e. for each observation, a set of cybox object IDs is associated, which
-    are the "root" objects which caused the match.  The cybox object ID info
+    I.e. for each observation, a set of Cyber Observable object IDs is associated, which
+    are the "root" objects which caused the match.  The Cyber Observable object ID info
     is necessary to eliminate observation expression matches not rooted at the
-    same cybox object.
+    same Cyber Observable object.
 
     :param obs_map: Observation data, as selected by an object path.
     :param predicate: This encompasses the actual test to perform.  It must
@@ -714,16 +718,16 @@ def _obs_map_prop_test(obs_map, predicate):
     :return: The transformed and filtered data, according to predicate.
     """
     passed_obs = {}
-    for obs_idx, cybox_obj_map in six.iteritems(obs_map):
-        passed_cybox_obj_roots = set()
-        for cybox_obj_id, values in six.iteritems(cybox_obj_map):
+    for obs_idx, cyber_obs_obj_map in six.iteritems(obs_map):
+        passed_cyber_obs_obj_roots = set()
+        for cyber_obs_obj_id, values in six.iteritems(cyber_obs_obj_map):
             for value in values:
                 if predicate(value):
-                    passed_cybox_obj_roots.add(cybox_obj_id)
+                    passed_cyber_obs_obj_roots.add(cyber_obs_obj_id)
                     break
 
-        if passed_cybox_obj_roots:
-            passed_obs[obs_idx] = passed_cybox_obj_roots
+        if passed_cyber_obs_obj_roots:
+            passed_obs[obs_idx] = passed_cyber_obs_obj_roots
 
     return passed_obs
 
@@ -846,6 +850,7 @@ class MatchListener(STIXPatternListener):
     affecting correctness.
     """
 
+    # TODO: convert to using STIX Observed Data.
     def __init__(self, observations, timestamps, verbose=False):
         """
         Initialize this match listener.
@@ -1087,7 +1092,7 @@ class MatchListener(STIXPatternListener):
         Consumes a the results of the inner comparison expression.  See
         exitComparisonExpression().
         Produces: a list of 1-tuples of the IDs.  At this stage, the root
-        cybox object IDs are no longer needed, and are dropped.
+        Cyber Observable object IDs are no longer needed, and are dropped.
 
         This is a preparatory transformative step, so that higher-level
         processing has consistent structures to work with (always lists of
@@ -1263,7 +1268,7 @@ class MatchListener(STIXPatternListener):
 
           This implements the "OR" operator.  So the maps are merged (union);
           observation IDs which are shared between both operands have their
-          cybox object ID sets unioned in the result.
+          Cyber Observable object ID sets unioned in the result.
         """
 
         debug_label = u"exitComparisonExpression"
@@ -1280,12 +1285,12 @@ class MatchListener(STIXPatternListener):
             obs1 = self.__pop(debug_label)
 
             # We union the observation IDs and their corresponding
-            # cybox object ID sets.
-            for obs_id, cybox_obj_ids in six.iteritems(obs2):
+            # Cyber Observable object ID sets.
+            for obs_id, cyber_obs_obj_ids in six.iteritems(obs2):
                 if obs_id in obs1:
-                    obs1[obs_id] |= cybox_obj_ids
+                    obs1[obs_id] |= cyber_obs_obj_ids
                 else:
-                    obs1[obs_id] = cybox_obj_ids
+                    obs1[obs_id] = cyber_obs_obj_ids
 
             self.__push(obs1, debug_label)
 
@@ -1299,7 +1304,7 @@ class MatchListener(STIXPatternListener):
           observation IDs.
 
           This implements the "AND" operator.  So the result map has those IDs
-          common to both (intersection); their cybox object ID sets are also
+          common to both (intersection); their Cyber Observable object ID sets are also
           intersected.  If this latter intersection is empty, the corresponding
           observation is dropped.
         """
@@ -1318,11 +1323,11 @@ class MatchListener(STIXPatternListener):
             obs1 = self.__pop(debug_label)
 
             # We intersect the observation IDs and their corresponding
-            # cybox object ID sets.  If any of the cybox object ID set
+            # Cyber Observable object ID sets.  If any of the Cyber Observable object ID set
             # intersections is empty, we drop the observation from the
             # result.
             obs_ids_to_drop = []
-            for obs_id, cybox_obj_ids in six.iteritems(obs1):
+            for obs_id, cyber_obs_obj_ids in six.iteritems(obs1):
                 if obs_id in obs2:
                     obs1[obs_id] &= obs2[obs_id]
                     if not obs1[obs_id]:
@@ -1340,12 +1345,12 @@ class MatchListener(STIXPatternListener):
     def exitPropTestEqual(self, ctx):
         """
         Consumes an observation data map, {obs_id: {...}, ...}, representing
-          selected values from cybox objects in each container
-          (grouped by observation index and root cybox object ID).
+          selected values from Cyber Observable objects in each container
+          (grouped by observation index and root Cyber Observable object ID).
           See exitObjectPath().
         Produces a map representing those observations with
-          cybox object values which pass the test, each with an associated
-          set of root cybox object IDs.  See _obs_map_prop_test().
+          Cyber Observable object values which pass the test, each with an associated
+          set of root Cyber Observable object IDs.  See _obs_map_prop_test().
 
         It's okay if the operands are of different type and comparison is
         not supported: they will compare unequal.  (Note: this would include
@@ -1397,12 +1402,12 @@ class MatchListener(STIXPatternListener):
     def exitPropTestOrder(self, ctx):
         """
         Consumes an observation data map, {obs_id: {...}, ...}, representing
-          selected values from cybox objects in each container
-          (grouped by observation index and root cybox object ID).
+          selected values from Cyber Observable objects in each container
+          (grouped by observation index and root Cyber Observable object ID).
           See exitObjectPath().
         Produces a map representing those observations with
-          cybox object values which pass the test, each with an associated
-          set of root cybox object IDs.  See _obs_map_prop_test().
+          Cyber Observable object values which pass the test, each with an associated
+          set of root Cyber Observable object IDs.  See _obs_map_prop_test().
 
         If operand types are not supported for order-comparison, current
         spec says the result must be False.  But this means that for two
@@ -1476,11 +1481,11 @@ class MatchListener(STIXPatternListener):
         """
         Consumes (1) a set object from exitSetLiteral(), and (2) an observation
            data map, {obs_id: {...}, ...}, representing selected values from
-           cybox objects in each container (grouped by observation index and
-           root cybox object ID).  See exitObjectPath().
+           Cyber Observable objects in each container (grouped by observation index and
+           root Cyber Observable object ID).  See exitObjectPath().
         Produces a map representing those observations with
-          cybox object values which pass the test, each with an associated
-          set of root cybox object IDs.  See _obs_map_prop_test().
+          Cyber Observable object values which pass the test, each with an associated
+          set of root Cyber Observable object IDs.  See _obs_map_prop_test().
         """
 
         debug_label = u"exitPropTestSet{}".format(
@@ -1495,7 +1500,7 @@ class MatchListener(STIXPatternListener):
                 result = value in s
             except TypeError:
                 # Ignore errors about un-hashability.  Not all values
-                # selected from a cybox object are hashable (e.g.
+                # selected from a Cyber Observable object are hashable (e.g.
                 # lists and dicts).  Those obviously can't be in the
                 # given set!
                 pass
@@ -1512,12 +1517,12 @@ class MatchListener(STIXPatternListener):
     def exitPropTestLike(self, ctx):
         """
         Consumes an observation data map, {obs_id: {...}, ...}, representing
-          selected values from cybox objects in each container
-          (grouped by observation index and root cybox object ID).
+          selected values from Cyber Observable objects in each container
+          (grouped by observation index and root Cyber Observable object ID).
           See exitObjectPath().
         Produces a map representing those observations with
-          cybox object values which pass the test, each with an associated
-          set of root cybox object IDs.  See _obs_map_prop_test().
+          Cyber Observable object values which pass the test, each with an associated
+          set of root Cyber Observable object IDs.  See _obs_map_prop_test().
 
         Non-string values are treated as non-matching, and don't produce
         errors.
@@ -1553,12 +1558,12 @@ class MatchListener(STIXPatternListener):
     def exitPropTestRegex(self, ctx):
         """
         Consumes an observation data map, {obs_id: {...}, ...}, representing
-          selected values from cybox objects in each container
-          (grouped by observation index and root cybox object ID).
+          selected values from Cyber Observable objects in each container
+          (grouped by observation index and root Cyber Observable object ID).
           See exitObjectPath().
         Produces a map representing those observations with
-          cybox object values which pass the test, each with an associated
-          set of root cybox object IDs.  See _obs_map_prop_test().
+          Cyber Observable object values which pass the test, each with an associated
+          set of root Cyber Observable object IDs.  See _obs_map_prop_test().
 
         Non-string values are treated as non-matching, and don't produce
         errors.
@@ -1593,12 +1598,12 @@ class MatchListener(STIXPatternListener):
     def exitPropTestIsSubset(self, ctx):
         """
         Consumes an observation data map, {obs_id: {...}, ...}, representing
-          selected values from cybox objects in each container
-          (grouped by observation index and root cybox object ID).
+          selected values from Cyber Observable objects in each container
+          (grouped by observation index and root Cyber Observable object ID).
           See exitObjectPath().
         Produces a map representing those observations with
-          cybox object values which pass the test, each with an associated
-          set of root cybox object IDs.  See _obs_map_prop_test().
+          Cyber Observable object values which pass the test, each with an associated
+          set of root Cyber Observable object IDs.  See _obs_map_prop_test().
 
         Non-string values are treated as non-matching, and don't produce
         errors.
@@ -1628,12 +1633,12 @@ class MatchListener(STIXPatternListener):
     def exitPropTestIsSuperset(self, ctx):
         """
         Consumes an observation data map, {obs_id: {...}, ...}, representing
-          selected values from cybox objects in each container
-          (grouped by observation index and root cybox object ID).
+          selected values from Cyber Observable objects in each container
+          (grouped by observation index and root Cyber Observable object ID).
           See exitObjectPath().
         Produces a map representing those observations with
-          cybox object values which pass the test, each with an associated
-          set of root cybox object IDs.  See _obs_map_prop_test().
+          Cyber Observable object values which pass the test, each with an associated
+          set of root Cyber Observable object IDs.  See _obs_map_prop_test().
 
         Non-string values are treated as non-matching, and don't produce
         errors.
@@ -1666,13 +1671,13 @@ class MatchListener(STIXPatternListener):
         Produces a mapping:
             {
               observation-idx: {
-                  "cybox_obj_id1": [value, value, ...],
-                  "cybox_obj_id2": [value, value, ...],
+                  "cyber_obs_obj_id1": [value, value, ...],
+                  "cyber_obs_obj_id2": [value, value, ...],
               },
               etc...
             }
           which are the values selected by the path, organized according to
-          the the observations they belong to, and the "root" cybox objects
+          the the observations they belong to, and the "root" Cyber Observable objects
           which began a chain of dereferences (if any).  These will be used in
           subsequent comparisons to select some of the observations.
           I use observations' indices into the self.__observations list as
@@ -1690,7 +1695,7 @@ class MatchListener(STIXPatternListener):
         """
         Consumes nothing from the stack.
         Produces a map, {observation-idx: {...}, ...}, representing those
-        cybox objects with the given type.  See exitObjectPath().
+        Cyber Observable objects with the given type.  See exitObjectPath().
         """
         type_ = ctx.Identifier().getText()
         results = {}
@@ -1713,11 +1718,11 @@ class MatchListener(STIXPatternListener):
     def __dereference_objects(self, prop_name, obs_map):
         """
         If prop_name is a reference property, this "dereferences" it,
-        substituting the referenced cybox object for the reference.  Reference
+        substituting the referenced Cyber Observable object for the reference.  Reference
         properties end in "_ref" or "_refs".  The former must have a string
         value, the latter must be a list of strings.  Any references which
         don't resolve are dropped and don't produce an error.  The references
-        are resolved only against the cybox objects in the same container as
+        are resolved only against the Cyber Observable objects in the same container as
         the reference.
 
         If the property isn't a reference, this method does nothing.
@@ -1734,12 +1739,12 @@ class MatchListener(STIXPatternListener):
 
         if prop_name.endswith(u"_ref"):
             # An object reference.  All top-level values should be
-            # string cybox object IDs.
+            # string Cyber Observable object IDs.
             dereferenced_obs_map = {}
-            for obs_idx, cybox_obj_map in six.iteritems(obs_map):
-                dereferenced_cybox_obj_map = {}
-                for cybox_obj_id, references in six.iteritems(cybox_obj_map):
-                    dereferenced_cybox_objs = _dereference_cybox_objs(
+            for obs_idx, cyber_obs_obj_map in six.iteritems(obs_map):
+                dereferenced_cyber_obs_obj_map = {}
+                for cyber_obs_obj_id, references in six.iteritems(cyber_obs_obj_map):
+                    dereferenced_cyber_obs_objs = _dereference_cyber_obs_objs(
                         # Note that "objects" must be a key of the observation,
                         # or it wouldn't be on the stack.  See exitObjectType().
                         self.__observations[obs_idx][u"objects"],
@@ -1747,23 +1752,23 @@ class MatchListener(STIXPatternListener):
                         prop_name
                     )
 
-                    if len(dereferenced_cybox_objs) > 0:
-                        dereferenced_cybox_obj_map[cybox_obj_id] = \
-                            dereferenced_cybox_objs
+                    if len(dereferenced_cyber_obs_objs) > 0:
+                        dereferenced_cyber_obs_obj_map[cyber_obs_obj_id] = \
+                            dereferenced_cyber_obs_objs
 
-                if len(dereferenced_cybox_obj_map) > 0:
-                    dereferenced_obs_map[obs_idx] = dereferenced_cybox_obj_map
+                if len(dereferenced_cyber_obs_obj_map) > 0:
+                    dereferenced_obs_map[obs_idx] = dereferenced_cyber_obs_obj_map
 
             obs_map = dereferenced_obs_map
 
         elif prop_name.endswith(u"_refs"):
             # A list of object references.  All top-level values should
-            # be lists (of cybox object references).
+            # be lists (of Cyber Observable object references).
             dereferenced_obs_map = {}
-            for obs_idx, cybox_obj_map in six.iteritems(obs_map):
-                dereferenced_cybox_obj_map = {}
-                for cybox_obj_id, reference_lists in six.iteritems(cybox_obj_map):
-                    dereferenced_cybox_obj_lists = []
+            for obs_idx, cyber_obs_obj_map in six.iteritems(obs_map):
+                dereferenced_cyber_obs_obj_map = {}
+                for cyber_obs_obj_id, reference_lists in six.iteritems(cyber_obs_obj_map):
+                    dereferenced_cyber_obs_obj_lists = []
                     for reference_list in reference_lists:
                         if not isinstance(reference_list, list):
                             raise MatcherException(
@@ -1772,22 +1777,22 @@ class MatchListener(STIXPatternListener):
                                     prop_name, reference_list
                                 ))
 
-                        dereferenced_cybox_objs = _dereference_cybox_objs(
+                        dereferenced_cyber_obs_objs = _dereference_cyber_obs_objs(
                             self.__observations[obs_idx][u"objects"],
                             reference_list,
                             prop_name
                         )
 
-                        if len(dereferenced_cybox_objs) > 0:
-                            dereferenced_cybox_obj_lists.append(
-                                dereferenced_cybox_objs)
+                        if len(dereferenced_cyber_obs_objs) > 0:
+                            dereferenced_cyber_obs_obj_lists.append(
+                                dereferenced_cyber_obs_objs)
 
-                    if len(dereferenced_cybox_obj_lists) > 0:
-                        dereferenced_cybox_obj_map[cybox_obj_id] = \
-                            dereferenced_cybox_obj_lists
+                    if len(dereferenced_cyber_obs_obj_lists) > 0:
+                        dereferenced_cyber_obs_obj_map[cyber_obs_obj_id] = \
+                            dereferenced_cyber_obs_obj_lists
 
-                if len(dereferenced_cybox_obj_map) > 0:
-                    dereferenced_obs_map[obs_idx] = dereferenced_cybox_obj_map
+                if len(dereferenced_cyber_obs_obj_map) > 0:
+                    dereferenced_obs_map[obs_idx] = dereferenced_cyber_obs_obj_map
 
             obs_map = dereferenced_obs_map
 
@@ -1796,15 +1801,15 @@ class MatchListener(STIXPatternListener):
     def exitFirstPathComponent(self, ctx):
         """
         Consumes the results of exitObjectType.
-        Produces a similar structure, but with cybox objects which
+        Produces a similar structure, but with Cyber Observable objects which
           don't have the given property, filtered out.  For those which
           do have the property, the property value is substituted for
           the object.  If the property was a reference, a second substitution
           occurs: the referent is substituted in place of the reference (if
           the reference resolves).  This enables subsequent path steps to step
-          into the referenced cybox object(s).
+          into the referenced Cyber Observable object(s).
 
-          If all cybox objects from a container are filtered out, the
+          If all Cyber Observable objects from a container are filtered out, the
           container is dropped.
         """
 
@@ -1885,9 +1890,9 @@ def match(pattern, containers, timestamps, verbose=False):
     """
     Match the given pattern against the given containers and timestamps.
 
-    :param pattern: The cybox pattern
-    :param containers: A list of cybox containers, as a list of dicts.  CybOX
-        json should be parsed into native python structures before calling
+    :param pattern: The STIX pattern
+    :param containers: A list of cybox containers, as a list of dicts.  STIX
+        JSON should be parsed into native Python structures before calling
         this function.
     :param timestamps: A list of timestamps corresponding to the containers,
         as a list of timezone-aware datetime.datetime objects.  There must be
@@ -1957,14 +1962,14 @@ def main():
     Can be used as a command line tool to test pattern-matcher.
     """
 
-    arg_parser = argparse.ArgumentParser(description="Match CybOX patterns to CybOX containers")
+    arg_parser = argparse.ArgumentParser(description="Match STIX Patterns to STIX Observed Data")
     arg_parser.add_argument("-p", "--patterns", required=True,
                             type=argparse.FileType("r"), help="""
-    Specify a file containing CybOX patterns, one per line.
+    Specify a file containing STIX Patterns, one per line.
     """)
     arg_parser.add_argument("-f", "--file", required=True,
                             type=argparse.FileType("r"), help="""
-    A file containing JSON list of cybox containers to match against.
+    A file containing JSON list of CybOX containers to match against.
     """)
     arg_parser.add_argument("-t", "--timestamps", type=argparse.FileType("r"),
                             help="""
