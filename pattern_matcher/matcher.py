@@ -81,7 +81,6 @@ _TOKEN_TYPE_COERCERS = {
     CyboxPatternParser.StringLiteral: lambda s: s[1:-1].replace(u"''", u"'"),
     CyboxPatternParser.BoolLiteral: lambda s: s.lower() == u"true",
     CyboxPatternParser.FloatLiteral: float,
-    # Binary literals: strip prefix & quotes, decode to binary data
     CyboxPatternParser.BinaryLiteral: lambda s: base64.standard_b64decode(s[2:-1]),
     CyboxPatternParser.HexLiteral: lambda s: binascii.a2b_hex(s[2:-1]),
     CyboxPatternParser.TimestampLiteral: lambda t: _str_to_datetime(t[2:-1]),
@@ -807,11 +806,11 @@ def _compute_expected_binding_size(ctx):
 
         return child_count * rep_count
 
-    elif ctx.getChildCount() == 0:
-        return 0
     else:
-        return sum(_compute_expected_binding_size(child)
-                   for child in ctx.getChildren())
+        # Not all node types have getChildren(), but afaict they all have
+        # getChildCount() and getChild().
+        return sum(_compute_expected_binding_size(ctx.getChild(i))
+                   for i in range(ctx.getChildCount()))
 
 
 class MatchListener(CyboxPatternListener):
@@ -839,8 +838,12 @@ class MatchListener(CyboxPatternListener):
     bindings at once, pruning away those which don't work as it goes.  This
     will likely use more memory, and the bookkeeping is a bit more complex,
     but it only needs one pass through the tree.  And at the end, you get
-    *all possible* bindings, rather than just the first one found, as might
+    many bindings, rather than just the first one found, as might
     be the case with a backtracking algorithm.
+
+    I made the conscious decision to skip some bindings in one particular case,
+    to improve scalability (see exitObservationExpressionOr()) without
+    affecting correctness.
     """
 
     def __init__(self, observations, timestamps, verbose=False):
@@ -971,6 +974,24 @@ class MatchListener(CyboxPatternListener):
           values set to None, and vice versa.  Result bindings with values
           from both LHS and RHS are not included, to improve scalability
           (reduces the number of results, without affecting correctness).
+
+        I believe the decision to include only one-sided bindings to be
+        justified because binding additional observations here only serves to
+        eliminate options for binding those observations to other parts of
+        the pattern later.  So it can never enable additional binding
+        possibilities, only eliminate them.
+
+        In case you're wondering about repeat-qualified sub-expressions
+        ("hey, if you reduce the number of bindings, you might not reach
+        the required repeat count for a repeat-qualified sub-expression!"),
+        note that none of these additional bindings would be disjoint w.r.t.
+        the base set of one-sided bindings.  Therefore, they could never
+        be combined with the base set to satisfy an increased repeat count.
+
+        So basically, this base set maximizes binding opportunities elsewhere
+        in the pattern, and does not introduce "false negatives".  It will
+        result in some possible bindings not being found, but only when it
+        would be extra noise anyway.  That improves scalability.
         """
         num_operands = len(ctx.observationExpressionOr())
 
@@ -998,8 +1019,9 @@ class MatchListener(CyboxPatternListener):
             # number of observation expressions in the pattern, but if one
             # side's bindings are empty, we can't easily tell what size they
             # would have been.  So I traverse that part of the subtree to
-            # obtain a size, but that's not strictly necessary.  It's cosmetic,
-            # to aid in understanding the resulting bindings.
+            # obtain a size.  Algorithm correctness doesn't depend on this
+            # "filler", but it helps users understand how the resulting
+            # bindings match up with the pattern.
             if lhs_bindings and rhs_bindings:
                 lhs_binding_none = (None,) * len(lhs_bindings[0])
                 rhs_binding_none = (None,) * len(rhs_bindings[0])
