@@ -81,7 +81,6 @@ _TOKEN_TYPE_COERCERS = {
     CyboxPatternParser.StringLiteral: lambda s: s[1:-1].replace(u"''", u"'"),
     CyboxPatternParser.BoolLiteral: lambda s: s.lower() == u"true",
     CyboxPatternParser.FloatLiteral: float,
-    # Binary literals: strip prefix & quotes, decode to binary data
     CyboxPatternParser.BinaryLiteral: lambda s: base64.standard_b64decode(s[2:-1]),
     CyboxPatternParser.HexLiteral: lambda s: binascii.a2b_hex(s[2:-1]),
     CyboxPatternParser.TimestampLiteral: lambda t: _str_to_datetime(t[2:-1]),
@@ -607,6 +606,8 @@ def _disjoint(first_seq, *rest_seq):
     Checks whether the values in first sequence are disjoint from the
     values in the sequences in rest_seq.
 
+    All 'None' values in the sequences are ignored.
+
     :return: True if first_seq is disjoint from the rest, False otherwise.
     """
 
@@ -614,9 +615,9 @@ def _disjoint(first_seq, *rest_seq):
         return True
 
     # is there a faster way to do this?
-    fs = set(first_seq)
+    fs = set(x for x in first_seq if x is not None)
     return all(
-        fs.isdisjoint(set(seq))
+        fs.isdisjoint(x for x in seq if x is not None)
         for seq in rest_seq
     )
 
@@ -779,6 +780,39 @@ def _filtered_combinations(values, combo_size, filter_pred=None):
         return combos
 
 
+def _compute_expected_binding_size(ctx):
+    """
+    Computes the expected size of bindings to the given subset of the pattern.
+    This is used purely to improve understandability of the generated bindings.
+    It essentially allows me to add "filler" to generated bindings so they have
+    the expected size.
+    :param ctx: A node of the pattern parse tree representing a subset of the
+        pattern.
+    :return: A binding size (a number)
+    """
+    if isinstance(ctx, CyboxPatternParser.ComparisonExpressionContext):
+        return 1
+    elif isinstance(ctx, CyboxPatternParser.ObservationExpressionRepeatedContext):
+        # Guess I ought to correctly handle the repeat-qualified observation
+        # expressions too huh?
+        child_count = _compute_expected_binding_size(
+            ctx.observationExpression())
+        rep_count = _literal_terminal_to_python_val(
+            ctx.repeatedQualifier().IntLiteral())
+
+        if rep_count < 1:
+            raise MatcherException(u"Invalid repetition count: {}".format(
+                rep_count))
+
+        return child_count * rep_count
+
+    else:
+        # Not all node types have getChildren(), but afaict they all have
+        # getChildCount() and getChild().
+        return sum(_compute_expected_binding_size(ctx.getChild(i))
+                   for i in range(ctx.getChildCount()))
+
+
 class MatchListener(CyboxPatternListener):
     """
     A parser listener which performs pattern matching.  It works like an
@@ -804,8 +838,12 @@ class MatchListener(CyboxPatternListener):
     bindings at once, pruning away those which don't work as it goes.  This
     will likely use more memory, and the bookkeeping is a bit more complex,
     but it only needs one pass through the tree.  And at the end, you get
-    *all possible* bindings, rather than just the first one found, as might
+    many bindings, rather than just the first one found, as might
     be the case with a backtracking algorithm.
+
+    I made the conscious decision to skip some bindings in one particular case,
+    to improve scalability (see exitObservationExpressionOr()) without
+    affecting correctness.
     """
 
     def __init__(self, observations, timestamps, verbose=False):
@@ -877,18 +915,15 @@ class MatchListener(CyboxPatternListener):
 
     def exitObservationExpressions(self, ctx):
         """
-        If there is no ALONGWITH or FOLLOWEDBY operator, this callback does
-        nothing.  Otherwise:
+        Implements the FOLLOWEDBY operator.  If there are two child nodes:
 
         Consumes two lists of binding tuples from the top of the stack, which
           are the RHS and LHS operands.
         Produces a joined list of binding tuples.  This essentially produces a
-          filtered cartesian cross-product of the LHS and RHS tuples.
-          - If ALONGWITH is the operator, they're combined in all different ways
-            such that a joined tuple has no duplicate observation IDs.
-          - If FOLLOWEDBY is the operator, then in addition to the above
-            restriction, the timestamps on the RHS binding must be >= than the
-            timestamps on the LHS binding.
+          filtered cartesian cross-product of the LHS and RHS tuples.  Results
+          include those with no duplicate observation IDs, and such that the
+          timestamps on the RHS binding are >= than the timestamps on the
+          LHS binding.
         """
         num_operands = len(ctx.observationExpressions())
 
@@ -898,8 +933,7 @@ class MatchListener(CyboxPatternListener):
             raise MatcherInternalError(msg.format(num_operands))
 
         if num_operands == 2:
-            op_str = ctx.getChild(1).getText()
-            debug_label = u"exitObservationExpressions ({})".format(op_str)
+            debug_label = u"exitObservationExpressions"
 
             rhs_bindings = self.__pop(debug_label)
             lhs_bindings = self.__pop(debug_label)
@@ -907,37 +941,146 @@ class MatchListener(CyboxPatternListener):
             joined_bindings = []
             for lhs_binding in lhs_bindings:
 
-                # Precompute latest lhs timestamp if this is a FOLLOWEDBY
-                # operator, so we can reuse later.
-                if ctx.FOLLOWEDBY():
-                    latest_lhs_timestamp = max(
-                        self.__timestamps[obs_id] for obs_id in lhs_binding
-                    )
+                latest_lhs_timestamp = max(
+                    self.__timestamps[obs_id] for obs_id in lhs_binding
+                    if obs_id is not None
+                )
 
                 for rhs_binding in rhs_bindings:
 
                     if _disjoint(lhs_binding, rhs_binding):
-                        if ctx.ALONGWITH():
+                        # make sure the rhs timestamps are later (or equal)
+                        # than all lhs timestamps.
+                        earliest_rhs_timestamp = min(
+                            self.__timestamps[obs_id] for obs_id in rhs_binding
+                            if obs_id is not None
+                        )
+
+                        if latest_lhs_timestamp <= earliest_rhs_timestamp:
                             joined_bindings.append(lhs_binding + rhs_binding)
-
-                        elif ctx.FOLLOWEDBY():
-                            # make sure the rhs timestamps are later (or equal)
-                            # than all lhs timestamps.
-                            earliest_rhs_timestamp = min(
-                                self.__timestamps[obs_id] for obs_id in rhs_binding
-                            )
-
-                            if latest_lhs_timestamp <= earliest_rhs_timestamp:
-                                joined_bindings.append(lhs_binding +
-                                                       rhs_binding)
-
-                        else:
-                            raise UnsupportedOperatorError(op_str)
 
             self.__push(joined_bindings, debug_label)
 
-        # If only the one observationExpression child, we don't need to do
+        # If only the one observationExpressionOr child, we don't need to do
         # anything to the top of the stack.
+
+    def exitObservationExpressionOr(self, ctx):
+        """
+        Implements the pattern-level OR operator.  If there are two child
+        nodes:
+
+        Consumes two lists of binding tuples from the top of the stack, which
+          are the RHS and LHS operands.
+        Produces a joined list of binding tuples.  This produces a sort of
+          outer join: result tuples include the LHS values with all RHS
+          values set to None, and vice versa.  Result bindings with values
+          from both LHS and RHS are not included, to improve scalability
+          (reduces the number of results, without affecting correctness).
+
+        I believe the decision to include only one-sided bindings to be
+        justified because binding additional observations here only serves to
+        eliminate options for binding those observations to other parts of
+        the pattern later.  So it can never enable additional binding
+        possibilities, only eliminate them.
+
+        In case you're wondering about repeat-qualified sub-expressions
+        ("hey, if you reduce the number of bindings, you might not reach
+        the required repeat count for a repeat-qualified sub-expression!"),
+        note that none of these additional bindings would be disjoint w.r.t.
+        the base set of one-sided bindings.  Therefore, they could never
+        be combined with the base set to satisfy an increased repeat count.
+
+        So basically, this base set maximizes binding opportunities elsewhere
+        in the pattern, and does not introduce "false negatives".  It will
+        result in some possible bindings not being found, but only when it
+        would be extra noise anyway.  That improves scalability.
+        """
+        num_operands = len(ctx.observationExpressionOr())
+
+        if num_operands not in (0, 2):
+            # Just in case...
+            msg = u"Unexpected number of observationExpressionOr children: {}"
+            raise MatcherInternalError(msg.format(num_operands))
+
+        if num_operands == 2:
+            debug_label = u"exitObservationExpressionOr"
+
+            rhs_bindings = self.__pop(debug_label)
+            lhs_bindings = self.__pop(debug_label)
+
+            # Compute tuples of None values, for each side (rhs/lhs), whose
+            # lengths are equal to the bindings on those sides.  These will
+            # be concatenated with actual bindings to produce the results.
+            # These are kind of like None'd "placeholder" bindings, since we
+            # want each joined binding to include actual bindings from only the
+            # left or right side, not both.  We fill in None's for the side
+            # we don't want to include.
+            #
+            # There are special cases when one side has no bindings.
+            # We would like the resulting binding sizes to match up to the
+            # number of observation expressions in the pattern, but if one
+            # side's bindings are empty, we can't easily tell what size they
+            # would have been.  So I traverse that part of the subtree to
+            # obtain a size.  Algorithm correctness doesn't depend on this
+            # "filler", but it helps users understand how the resulting
+            # bindings match up with the pattern.
+            if lhs_bindings and rhs_bindings:
+                lhs_binding_none = (None,) * len(lhs_bindings[0])
+                rhs_binding_none = (None,) * len(rhs_bindings[0])
+            elif lhs_bindings:
+                right_binding_size = _compute_expected_binding_size(
+                    ctx.observationExpressionOr(1))
+                lhs_binding_none = (None,) * len(lhs_bindings[0])
+                rhs_binding_none = (None,) * right_binding_size
+            elif rhs_bindings:
+                left_binding_size = _compute_expected_binding_size(
+                    ctx.observationExpressionOr(0))
+                lhs_binding_none = (None,) * left_binding_size
+                rhs_binding_none = (None,) * len(rhs_bindings[0])
+
+            joined_bindings = [
+                lhs_binding + rhs_binding_none
+                for lhs_binding in lhs_bindings
+            ]
+
+            joined_bindings.extend(
+                lhs_binding_none + rhs_binding
+                for rhs_binding in rhs_bindings
+            )
+
+            self.__push(joined_bindings, debug_label)
+
+    def exitObservationExpressionAnd(self, ctx):
+        """
+        Implements the pattern-level AND operator.  If there are two child
+        nodes:
+
+        Consumes two lists of binding tuples from the top of the stack, which
+          are the RHS and LHS operands.
+        Produces a joined list of binding tuples.  All joined tuples are
+          produced which include lhs and rhs values without having any
+          duplicate observation IDs.
+        """
+        num_operands = len(ctx.observationExpressionAnd())
+
+        if num_operands not in (0, 2):
+            # Just in case...
+            msg = u"Unexpected number of observationExpressionAnd children: {}"
+            raise MatcherInternalError(msg.format(num_operands))
+
+        if num_operands == 2:
+            debug_label = u"exitObservationExpressionAnd"
+
+            rhs_bindings = self.__pop(debug_label)
+            lhs_bindings = self.__pop(debug_label)
+
+            joined_bindings = []
+            for lhs_binding in lhs_bindings:
+                for rhs_binding in rhs_bindings:
+                    if _disjoint(lhs_binding, rhs_binding):
+                        joined_bindings.append(lhs_binding + rhs_binding)
+
+            self.__push(joined_bindings, debug_label)
 
     def exitObservationExpressionSimple(self, ctx):
         """

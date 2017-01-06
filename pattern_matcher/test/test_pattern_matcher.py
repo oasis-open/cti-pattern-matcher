@@ -32,7 +32,7 @@ TEST_CASES = [
     "[file-object:hashes.sha-256 = 'aec070645fe53ee3b3763059376134f058cc337247c978add178b6ccdfb0019f' AND file-object:mime-type = 'application/x-pdf']",
     """
     [file-object:hashes.sha-256 = 'bf07a7fbb825fc0aae7bf4a1177b2b31fcf8a3feeaf7092761e18c859ee52a9c']
-    ALONGWITH
+    AND
     [file-object:hashes.sha-256 = 'aec070645fe53ee3b3763059376134f058cc337247c978add178b6ccdfb0019f']""",
     """
     [file-object:hashes.md5 = '79054025255fb1a26e4bc422aef54eb4']
@@ -40,9 +40,9 @@ TEST_CASES = [
     [win-registry-key-object:key = 'hkey_local_machine\\foo\\bar'] WITHIN 5 MINUTES""",
     """
     ([user-account-object:value = 'Peter']
-    ALONGWITH
+    AND
     [user-account-object:value = 'Paul']
-    ALONGWITH
+    AND
     [user-account-object:value = 'Mary']) WITHIN 5 MINUTES""",
     "[artifact-object:mime-type = 'application/vnd.tcpdump.pcap' AND artifact-object:payload MATCHES /Zm9vYmFy/]",
     "[network-connection-object:extended_properties[0].source_payload MATCHES /dGVzdHRlc3R0ZXN0/]",

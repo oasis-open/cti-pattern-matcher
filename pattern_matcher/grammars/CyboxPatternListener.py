@@ -22,6 +22,24 @@ class CyboxPatternListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by CyboxPatternParser#observationExpressionOr.
+    def enterObservationExpressionOr(self, ctx):
+        pass
+
+    # Exit a parse tree produced by CyboxPatternParser#observationExpressionOr.
+    def exitObservationExpressionOr(self, ctx):
+        pass
+
+
+    # Enter a parse tree produced by CyboxPatternParser#observationExpressionAnd.
+    def enterObservationExpressionAnd(self, ctx):
+        pass
+
+    # Exit a parse tree produced by CyboxPatternParser#observationExpressionAnd.
+    def exitObservationExpressionAnd(self, ctx):
+        pass
+
+
     # Enter a parse tree produced by CyboxPatternParser#observationExpressionRepeated.
     def enterObservationExpressionRepeated(self, ctx):
         pass
