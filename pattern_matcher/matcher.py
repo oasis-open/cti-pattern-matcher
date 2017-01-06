@@ -943,6 +943,7 @@ class MatchListener(CyboxPatternListener):
 
                 latest_lhs_timestamp = max(
                     self.__timestamps[obs_id] for obs_id in lhs_binding
+                    if obs_id is not None
                 )
 
                 for rhs_binding in rhs_bindings:
@@ -952,6 +953,7 @@ class MatchListener(CyboxPatternListener):
                         # than all lhs timestamps.
                         earliest_rhs_timestamp = min(
                             self.__timestamps[obs_id] for obs_id in rhs_binding
+                            if obs_id is not None
                         )
 
                         if latest_lhs_timestamp <= earliest_rhs_timestamp:
