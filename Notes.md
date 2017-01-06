@@ -11,16 +11,16 @@ Matching a pattern is equivalent to finding a set of *bindings*.  A binding
 is a mapping from observation expressions in the pattern to observations.  The 
 matcher does its job in a single traversal of the pattern parse tree.  It 
 maintains a list of candidate bindings and other state, pruning away those which
-don't work as it goes.  At the end, the result is a list of all possible 
-bindings, not just the first one found.
+don't work as it goes.  At the end, the result is a list of many bindings, not
+just the first one found.
 
 ## Caveats
 
-- **The number of possible bindings can be large.**  If each observation 
+- **The number of bindings found can be large.**  If each observation
 expression matches a lot of observations, the number of bindings can grow 
-exponentially.  In the worst case, if N observations match N observation 
+exponentially.  In the worst case, if N observations match N observation
 expressions (i.e. every observation expression matches every observation), and
-only the `ALONGWITH` observation operator is used, that's N! different possible
+only the `AND` observation operator is used, that's N! different possible
 bindings altogether.
 
 - **High repeat counts can result in a lot of bindings.**  This is related to
@@ -34,12 +34,12 @@ out for is when the qualified observation expression matches a lot of
 observations.
 
 - **Temporal qualifiers are less effective at reducing the number of bindings.**
-For example, using `REPEATED 5 TIMES` might result in a lot of possible 
-bindings, whereas `REPEATED 5 TIMES WITHIN 5 MINUTES` could allow additional
-temporal filtering, reducing the number of bindings.  However, the matcher works
-in a very simple way, applying each qualifier in turn.  The repetition is
-computed first, then temporal filtering occurs second.  They don't occur at the
-same time.  So you could still get large growth in the number of bindings in
+For example, using `REPEATS 5 TIMES` might result in a lot of possible bindings,
+whereas `REPEATS 5 TIMES WITHIN 300 SECONDS` could allow additional temporal
+filtering, reducing the number of bindings.  However, the matcher works in a
+very simple way, applying each qualifier in turn.  The repetition is computed
+first, then temporal filtering occurs second.  They don't occur at the same
+time.  So you could still get large growth in the number of bindings in
 the first step.  A more clever implementation could do both at the same time.
 
 - **"Creative" use of references can cause large memory usage.**  This is a 
