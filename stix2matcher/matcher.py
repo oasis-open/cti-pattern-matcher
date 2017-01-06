@@ -1577,7 +1577,7 @@ class MatchListener(STIXPatternListener):
 
         obs_values = self.__pop(debug_label)
 
-        regex = regex_terminal.getText()[1:-1]  # strip "quotes"
+        regex = _literal_terminal_to_python_val(regex_terminal)
         compiled_re = re.compile(regex)
 
         def regex_pred(value):
