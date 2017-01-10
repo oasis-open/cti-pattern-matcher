@@ -1,5 +1,5 @@
-antlr4-python2-runtime==4.5.3 ; python_version < '3'
-antlr4-python3-runtime==4.5.3 ; python_version >= '3'
+antlr4-python2-runtime==4.6 ; python_version < '3'
+antlr4-python3-runtime==4.6 ; python_version >= '3'
 pytest==3.0.5
 python-dateutil
 six

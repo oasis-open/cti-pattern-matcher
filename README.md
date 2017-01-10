@@ -7,7 +7,7 @@ The pattern-matcher is a prototype software tool for matching STIX Observed Data
 ## Requirements
 
 * Python 2.7.6+
-* ANTLR Python Runtime (4.5.3+)
+* ANTLR Python Runtime (4.6+)
  * https://pypi.python.org/pypi/antlr4-python2-runtime (Python 2)
  * https://pypi.python.org/pypi/antlr4-python3-runtime (Python 3)
 * python-dateutil (https://dateutil.readthedocs.io/en/stable/)
