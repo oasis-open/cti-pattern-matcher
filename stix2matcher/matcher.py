@@ -1962,22 +1962,18 @@ def main():
     """
 
     arg_parser = argparse.ArgumentParser(description="Match STIX Patterns to STIX Observed Data")
-    arg_parser.add_argument("-p", "--patterns", required=True,
-                            type=argparse.FileType("r"), help="""
+    arg_parser.add_argument("-p", "--patterns", required=True,  help="""
     Specify a file containing STIX Patterns, one per line.
     """)
-    arg_parser.add_argument("-f", "--file", required=True,
-                            type=argparse.FileType("r"), help="""
+    arg_parser.add_argument("-f", "--file", required=True, help="""
     A file containing JSON list of CybOX containers to match against.
     """)
-    arg_parser.add_argument("-t", "--timestamps", type=argparse.FileType("r"),
-                            help="""
-                            Specify a file with ISO-formatted timestamps, one
-                            per line.  If given, this must have at least as many
-                            timestamps as there are containers (extras will be
-                            ignored).  If not given, all containers will be
-                            assigned the current time.
-                            """)
+    arg_parser.add_argument("-t", "--timestamps", help="""
+    Specify a file with ISO-formatted timestamps, one per line.  If given, this
+    must have at least as many timestamps as there are containers (extras will
+    be ignored).  If not given, all containers will be assigned the current
+    time.
+    """)
     arg_parser.add_argument("-e", "--encoding", default="utf8", help="""
     Set encoding used for reading container, pattern, and timestamp files.
     Must be an encoding name Python understands.  Default is utf8.
@@ -1986,24 +1982,19 @@ def main():
                             help="""Be verbose""")
 
     args = arg_parser.parse_args()
-    json_in = args.file
-    try:
-        containers = json.load(json_in, encoding=args.encoding)
-    finally:
-        json_in.close()
+
+    with io.open(args.file, encoding=args.encoding) as json_in:
+        containers = json.load(json_in)
 
     if args.timestamps:
-        try:
+        with io.open(args.timestamps, encoding=args.encoding) as ts_in:
             timestamps = []
-            for line in args.timestamps:
+            for line in ts_in:
                 line = line.strip()
-                line = line.decode(args.encoding)
                 if not line:
                     continue  # skip blank lines
                 timestamp = _str_to_datetime(line, ignore_case=True)
                 timestamps.append(timestamp)
-        finally:
-            args.timestamps.close()
     else:
         timestamps = [datetime.datetime.now(dateutil.tz.tzutc())
                       for _ in containers]
@@ -2016,21 +2007,18 @@ def main():
     elif len(timestamps) > len(containers):
         timestamps = timestamps[:len(containers)]
 
-    try:
-        for pattern in args.patterns:
+    with io.open(args.patterns, encoding=args.encoding) as patterns_in:
+        for pattern in patterns_in:
             pattern = pattern.strip()
             if not pattern:
                 continue  # skip blank lines
-            if pattern[0] == "#":
+            if pattern[0] == u"#":
                 continue  # skip commented out lines
-            pattern = pattern.decode(args.encoding)
             escaped_pattern = pattern.encode("unicode_escape")
             if match(pattern, containers, timestamps, args.verbose):
                 print(u"\nPASS: ", escaped_pattern)
             else:
                 print(u"\nFAIL: ", escaped_pattern)
-    finally:
-        args.patterns.close()
 
 
 if __name__ == '__main__':
