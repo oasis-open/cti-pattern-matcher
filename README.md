@@ -52,6 +52,24 @@ optional arguments:
 The STIX Pattern Matcher's test suite can be run with
 [pytest](http://pytest.org).
 
+## Updating the Grammar
+
+The ANTLR pattern grammar is maintained in the
+[stix2-json-schemas](https://github.com/oasis-open/cti-stix2-json-schemas/blob/master/pattern_grammar/STIXPattern.g4)
+repository. If the grammar changes, the code in this repository should be
+updated to match. To do so, use the Java ANTLR package to generate new Python
+source files. (The .jar file is not needed for normal use of the validator).
+
+1. Download antlr-4.6-complete.jar from http://www.antlr.org/download/
+2. Clone the stix2-json-schemas repository or download the STIXPattern.g4 file.
+3. Change to the directory containing the STIXPattern.g4 file.
+4. Run the following command
+
+    ```bash
+    $ java -cp "/path/to/antlr-4.6-complete.jar" -Xmx500M org.antlr.v4.Tool -Dlanguage=Python2 STIXPattern.g4 -o /path/to/cti-pattern-matcher/stix2matcher/grammars
+    ```
+5. Commit the resulting files to git.
+
 ## Governance
 
 This GitHub public repository ( **[https://github.com/oasis-open/cti-pattern-matcher](https://github.com/oasis-open/cti-pattern-matcher)** ) was [proposed](https://lists.oasis-open.org/archives/cti/201610/msg00106.html) and [approved](https://lists.oasis-open.org/archives/cti/201610/msg00126.html) [[bis](https://issues.oasis-open.org/browse/TCADMIN-2477)] by the [OASIS Cyber Threat Intelligence (CTI) TC](https://www.oasis-open.org/committees/cti/) as an [OASIS Open Repository](https://www.oasis-open.org/resources/open-repositories/) to support development of open source resources related to Technical Committee work.
