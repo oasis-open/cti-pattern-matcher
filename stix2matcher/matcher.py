@@ -884,10 +884,11 @@ class MatchListener(STIXPatternListener):
 
         if self.__verbose:
             if label:
-                label = label.encode("unicode_escape")
+                label = label.encode("unicode_escape").decode("ascii")
                 print(u"{}: ".format(label), end=u"")
-            # pprint seems to unicode-escape things automatically.
-            print(u"push {}".format(pprint.pformat(val)))
+            print(u"push {}".format(pprint.pformat(val).
+                                    encode("unicode_escape").
+                                    decode("ascii")))
 
     def __pop(self, label=None):
         """Utility for popping a value off the compute stack.
@@ -898,10 +899,11 @@ class MatchListener(STIXPatternListener):
 
         if self.__verbose:
             if label:
-                label = label.encode("unicode_escape")
+                label = label.encode("unicode_escape").decode("ascii")
                 print(u"{}: ".format(label), end=u"")
-            # pprint seems to unicode-escape things automatically.
-            print(u"pop {}".format(pprint.pformat(val)))
+            print(u"pop {}".format(pprint.pformat(val).
+                                   encode("unicode_escape").
+                                   decode("ascii")))
 
         return val
 
@@ -2014,7 +2016,7 @@ def main():
                 continue  # skip blank lines
             if pattern[0] == u"#":
                 continue  # skip commented out lines
-            escaped_pattern = pattern.encode("unicode_escape")
+            escaped_pattern = pattern.encode("unicode_escape").decode("ascii")
             if match(pattern, containers, timestamps, args.verbose):
                 print(u"\nPASS: ", escaped_pattern)
             else:
