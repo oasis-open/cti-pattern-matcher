@@ -124,7 +124,7 @@ BinaryLiteral :
   ;
 
 StringLiteral :
-  QUOTE ( ~['\\] | '\\\'' | '\\\\' )* QUOTE
+  QUOTE ( ~'\'' | '\'\'' )* QUOTE
   ;
 
 BoolLiteral :
