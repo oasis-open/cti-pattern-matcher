@@ -80,8 +80,7 @@ from stix2matcher.grammars.STIXPatternParser import STIXPatternParser
 # Set and regex literals are not handled here; they're a different beast...
 _TOKEN_TYPE_COERCERS = {
     STIXPatternParser.IntLiteral: int,
-    # for strings, strip quotes and un-escape embedded quotes
-    STIXPatternParser.StringLiteral: lambda s: s[1:-1].replace(u"''", u"'"),
+    STIXPatternParser.StringLiteral: lambda s: s[1:-1].replace(u"\\'", u"'").replace(u"\\\\", u"\\"),
     STIXPatternParser.BoolLiteral: lambda s: s.lower() == u"true",
     STIXPatternParser.FloatLiteral: float,
     STIXPatternParser.BinaryLiteral: lambda s: base64.standard_b64decode(s[2:-1]),
