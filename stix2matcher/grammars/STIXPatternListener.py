@@ -283,12 +283,3 @@ class STIXPatternListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by STIXPatternParser#timeUnit.
-    def enterTimeUnit(self, ctx):
-        pass
-
-    # Exit a parse tree produced by STIXPatternParser#timeUnit.
-    def exitTimeUnit(self, ctx):
-        pass
-
-
