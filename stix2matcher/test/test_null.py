@@ -51,4 +51,3 @@ def test_notequal_null_json(pattern):
 def test_null_pattern(pattern):
     with pytest.raises(MatcherException):
         match(pattern, _observations, _timestamps)
-
