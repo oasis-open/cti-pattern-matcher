@@ -816,6 +816,22 @@ def _compute_expected_binding_size(ctx):
                    for i in range(ctx.getChildCount()))
 
 
+def _unicode_escape(src):
+    """
+    Escapes unicode characters in src, using the \\uXXXX syntax.  The
+    unicode_escape codec escapes newlines too, so it's unusable for me.
+    I have to write my own.  This will affect all codepoints > 127.
+    """
+    with io.StringIO() as dst:
+        for c in src:
+            ordc = ord(c)
+            dst.write(
+                c if ordc < 128
+                else u"\\u{:04x}".format(ordc)
+            )
+        return dst.getvalue()
+
+
 class MatchListener(STIXPatternListener):
     """
     A parser listener which performs pattern matching.  It works like an
@@ -884,11 +900,18 @@ class MatchListener(STIXPatternListener):
 
         if self.__verbose:
             if label:
-                label = label.encode("unicode_escape").decode("ascii")
-                print(u"{}: ".format(label), end=u"")
-            print(u"push {}".format(pprint.pformat(val).
-                                    encode("unicode_escape").
-                                    decode("ascii")))
+                print(u"{}: ".format(_unicode_escape(label)), end=u"")
+
+            # Python2's pformat() returns str (the binary type), therefore
+            # it must escape unicode chars.  Python3's pformat() returns str
+            # (the text type), and does not escape unicode chars.  The
+            # unicode_escape codec escapes newlines, which ruins the pretty
+            # formatting, so it's not usable at all.
+            if six.PY2:
+                str_val = pprint.pformat(val).decode("ascii")
+            else:
+                str_val = _unicode_escape(pprint.pformat(val))
+            print(u"push", str_val)
 
     def __pop(self, label=None):
         """Utility for popping a value off the compute stack.
@@ -899,11 +922,18 @@ class MatchListener(STIXPatternListener):
 
         if self.__verbose:
             if label:
-                label = label.encode("unicode_escape").decode("ascii")
-                print(u"{}: ".format(label), end=u"")
-            print(u"pop {}".format(pprint.pformat(val).
-                                   encode("unicode_escape").
-                                   decode("ascii")))
+                print(u"{}: ".format(_unicode_escape(label)), end=u"")
+
+            # Python2's pformat() returns str (the binary type), therefore
+            # it must escape unicode chars.  Python3's pformat() returns str
+            # (the text type), and does not escape unicode chars.  The
+            # unicode_escape codec escapes newlines, which ruins the pretty
+            # formatting, so it's not usable at all.
+            if six.PY2:
+                str_val = pprint.pformat(val).decode("ascii")
+            else:
+                str_val = _unicode_escape(pprint.pformat(val))
+            print(u"pop", str_val)
 
         return val
 
