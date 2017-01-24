@@ -86,7 +86,6 @@ _TOKEN_TYPE_COERCERS = {
     STIXPatternParser.BinaryLiteral: lambda s: base64.standard_b64decode(s[2:-1]),
     STIXPatternParser.HexLiteral: lambda s: binascii.a2b_hex(s[2:-1]),
     STIXPatternParser.TimestampLiteral: lambda t: _str_to_datetime(t[2:-1]),
-    STIXPatternParser.NULL: lambda _: None
 }
 
 
@@ -100,15 +99,6 @@ _TOKEN_TYPE_COERCERS = {
 #
 # Where I use python operators, python's mixed-type comparison rules are
 # in effect, e.g. conversion of operands to a common type.
-_NoneType = type(None)  # better way to do this??
-
-
-def _ret_false(_1, _2):
-    return False
-
-
-def _ret_true(_1, _2):
-    return True
 
 
 def _bin_str_equals(val1, val2):
@@ -151,9 +141,6 @@ _COMPARE_EQ_FUNCS = {
     },
     datetime.datetime: {
         datetime.datetime: operator.eq
-    },
-    _NoneType: {
-        _NoneType: _ret_true
     }
 }
 
