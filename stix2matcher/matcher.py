@@ -1241,8 +1241,8 @@ class MatchListener(STIXPatternListener):
           the specified interval.
         """
 
-        debug_label = u"exitWithinQualifier"
         value = _literal_terminal_to_python_val(ctx.IntLiteral())
+        debug_label = u"exitWithinQualifier ({})".format(value)
         if value < 0:
             raise MatcherException(u"Invalid WITHIN value: {}".format(value))
 
