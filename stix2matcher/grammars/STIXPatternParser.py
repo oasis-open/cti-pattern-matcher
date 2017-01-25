@@ -75,7 +75,7 @@ def serializedATN():
         buf.write(u"\u0092\3\2\2\2\u00a4\u0099\3\2\2\2\u00a4\u00a0\3\2\2")
         buf.write(u"\2\u00a5\21\3\2\2\2\u00a6\u00a7\7\24\2\2\u00a7\u00a8")
         buf.write(u"\7\7\2\2\u00a8\u00a9\7\25\2\2\u00a9\u00aa\7\7\2\2\u00aa")
-        buf.write(u"\23\3\2\2\2\u00ab\u00ac\7\31\2\2\u00ac\u00ad\7\3\2\2")
+        buf.write(u"\23\3\2\2\2\u00ab\u00ac\7\31\2\2\u00ac\u00ad\7\4\2\2")
         buf.write(u"\u00ad\u00ae\7\26\2\2\u00ae\25\3\2\2\2\u00af\u00b0\7")
         buf.write(u"\32\2\2\u00b0\u00b1\7\3\2\2\u00b1\u00b2\7\33\2\2\u00b2")
         buf.write(u"\27\3\2\2\2\u00b3\u00b4\5\32\16\2\u00b4\u00b5\7$\2\2")
@@ -1300,8 +1300,8 @@ class STIXPatternParser ( Parser ):
         def WITHIN(self):
             return self.getToken(STIXPatternParser.WITHIN, 0)
 
-        def IntLiteral(self):
-            return self.getToken(STIXPatternParser.IntLiteral, 0)
+        def FloatLiteral(self):
+            return self.getToken(STIXPatternParser.FloatLiteral, 0)
 
         def SECONDS(self):
             return self.getToken(STIXPatternParser.SECONDS, 0)
@@ -1329,7 +1329,7 @@ class STIXPatternParser ( Parser ):
             self.state = 169
             self.match(STIXPatternParser.WITHIN)
             self.state = 170
-            self.match(STIXPatternParser.IntLiteral)
+            self.match(STIXPatternParser.FloatLiteral)
             self.state = 171
             self.match(STIXPatternParser.SECONDS)
         except RecognitionException as re:
