@@ -1243,8 +1243,8 @@ class MatchListener(STIXPatternListener):
 
         value = _literal_terminal_to_python_val(ctx.FloatLiteral() or ctx.IntLiteral())
         debug_label = u"exitWithinQualifier ({})".format(value)
-        if value < 0:
-            raise MatcherException(u"Invalid WITHIN value: {}".format(value))
+        if value <= 0:
+            raise MatcherException(u"Invalid WITHIN value (must be positive): {}".format(value))
 
         delta = dateutil.relativedelta.relativedelta(seconds=value)
 
