@@ -1181,7 +1181,8 @@ class MatchListener(STIXPatternListener):
         filtered_bindings = []
         for binding in bindings:
             if _timestamps_within(
-                    (self.__timestamps[obs_id] for obs_id in binding),
+                    (self.__timestamps[obs_id] for obs_id in binding
+                     if obs_id is not None),
                     duration):
                 filtered_bindings.append(binding)
 
@@ -1206,7 +1207,7 @@ class MatchListener(STIXPatternListener):
         for binding in bindings:
             in_bounds = all(
                 start_time <= self.__timestamps[obs_id] < stop_time
-                for obs_id in binding
+                for obs_id in binding if obs_id is not None
             )
 
             if in_bounds:
