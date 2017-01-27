@@ -7,100 +7,99 @@ from io import StringIO
 def serializedATN():
     with StringIO() as buf:
         buf.write(u"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3")
-        buf.write(u"9\u00e6\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t")
-        buf.write(u"\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\4\f\t\f\4\r\t\r")
-        buf.write(u"\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22\4")
-        buf.write(u"\23\t\23\4\24\t\24\3\2\3\2\3\3\3\3\3\3\3\3\3\3\3\3\7")
-        buf.write(u"\3\61\n\3\f\3\16\3\64\13\3\3\4\3\4\3\4\3\4\3\4\3\4\7")
-        buf.write(u"\4<\n\4\f\4\16\4?\13\4\3\5\3\5\3\5\3\5\3\5\3\5\7\5G\n")
-        buf.write(u"\5\f\5\16\5J\13\5\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6")
-        buf.write(u"\5\6U\n\6\3\6\3\6\3\6\3\6\3\6\3\6\7\6]\n\6\f\6\16\6`")
-        buf.write(u"\13\6\3\7\3\7\3\7\3\7\3\7\3\7\7\7h\n\7\f\7\16\7k\13\7")
-        buf.write(u"\3\b\3\b\3\b\3\b\3\b\3\b\7\bs\n\b\f\b\16\bv\13\b\3\t")
-        buf.write(u"\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3\t\5\t\u0082\n\t\3")
-        buf.write(u"\t\3\t\3\t\3\t\3\t\5\t\u0089\n\t\3\t\3\t\3\t\3\t\3\t")
-        buf.write(u"\5\t\u0090\n\t\3\t\3\t\3\t\3\t\3\t\5\t\u0097\n\t\3\t")
-        buf.write(u"\3\t\3\t\3\t\3\t\5\t\u009e\n\t\3\t\3\t\3\t\3\t\3\t\3")
-        buf.write(u"\t\3\t\5\t\u00a7\n\t\3\n\3\n\3\n\3\n\3\n\3\13\3\13\3")
-        buf.write(u"\13\3\13\3\f\3\f\3\f\3\f\3\r\3\r\3\r\3\r\5\r\u00ba\n")
-        buf.write(u"\r\3\16\3\16\3\17\3\17\3\20\3\20\3\20\3\20\3\20\3\20")
-        buf.write(u"\5\20\u00c6\n\20\3\20\3\20\7\20\u00ca\n\20\f\20\16\20")
-        buf.write(u"\u00cd\13\20\3\21\3\21\3\21\3\21\3\21\3\21\7\21\u00d5")
-        buf.write(u"\n\21\f\21\16\21\u00d8\13\21\3\21\3\21\5\21\u00dc\n\21")
-        buf.write(u"\3\22\3\22\5\22\u00e0\n\22\3\23\3\23\3\24\3\24\3\24\2")
-        buf.write(u"\t\4\6\b\n\f\16\36\25\2\4\6\b\n\f\16\20\22\24\26\30\32")
-        buf.write(u"\34\36 \"$&\2\7\3\2#$\3\2%(\4\2\3\3\66\66\4\2\3\7\t\t")
-        buf.write(u"\3\2\26\34\u00ed\2(\3\2\2\2\4*\3\2\2\2\6\65\3\2\2\2\b")
-        buf.write(u"@\3\2\2\2\nT\3\2\2\2\fa\3\2\2\2\16l\3\2\2\2\20\u00a6")
-        buf.write(u"\3\2\2\2\22\u00a8\3\2\2\2\24\u00ad\3\2\2\2\26\u00b1\3")
-        buf.write(u"\2\2\2\30\u00b5\3\2\2\2\32\u00bb\3\2\2\2\34\u00bd\3\2")
-        buf.write(u"\2\2\36\u00c5\3\2\2\2 \u00db\3\2\2\2\"\u00df\3\2\2\2")
-        buf.write(u"$\u00e1\3\2\2\2&\u00e3\3\2\2\2()\5\4\3\2)\3\3\2\2\2*")
-        buf.write(u"+\b\3\1\2+,\5\6\4\2,\62\3\2\2\2-.\f\4\2\2./\7\r\2\2/")
-        buf.write(u"\61\5\4\3\5\60-\3\2\2\2\61\64\3\2\2\2\62\60\3\2\2\2\62")
-        buf.write(u"\63\3\2\2\2\63\5\3\2\2\2\64\62\3\2\2\2\65\66\b\4\1\2")
-        buf.write(u"\66\67\5\b\5\2\67=\3\2\2\289\f\4\2\29:\7\13\2\2:<\5\6")
-        buf.write(u"\4\5;8\3\2\2\2<?\3\2\2\2=;\3\2\2\2=>\3\2\2\2>\7\3\2\2")
-        buf.write(u"\2?=\3\2\2\2@A\b\5\1\2AB\5\n\6\2BH\3\2\2\2CD\f\4\2\2")
-        buf.write(u"DE\7\n\2\2EG\5\b\5\5FC\3\2\2\2GJ\3\2\2\2HF\3\2\2\2HI")
-        buf.write(u"\3\2\2\2I\t\3\2\2\2JH\3\2\2\2KL\b\6\1\2LM\7\60\2\2MN")
-        buf.write(u"\5\f\7\2NO\7/\2\2OU\3\2\2\2PQ\7.\2\2QR\5\4\3\2RS\7-\2")
-        buf.write(u"\2SU\3\2\2\2TK\3\2\2\2TP\3\2\2\2U^\3\2\2\2VW\f\5\2\2")
-        buf.write(u"W]\5\22\n\2XY\f\4\2\2Y]\5\24\13\2Z[\f\3\2\2[]\5\26\f")
-        buf.write(u"\2\\V\3\2\2\2\\X\3\2\2\2\\Z\3\2\2\2]`\3\2\2\2^\\\3\2")
-        buf.write(u"\2\2^_\3\2\2\2_\13\3\2\2\2`^\3\2\2\2ab\b\7\1\2bc\5\16")
-        buf.write(u"\b\2ci\3\2\2\2de\f\4\2\2ef\7\13\2\2fh\5\f\7\5gd\3\2\2")
-        buf.write(u"\2hk\3\2\2\2ig\3\2\2\2ij\3\2\2\2j\r\3\2\2\2ki\3\2\2\2")
-        buf.write(u"lm\b\b\1\2mn\5\20\t\2nt\3\2\2\2op\f\4\2\2pq\7\n\2\2q")
-        buf.write(u"s\5\16\b\5ro\3\2\2\2sv\3\2\2\2tr\3\2\2\2tu\3\2\2\2u\17")
-        buf.write(u"\3\2\2\2vt\3\2\2\2wx\5\30\r\2xy\t\2\2\2yz\5\"\22\2z\u00a7")
-        buf.write(u"\3\2\2\2{|\5\30\r\2|}\t\3\2\2}~\5$\23\2~\u00a7\3\2\2")
-        buf.write(u"\2\177\u0081\5\30\r\2\u0080\u0082\7\f\2\2\u0081\u0080")
-        buf.write(u"\3\2\2\2\u0081\u0082\3\2\2\2\u0082\u0083\3\2\2\2\u0083")
-        buf.write(u"\u0084\7\23\2\2\u0084\u0085\5 \21\2\u0085\u00a7\3\2\2")
-        buf.write(u"\2\u0086\u0088\5\30\r\2\u0087\u0089\7\f\2\2\u0088\u0087")
-        buf.write(u"\3\2\2\2\u0088\u0089\3\2\2\2\u0089\u008a\3\2\2\2\u008a")
-        buf.write(u"\u008b\7\16\2\2\u008b\u008c\7\7\2\2\u008c\u00a7\3\2\2")
-        buf.write(u"\2\u008d\u008f\5\30\r\2\u008e\u0090\7\f\2\2\u008f\u008e")
-        buf.write(u"\3\2\2\2\u008f\u0090\3\2\2\2\u0090\u0091\3\2\2\2\u0091")
-        buf.write(u"\u0092\7\17\2\2\u0092\u0093\7\7\2\2\u0093\u00a7\3\2\2")
-        buf.write(u"\2\u0094\u0096\5\30\r\2\u0095\u0097\7\f\2\2\u0096\u0095")
-        buf.write(u"\3\2\2\2\u0096\u0097\3\2\2\2\u0097\u0098\3\2\2\2\u0098")
-        buf.write(u"\u0099\7\21\2\2\u0099\u009a\7\7\2\2\u009a\u00a7\3\2\2")
-        buf.write(u"\2\u009b\u009d\5\30\r\2\u009c\u009e\7\f\2\2\u009d\u009c")
-        buf.write(u"\3\2\2\2\u009d\u009e\3\2\2\2\u009e\u009f\3\2\2\2\u009f")
-        buf.write(u"\u00a0\7\20\2\2\u00a0\u00a1\7\7\2\2\u00a1\u00a7\3\2\2")
-        buf.write(u"\2\u00a2\u00a3\7.\2\2\u00a3\u00a4\5\f\7\2\u00a4\u00a5")
-        buf.write(u"\7-\2\2\u00a5\u00a7\3\2\2\2\u00a6w\3\2\2\2\u00a6{\3\2")
-        buf.write(u"\2\2\u00a6\177\3\2\2\2\u00a6\u0086\3\2\2\2\u00a6\u008d")
-        buf.write(u"\3\2\2\2\u00a6\u0094\3\2\2\2\u00a6\u009b\3\2\2\2\u00a6")
-        buf.write(u"\u00a2\3\2\2\2\u00a7\21\3\2\2\2\u00a8\u00a9\7\24\2\2")
-        buf.write(u"\u00a9\u00aa\7\7\2\2\u00aa\u00ab\7\25\2\2\u00ab\u00ac")
-        buf.write(u"\7\7\2\2\u00ac\23\3\2\2\2\u00ad\u00ae\7\37\2\2\u00ae")
-        buf.write(u"\u00af\7\3\2\2\u00af\u00b0\5&\24\2\u00b0\25\3\2\2\2\u00b1")
-        buf.write(u"\u00b2\7 \2\2\u00b2\u00b3\7\3\2\2\u00b3\u00b4\7!\2\2")
-        buf.write(u"\u00b4\27\3\2\2\2\u00b5\u00b6\5\32\16\2\u00b6\u00b7\7")
-        buf.write(u"*\2\2\u00b7\u00b9\5\34\17\2\u00b8\u00ba\5\36\20\2\u00b9")
-        buf.write(u"\u00b8\3\2\2\2\u00b9\u00ba\3\2\2\2\u00ba\31\3\2\2\2\u00bb")
-        buf.write(u"\u00bc\7\"\2\2\u00bc\33\3\2\2\2\u00bd\u00be\7\"\2\2\u00be")
-        buf.write(u"\35\3\2\2\2\u00bf\u00c0\b\20\1\2\u00c0\u00c1\7+\2\2\u00c1")
-        buf.write(u"\u00c6\7\"\2\2\u00c2\u00c3\7\60\2\2\u00c3\u00c4\t\4\2")
-        buf.write(u"\2\u00c4\u00c6\7/\2\2\u00c5\u00bf\3\2\2\2\u00c5\u00c2")
-        buf.write(u"\3\2\2\2\u00c6\u00cb\3\2\2\2\u00c7\u00c8\f\5\2\2\u00c8")
-        buf.write(u"\u00ca\5\36\20\6\u00c9\u00c7\3\2\2\2\u00ca\u00cd\3\2")
-        buf.write(u"\2\2\u00cb\u00c9\3\2\2\2\u00cb\u00cc\3\2\2\2\u00cc\37")
-        buf.write(u"\3\2\2\2\u00cd\u00cb\3\2\2\2\u00ce\u00cf\7.\2\2\u00cf")
-        buf.write(u"\u00dc\7-\2\2\u00d0\u00d1\7.\2\2\u00d1\u00d6\5\"\22\2")
-        buf.write(u"\u00d2\u00d3\7,\2\2\u00d3\u00d5\5\"\22\2\u00d4\u00d2")
-        buf.write(u"\3\2\2\2\u00d5\u00d8\3\2\2\2\u00d6\u00d4\3\2\2\2\u00d6")
-        buf.write(u"\u00d7\3\2\2\2\u00d7\u00d9\3\2\2\2\u00d8\u00d6\3\2\2")
-        buf.write(u"\2\u00d9\u00da\7-\2\2\u00da\u00dc\3\2\2\2\u00db\u00ce")
-        buf.write(u"\3\2\2\2\u00db\u00d0\3\2\2\2\u00dc!\3\2\2\2\u00dd\u00e0")
-        buf.write(u"\5$\23\2\u00de\u00e0\7\b\2\2\u00df\u00dd\3\2\2\2\u00df")
-        buf.write(u"\u00de\3\2\2\2\u00e0#\3\2\2\2\u00e1\u00e2\t\5\2\2\u00e2")
-        buf.write(u"%\3\2\2\2\u00e3\u00e4\t\6\2\2\u00e4\'\3\2\2\2\26\62=")
-        buf.write(u"HT\\^it\u0081\u0088\u008f\u0096\u009d\u00a6\u00b9\u00c5")
-        buf.write(u"\u00cb\u00d6\u00db\u00df")
+        buf.write(u"\63\u00e2\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7")
+        buf.write(u"\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\4\f\t\f\4\r\t")
+        buf.write(u"\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22")
+        buf.write(u"\4\23\t\23\3\2\3\2\3\3\3\3\3\3\3\3\3\3\3\3\7\3/\n\3\f")
+        buf.write(u"\3\16\3\62\13\3\3\4\3\4\3\4\3\4\3\4\3\4\7\4:\n\4\f\4")
+        buf.write(u"\16\4=\13\4\3\5\3\5\3\5\3\5\3\5\3\5\7\5E\n\5\f\5\16\5")
+        buf.write(u"H\13\5\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\5\6S\n\6\3")
+        buf.write(u"\6\3\6\3\6\3\6\3\6\3\6\7\6[\n\6\f\6\16\6^\13\6\3\7\3")
+        buf.write(u"\7\3\7\3\7\3\7\3\7\7\7f\n\7\f\7\16\7i\13\7\3\b\3\b\3")
+        buf.write(u"\b\3\b\3\b\3\b\7\bq\n\b\f\b\16\bt\13\b\3\t\3\t\3\t\3")
+        buf.write(u"\t\3\t\3\t\3\t\3\t\3\t\3\t\5\t\u0080\n\t\3\t\3\t\3\t")
+        buf.write(u"\3\t\3\t\5\t\u0087\n\t\3\t\3\t\3\t\3\t\3\t\5\t\u008e")
+        buf.write(u"\n\t\3\t\3\t\3\t\3\t\3\t\5\t\u0095\n\t\3\t\3\t\3\t\3")
+        buf.write(u"\t\3\t\5\t\u009c\n\t\3\t\3\t\3\t\3\t\3\t\3\t\3\t\5\t")
+        buf.write(u"\u00a5\n\t\3\n\3\n\3\n\3\n\3\n\3\13\3\13\3\13\3\13\3")
+        buf.write(u"\f\3\f\3\f\3\f\3\r\3\r\3\r\3\r\5\r\u00b8\n\r\3\16\3\16")
+        buf.write(u"\3\17\3\17\3\20\3\20\3\20\3\20\3\20\3\20\5\20\u00c4\n")
+        buf.write(u"\20\3\20\3\20\7\20\u00c8\n\20\f\20\16\20\u00cb\13\20")
+        buf.write(u"\3\21\3\21\3\21\3\21\3\21\3\21\7\21\u00d3\n\21\f\21\16")
+        buf.write(u"\21\u00d6\13\21\3\21\3\21\5\21\u00da\n\21\3\22\3\22\5")
+        buf.write(u"\22\u00de\n\22\3\23\3\23\3\23\2\t\4\6\b\n\f\16\36\24")
+        buf.write(u"\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36 \"$\2\7\3\2\35")
+        buf.write(u"\36\3\2\37\"\3\2\3\4\4\2\3\3\60\60\4\2\3\7\t\t\u00ea")
+        buf.write(u"\2&\3\2\2\2\4(\3\2\2\2\6\63\3\2\2\2\b>\3\2\2\2\nR\3\2")
+        buf.write(u"\2\2\f_\3\2\2\2\16j\3\2\2\2\20\u00a4\3\2\2\2\22\u00a6")
+        buf.write(u"\3\2\2\2\24\u00ab\3\2\2\2\26\u00af\3\2\2\2\30\u00b3\3")
+        buf.write(u"\2\2\2\32\u00b9\3\2\2\2\34\u00bb\3\2\2\2\36\u00c3\3\2")
+        buf.write(u"\2\2 \u00d9\3\2\2\2\"\u00dd\3\2\2\2$\u00df\3\2\2\2&\'")
+        buf.write(u"\5\4\3\2\'\3\3\2\2\2()\b\3\1\2)*\5\6\4\2*\60\3\2\2\2")
+        buf.write(u"+,\f\4\2\2,-\7\r\2\2-/\5\4\3\5.+\3\2\2\2/\62\3\2\2\2")
+        buf.write(u"\60.\3\2\2\2\60\61\3\2\2\2\61\5\3\2\2\2\62\60\3\2\2\2")
+        buf.write(u"\63\64\b\4\1\2\64\65\5\b\5\2\65;\3\2\2\2\66\67\f\4\2")
+        buf.write(u"\2\678\7\13\2\28:\5\6\4\59\66\3\2\2\2:=\3\2\2\2;9\3\2")
+        buf.write(u"\2\2;<\3\2\2\2<\7\3\2\2\2=;\3\2\2\2>?\b\5\1\2?@\5\n\6")
+        buf.write(u"\2@F\3\2\2\2AB\f\4\2\2BC\7\n\2\2CE\5\b\5\5DA\3\2\2\2")
+        buf.write(u"EH\3\2\2\2FD\3\2\2\2FG\3\2\2\2G\t\3\2\2\2HF\3\2\2\2I")
+        buf.write(u"J\b\6\1\2JK\7*\2\2KL\5\f\7\2LM\7)\2\2MS\3\2\2\2NO\7(")
+        buf.write(u"\2\2OP\5\4\3\2PQ\7\'\2\2QS\3\2\2\2RI\3\2\2\2RN\3\2\2")
+        buf.write(u"\2S\\\3\2\2\2TU\f\5\2\2U[\5\22\n\2VW\f\4\2\2W[\5\24\13")
+        buf.write(u"\2XY\f\3\2\2Y[\5\26\f\2ZT\3\2\2\2ZV\3\2\2\2ZX\3\2\2\2")
+        buf.write(u"[^\3\2\2\2\\Z\3\2\2\2\\]\3\2\2\2]\13\3\2\2\2^\\\3\2\2")
+        buf.write(u"\2_`\b\7\1\2`a\5\16\b\2ag\3\2\2\2bc\f\4\2\2cd\7\13\2")
+        buf.write(u"\2df\5\f\7\5eb\3\2\2\2fi\3\2\2\2ge\3\2\2\2gh\3\2\2\2")
+        buf.write(u"h\r\3\2\2\2ig\3\2\2\2jk\b\b\1\2kl\5\20\t\2lr\3\2\2\2")
+        buf.write(u"mn\f\4\2\2no\7\n\2\2oq\5\16\b\5pm\3\2\2\2qt\3\2\2\2r")
+        buf.write(u"p\3\2\2\2rs\3\2\2\2s\17\3\2\2\2tr\3\2\2\2uv\5\30\r\2")
+        buf.write(u"vw\t\2\2\2wx\5\"\22\2x\u00a5\3\2\2\2yz\5\30\r\2z{\t\3")
+        buf.write(u"\2\2{|\5$\23\2|\u00a5\3\2\2\2}\177\5\30\r\2~\u0080\7")
+        buf.write(u"\f\2\2\177~\3\2\2\2\177\u0080\3\2\2\2\u0080\u0081\3\2")
+        buf.write(u"\2\2\u0081\u0082\7\23\2\2\u0082\u0083\5 \21\2\u0083\u00a5")
+        buf.write(u"\3\2\2\2\u0084\u0086\5\30\r\2\u0085\u0087\7\f\2\2\u0086")
+        buf.write(u"\u0085\3\2\2\2\u0086\u0087\3\2\2\2\u0087\u0088\3\2\2")
+        buf.write(u"\2\u0088\u0089\7\16\2\2\u0089\u008a\7\7\2\2\u008a\u00a5")
+        buf.write(u"\3\2\2\2\u008b\u008d\5\30\r\2\u008c\u008e\7\f\2\2\u008d")
+        buf.write(u"\u008c\3\2\2\2\u008d\u008e\3\2\2\2\u008e\u008f\3\2\2")
+        buf.write(u"\2\u008f\u0090\7\17\2\2\u0090\u0091\7\7\2\2\u0091\u00a5")
+        buf.write(u"\3\2\2\2\u0092\u0094\5\30\r\2\u0093\u0095\7\f\2\2\u0094")
+        buf.write(u"\u0093\3\2\2\2\u0094\u0095\3\2\2\2\u0095\u0096\3\2\2")
+        buf.write(u"\2\u0096\u0097\7\21\2\2\u0097\u0098\7\7\2\2\u0098\u00a5")
+        buf.write(u"\3\2\2\2\u0099\u009b\5\30\r\2\u009a\u009c\7\f\2\2\u009b")
+        buf.write(u"\u009a\3\2\2\2\u009b\u009c\3\2\2\2\u009c\u009d\3\2\2")
+        buf.write(u"\2\u009d\u009e\7\20\2\2\u009e\u009f\7\7\2\2\u009f\u00a5")
+        buf.write(u"\3\2\2\2\u00a0\u00a1\7(\2\2\u00a1\u00a2\5\f\7\2\u00a2")
+        buf.write(u"\u00a3\7\'\2\2\u00a3\u00a5\3\2\2\2\u00a4u\3\2\2\2\u00a4")
+        buf.write(u"y\3\2\2\2\u00a4}\3\2\2\2\u00a4\u0084\3\2\2\2\u00a4\u008b")
+        buf.write(u"\3\2\2\2\u00a4\u0092\3\2\2\2\u00a4\u0099\3\2\2\2\u00a4")
+        buf.write(u"\u00a0\3\2\2\2\u00a5\21\3\2\2\2\u00a6\u00a7\7\24\2\2")
+        buf.write(u"\u00a7\u00a8\7\7\2\2\u00a8\u00a9\7\25\2\2\u00a9\u00aa")
+        buf.write(u"\7\7\2\2\u00aa\23\3\2\2\2\u00ab\u00ac\7\31\2\2\u00ac")
+        buf.write(u"\u00ad\t\4\2\2\u00ad\u00ae\7\26\2\2\u00ae\25\3\2\2\2")
+        buf.write(u"\u00af\u00b0\7\32\2\2\u00b0\u00b1\7\3\2\2\u00b1\u00b2")
+        buf.write(u"\7\33\2\2\u00b2\27\3\2\2\2\u00b3\u00b4\5\32\16\2\u00b4")
+        buf.write(u"\u00b5\7$\2\2\u00b5\u00b7\5\34\17\2\u00b6\u00b8\5\36")
+        buf.write(u"\20\2\u00b7\u00b6\3\2\2\2\u00b7\u00b8\3\2\2\2\u00b8\31")
+        buf.write(u"\3\2\2\2\u00b9\u00ba\7\34\2\2\u00ba\33\3\2\2\2\u00bb")
+        buf.write(u"\u00bc\7\34\2\2\u00bc\35\3\2\2\2\u00bd\u00be\b\20\1\2")
+        buf.write(u"\u00be\u00bf\7%\2\2\u00bf\u00c4\7\34\2\2\u00c0\u00c1")
+        buf.write(u"\7*\2\2\u00c1\u00c2\t\5\2\2\u00c2\u00c4\7)\2\2\u00c3")
+        buf.write(u"\u00bd\3\2\2\2\u00c3\u00c0\3\2\2\2\u00c4\u00c9\3\2\2")
+        buf.write(u"\2\u00c5\u00c6\f\5\2\2\u00c6\u00c8\5\36\20\6\u00c7\u00c5")
+        buf.write(u"\3\2\2\2\u00c8\u00cb\3\2\2\2\u00c9\u00c7\3\2\2\2\u00c9")
+        buf.write(u"\u00ca\3\2\2\2\u00ca\37\3\2\2\2\u00cb\u00c9\3\2\2\2\u00cc")
+        buf.write(u"\u00cd\7(\2\2\u00cd\u00da\7\'\2\2\u00ce\u00cf\7(\2\2")
+        buf.write(u"\u00cf\u00d4\5\"\22\2\u00d0\u00d1\7&\2\2\u00d1\u00d3")
+        buf.write(u"\5\"\22\2\u00d2\u00d0\3\2\2\2\u00d3\u00d6\3\2\2\2\u00d4")
+        buf.write(u"\u00d2\3\2\2\2\u00d4\u00d5\3\2\2\2\u00d5\u00d7\3\2\2")
+        buf.write(u"\2\u00d6\u00d4\3\2\2\2\u00d7\u00d8\7\'\2\2\u00d8\u00da")
+        buf.write(u"\3\2\2\2\u00d9\u00cc\3\2\2\2\u00d9\u00ce\3\2\2\2\u00da")
+        buf.write(u"!\3\2\2\2\u00db\u00de\5$\23\2\u00dc\u00de\7\b\2\2\u00dd")
+        buf.write(u"\u00db\3\2\2\2\u00dd\u00dc\3\2\2\2\u00de#\3\2\2\2\u00df")
+        buf.write(u"\u00e0\t\6\2\2\u00e0%\3\2\2\2\26\60;FRZ\\gr\177\u0086")
+        buf.write(u"\u008d\u0094\u009b\u00a4\u00b7\u00c3\u00c9\u00d4\u00d9")
+        buf.write(u"\u00dd")
         return buf.getvalue()
 
 
@@ -121,24 +120,20 @@ class STIXPatternParser ( Parser ):
                      u"<INVALID>", u"<INVALID>", u"<INVALID>", u"<INVALID>", 
                      u"<INVALID>", u"<INVALID>", u"<INVALID>", u"<INVALID>", 
                      u"<INVALID>", u"<INVALID>", u"<INVALID>", u"<INVALID>", 
-                     u"<INVALID>", u"<INVALID>", u"<INVALID>", u"<INVALID>", 
-                     u"<INVALID>", u"<INVALID>", u"<INVALID>", u"'<'", u"'<='", 
-                     u"'>'", u"'>='", u"'''", u"':'", u"'.'", u"','", u"')'", 
-                     u"'('", u"']'", u"'['", u"'+'", u"<INVALID>", u"'-'", 
-                     u"'^'", u"'/'", u"'*'" ]
+                     u"<INVALID>", u"'<'", u"'<='", u"'>'", u"'>='", u"'''", 
+                     u"':'", u"'.'", u"','", u"')'", u"'('", u"']'", u"'['", 
+                     u"'+'", u"<INVALID>", u"'-'", u"'^'", u"'/'", u"'*'" ]
 
     symbolicNames = [ u"<INVALID>", u"IntLiteral", u"FloatLiteral", u"HexLiteral", 
                       u"BinaryLiteral", u"StringLiteral", u"BoolLiteral", 
                       u"TimestampLiteral", u"AND", u"OR", u"NOT", u"FOLLOWEDBY", 
                       u"LIKE", u"MATCHES", u"ISSUPERSET", u"ISSUBSET", u"LAST", 
-                      u"IN", u"START", u"STOP", u"MILLISECONDS", u"SECONDS", 
-                      u"MINUTES", u"HOURS", u"DAYS", u"MONTHS", u"YEARS", 
-                      u"TRUE", u"FALSE", u"WITHIN", u"REPEATS", u"TIMES", 
-                      u"Identifier", u"EQ", u"NEQ", u"LT", u"LE", u"GT", 
-                      u"GE", u"QUOTE", u"COLON", u"DOT", u"COMMA", u"RPAREN", 
-                      u"LPAREN", u"RBRACK", u"LBRACK", u"PLUS", u"HYPHEN", 
-                      u"MINUS", u"POWER_OP", u"DIVIDE", u"ASTERISK", u"WS", 
-                      u"COMMENT", u"LINE_COMMENT" ]
+                      u"IN", u"START", u"STOP", u"SECONDS", u"TRUE", u"FALSE", 
+                      u"WITHIN", u"REPEATS", u"TIMES", u"Identifier", u"EQ", 
+                      u"NEQ", u"LT", u"LE", u"GT", u"GE", u"QUOTE", u"COLON", 
+                      u"DOT", u"COMMA", u"RPAREN", u"LPAREN", u"RBRACK", 
+                      u"LBRACK", u"PLUS", u"HYPHEN", u"MINUS", u"POWER_OP", 
+                      u"DIVIDE", u"ASTERISK", u"WS", u"COMMENT", u"LINE_COMMENT" ]
 
     RULE_pattern = 0
     RULE_observationExpressions = 1
@@ -158,7 +153,6 @@ class STIXPatternParser ( Parser ):
     RULE_setLiteral = 15
     RULE_primitiveLiteral = 16
     RULE_orderableLiteral = 17
-    RULE_timeUnit = 18
 
     ruleNames =  [ u"pattern", u"observationExpressions", u"observationExpressionOr", 
                    u"observationExpressionAnd", u"observationExpression", 
@@ -166,7 +160,7 @@ class STIXPatternParser ( Parser ):
                    u"propTest", u"startStopQualifier", u"withinQualifier", 
                    u"repeatedQualifier", u"objectPath", u"objectType", u"firstPathComponent", 
                    u"objectPathComponent", u"setLiteral", u"primitiveLiteral", 
-                   u"orderableLiteral", u"timeUnit" ]
+                   u"orderableLiteral" ]
 
     EOF = Token.EOF
     IntLiteral=1
@@ -188,42 +182,36 @@ class STIXPatternParser ( Parser ):
     IN=17
     START=18
     STOP=19
-    MILLISECONDS=20
-    SECONDS=21
-    MINUTES=22
-    HOURS=23
-    DAYS=24
-    MONTHS=25
-    YEARS=26
-    TRUE=27
-    FALSE=28
-    WITHIN=29
-    REPEATS=30
-    TIMES=31
-    Identifier=32
-    EQ=33
-    NEQ=34
-    LT=35
-    LE=36
-    GT=37
-    GE=38
-    QUOTE=39
-    COLON=40
-    DOT=41
-    COMMA=42
-    RPAREN=43
-    LPAREN=44
-    RBRACK=45
-    LBRACK=46
-    PLUS=47
-    HYPHEN=48
-    MINUS=49
-    POWER_OP=50
-    DIVIDE=51
-    ASTERISK=52
-    WS=53
-    COMMENT=54
-    LINE_COMMENT=55
+    SECONDS=20
+    TRUE=21
+    FALSE=22
+    WITHIN=23
+    REPEATS=24
+    TIMES=25
+    Identifier=26
+    EQ=27
+    NEQ=28
+    LT=29
+    LE=30
+    GT=31
+    GE=32
+    QUOTE=33
+    COLON=34
+    DOT=35
+    COMMA=36
+    RPAREN=37
+    LPAREN=38
+    RBRACK=39
+    LBRACK=40
+    PLUS=41
+    HYPHEN=42
+    MINUS=43
+    POWER_OP=44
+    DIVIDE=45
+    ASTERISK=46
+    WS=47
+    COMMENT=48
+    LINE_COMMENT=49
 
     def __init__(self, input):
         super(STIXPatternParser, self).__init__(input)
@@ -263,7 +251,7 @@ class STIXPatternParser ( Parser ):
         self.enterRule(localctx, 0, self.RULE_pattern)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 38
+            self.state = 36
             self.observationExpressions(0)
         except RecognitionException as re:
             localctx.exception = re
@@ -315,10 +303,10 @@ class STIXPatternParser ( Parser ):
         self.enterRecursionRule(localctx, 2, self.RULE_observationExpressions, _p)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 41
+            self.state = 39
             self.observationExpressionOr(0)
             self._ctx.stop = self._input.LT(-1)
-            self.state = 48
+            self.state = 46
             self._errHandler.sync(self)
             _alt = self._interp.adaptivePredict(self._input,0,self._ctx)
             while _alt!=2 and _alt!=ATN.INVALID_ALT_NUMBER:
@@ -328,15 +316,15 @@ class STIXPatternParser ( Parser ):
                     _prevctx = localctx
                     localctx = STIXPatternParser.ObservationExpressionsContext(self, _parentctx, _parentState)
                     self.pushNewRecursionContext(localctx, _startState, self.RULE_observationExpressions)
-                    self.state = 43
+                    self.state = 41
                     if not self.precpred(self._ctx, 2):
                         from antlr4.error.Errors import FailedPredicateException
                         raise FailedPredicateException(self, "self.precpred(self._ctx, 2)")
-                    self.state = 44
+                    self.state = 42
                     self.match(STIXPatternParser.FOLLOWEDBY)
-                    self.state = 45
+                    self.state = 43
                     self.observationExpressions(3) 
-                self.state = 50
+                self.state = 48
                 self._errHandler.sync(self)
                 _alt = self._interp.adaptivePredict(self._input,0,self._ctx)
 
@@ -390,10 +378,10 @@ class STIXPatternParser ( Parser ):
         self.enterRecursionRule(localctx, 4, self.RULE_observationExpressionOr, _p)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 52
+            self.state = 50
             self.observationExpressionAnd(0)
             self._ctx.stop = self._input.LT(-1)
-            self.state = 59
+            self.state = 57
             self._errHandler.sync(self)
             _alt = self._interp.adaptivePredict(self._input,1,self._ctx)
             while _alt!=2 and _alt!=ATN.INVALID_ALT_NUMBER:
@@ -403,15 +391,15 @@ class STIXPatternParser ( Parser ):
                     _prevctx = localctx
                     localctx = STIXPatternParser.ObservationExpressionOrContext(self, _parentctx, _parentState)
                     self.pushNewRecursionContext(localctx, _startState, self.RULE_observationExpressionOr)
-                    self.state = 54
+                    self.state = 52
                     if not self.precpred(self._ctx, 2):
                         from antlr4.error.Errors import FailedPredicateException
                         raise FailedPredicateException(self, "self.precpred(self._ctx, 2)")
-                    self.state = 55
+                    self.state = 53
                     self.match(STIXPatternParser.OR)
-                    self.state = 56
+                    self.state = 54
                     self.observationExpressionOr(3) 
-                self.state = 61
+                self.state = 59
                 self._errHandler.sync(self)
                 _alt = self._interp.adaptivePredict(self._input,1,self._ctx)
 
@@ -465,10 +453,10 @@ class STIXPatternParser ( Parser ):
         self.enterRecursionRule(localctx, 6, self.RULE_observationExpressionAnd, _p)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 63
+            self.state = 61
             self.observationExpression(0)
             self._ctx.stop = self._input.LT(-1)
-            self.state = 70
+            self.state = 68
             self._errHandler.sync(self)
             _alt = self._interp.adaptivePredict(self._input,2,self._ctx)
             while _alt!=2 and _alt!=ATN.INVALID_ALT_NUMBER:
@@ -478,15 +466,15 @@ class STIXPatternParser ( Parser ):
                     _prevctx = localctx
                     localctx = STIXPatternParser.ObservationExpressionAndContext(self, _parentctx, _parentState)
                     self.pushNewRecursionContext(localctx, _startState, self.RULE_observationExpressionAnd)
-                    self.state = 65
+                    self.state = 63
                     if not self.precpred(self._ctx, 2):
                         from antlr4.error.Errors import FailedPredicateException
                         raise FailedPredicateException(self, "self.precpred(self._ctx, 2)")
-                    self.state = 66
+                    self.state = 64
                     self.match(STIXPatternParser.AND)
-                    self.state = 67
+                    self.state = 65
                     self.observationExpressionAnd(3) 
-                self.state = 72
+                self.state = 70
                 self._errHandler.sync(self)
                 _alt = self._interp.adaptivePredict(self._input,2,self._ctx)
 
@@ -635,7 +623,7 @@ class STIXPatternParser ( Parser ):
         self.enterRecursionRule(localctx, 8, self.RULE_observationExpression, _p)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 82
+            self.state = 80
             self._errHandler.sync(self)
             token = self._input.LA(1)
             if token in [STIXPatternParser.LBRACK]:
@@ -643,29 +631,29 @@ class STIXPatternParser ( Parser ):
                 self._ctx = localctx
                 _prevctx = localctx
 
-                self.state = 74
+                self.state = 72
                 self.match(STIXPatternParser.LBRACK)
-                self.state = 75
+                self.state = 73
                 self.comparisonExpression(0)
-                self.state = 76
+                self.state = 74
                 self.match(STIXPatternParser.RBRACK)
                 pass
             elif token in [STIXPatternParser.LPAREN]:
                 localctx = STIXPatternParser.ObservationExpressionCompoundContext(self, localctx)
                 self._ctx = localctx
                 _prevctx = localctx
-                self.state = 78
+                self.state = 76
                 self.match(STIXPatternParser.LPAREN)
-                self.state = 79
+                self.state = 77
                 self.observationExpressions(0)
-                self.state = 80
+                self.state = 78
                 self.match(STIXPatternParser.RPAREN)
                 pass
             else:
                 raise NoViableAltException(self)
 
             self._ctx.stop = self._input.LT(-1)
-            self.state = 92
+            self.state = 90
             self._errHandler.sync(self)
             _alt = self._interp.adaptivePredict(self._input,5,self._ctx)
             while _alt!=2 and _alt!=ATN.INVALID_ALT_NUMBER:
@@ -673,44 +661,44 @@ class STIXPatternParser ( Parser ):
                     if self._parseListeners is not None:
                         self.triggerExitRuleEvent()
                     _prevctx = localctx
-                    self.state = 90
+                    self.state = 88
                     self._errHandler.sync(self)
                     la_ = self._interp.adaptivePredict(self._input,4,self._ctx)
                     if la_ == 1:
                         localctx = STIXPatternParser.ObservationExpressionStartStopContext(self, STIXPatternParser.ObservationExpressionContext(self, _parentctx, _parentState))
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_observationExpression)
-                        self.state = 84
+                        self.state = 82
                         if not self.precpred(self._ctx, 3):
                             from antlr4.error.Errors import FailedPredicateException
                             raise FailedPredicateException(self, "self.precpred(self._ctx, 3)")
-                        self.state = 85
+                        self.state = 83
                         self.startStopQualifier()
                         pass
 
                     elif la_ == 2:
                         localctx = STIXPatternParser.ObservationExpressionWithinContext(self, STIXPatternParser.ObservationExpressionContext(self, _parentctx, _parentState))
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_observationExpression)
-                        self.state = 86
+                        self.state = 84
                         if not self.precpred(self._ctx, 2):
                             from antlr4.error.Errors import FailedPredicateException
                             raise FailedPredicateException(self, "self.precpred(self._ctx, 2)")
-                        self.state = 87
+                        self.state = 85
                         self.withinQualifier()
                         pass
 
                     elif la_ == 3:
                         localctx = STIXPatternParser.ObservationExpressionRepeatedContext(self, STIXPatternParser.ObservationExpressionContext(self, _parentctx, _parentState))
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_observationExpression)
-                        self.state = 88
+                        self.state = 86
                         if not self.precpred(self._ctx, 1):
                             from antlr4.error.Errors import FailedPredicateException
                             raise FailedPredicateException(self, "self.precpred(self._ctx, 1)")
-                        self.state = 89
+                        self.state = 87
                         self.repeatedQualifier()
                         pass
 
              
-                self.state = 94
+                self.state = 92
                 self._errHandler.sync(self)
                 _alt = self._interp.adaptivePredict(self._input,5,self._ctx)
 
@@ -764,10 +752,10 @@ class STIXPatternParser ( Parser ):
         self.enterRecursionRule(localctx, 10, self.RULE_comparisonExpression, _p)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 96
+            self.state = 94
             self.comparisonExpressionAnd(0)
             self._ctx.stop = self._input.LT(-1)
-            self.state = 103
+            self.state = 101
             self._errHandler.sync(self)
             _alt = self._interp.adaptivePredict(self._input,6,self._ctx)
             while _alt!=2 and _alt!=ATN.INVALID_ALT_NUMBER:
@@ -777,15 +765,15 @@ class STIXPatternParser ( Parser ):
                     _prevctx = localctx
                     localctx = STIXPatternParser.ComparisonExpressionContext(self, _parentctx, _parentState)
                     self.pushNewRecursionContext(localctx, _startState, self.RULE_comparisonExpression)
-                    self.state = 98
+                    self.state = 96
                     if not self.precpred(self._ctx, 2):
                         from antlr4.error.Errors import FailedPredicateException
                         raise FailedPredicateException(self, "self.precpred(self._ctx, 2)")
-                    self.state = 99
+                    self.state = 97
                     self.match(STIXPatternParser.OR)
-                    self.state = 100
+                    self.state = 98
                     self.comparisonExpression(3) 
-                self.state = 105
+                self.state = 103
                 self._errHandler.sync(self)
                 _alt = self._interp.adaptivePredict(self._input,6,self._ctx)
 
@@ -839,10 +827,10 @@ class STIXPatternParser ( Parser ):
         self.enterRecursionRule(localctx, 12, self.RULE_comparisonExpressionAnd, _p)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 107
+            self.state = 105
             self.propTest()
             self._ctx.stop = self._input.LT(-1)
-            self.state = 114
+            self.state = 112
             self._errHandler.sync(self)
             _alt = self._interp.adaptivePredict(self._input,7,self._ctx)
             while _alt!=2 and _alt!=ATN.INVALID_ALT_NUMBER:
@@ -852,15 +840,15 @@ class STIXPatternParser ( Parser ):
                     _prevctx = localctx
                     localctx = STIXPatternParser.ComparisonExpressionAndContext(self, _parentctx, _parentState)
                     self.pushNewRecursionContext(localctx, _startState, self.RULE_comparisonExpressionAnd)
-                    self.state = 109
+                    self.state = 107
                     if not self.precpred(self._ctx, 2):
                         from antlr4.error.Errors import FailedPredicateException
                         raise FailedPredicateException(self, "self.precpred(self._ctx, 2)")
-                    self.state = 110
+                    self.state = 108
                     self.match(STIXPatternParser.AND)
-                    self.state = 111
+                    self.state = 109
                     self.comparisonExpressionAnd(3) 
-                self.state = 116
+                self.state = 114
                 self._errHandler.sync(self)
                 _alt = self._interp.adaptivePredict(self._input,7,self._ctx)
 
@@ -1100,144 +1088,144 @@ class STIXPatternParser ( Parser ):
         self.enterRule(localctx, 14, self.RULE_propTest)
         self._la = 0 # Token type
         try:
-            self.state = 164
+            self.state = 162
             self._errHandler.sync(self)
             la_ = self._interp.adaptivePredict(self._input,13,self._ctx)
             if la_ == 1:
                 localctx = STIXPatternParser.PropTestEqualContext(self, localctx)
                 self.enterOuterAlt(localctx, 1)
-                self.state = 117
+                self.state = 115
                 self.objectPath()
-                self.state = 118
+                self.state = 116
                 _la = self._input.LA(1)
                 if not(_la==STIXPatternParser.EQ or _la==STIXPatternParser.NEQ):
                     self._errHandler.recoverInline(self)
                 else:
                     self._errHandler.reportMatch(self)
                     self.consume()
-                self.state = 119
+                self.state = 117
                 self.primitiveLiteral()
                 pass
 
             elif la_ == 2:
                 localctx = STIXPatternParser.PropTestOrderContext(self, localctx)
                 self.enterOuterAlt(localctx, 2)
-                self.state = 121
+                self.state = 119
                 self.objectPath()
-                self.state = 122
+                self.state = 120
                 _la = self._input.LA(1)
                 if not((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << STIXPatternParser.LT) | (1 << STIXPatternParser.LE) | (1 << STIXPatternParser.GT) | (1 << STIXPatternParser.GE))) != 0)):
                     self._errHandler.recoverInline(self)
                 else:
                     self._errHandler.reportMatch(self)
                     self.consume()
-                self.state = 123
+                self.state = 121
                 self.orderableLiteral()
                 pass
 
             elif la_ == 3:
                 localctx = STIXPatternParser.PropTestSetContext(self, localctx)
                 self.enterOuterAlt(localctx, 3)
-                self.state = 125
+                self.state = 123
                 self.objectPath()
-                self.state = 127
+                self.state = 125
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
                 if _la==STIXPatternParser.NOT:
-                    self.state = 126
+                    self.state = 124
                     self.match(STIXPatternParser.NOT)
 
 
-                self.state = 129
+                self.state = 127
                 self.match(STIXPatternParser.IN)
-                self.state = 130
+                self.state = 128
                 self.setLiteral()
                 pass
 
             elif la_ == 4:
                 localctx = STIXPatternParser.PropTestLikeContext(self, localctx)
                 self.enterOuterAlt(localctx, 4)
-                self.state = 132
+                self.state = 130
                 self.objectPath()
-                self.state = 134
+                self.state = 132
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
                 if _la==STIXPatternParser.NOT:
-                    self.state = 133
+                    self.state = 131
                     self.match(STIXPatternParser.NOT)
 
 
-                self.state = 136
+                self.state = 134
                 self.match(STIXPatternParser.LIKE)
-                self.state = 137
+                self.state = 135
                 self.match(STIXPatternParser.StringLiteral)
                 pass
 
             elif la_ == 5:
                 localctx = STIXPatternParser.PropTestRegexContext(self, localctx)
                 self.enterOuterAlt(localctx, 5)
-                self.state = 139
+                self.state = 137
                 self.objectPath()
-                self.state = 141
+                self.state = 139
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
                 if _la==STIXPatternParser.NOT:
-                    self.state = 140
+                    self.state = 138
                     self.match(STIXPatternParser.NOT)
 
 
-                self.state = 143
+                self.state = 141
                 self.match(STIXPatternParser.MATCHES)
-                self.state = 144
+                self.state = 142
                 self.match(STIXPatternParser.StringLiteral)
                 pass
 
             elif la_ == 6:
                 localctx = STIXPatternParser.PropTestIsSubsetContext(self, localctx)
                 self.enterOuterAlt(localctx, 6)
-                self.state = 146
+                self.state = 144
                 self.objectPath()
-                self.state = 148
+                self.state = 146
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
                 if _la==STIXPatternParser.NOT:
-                    self.state = 147
+                    self.state = 145
                     self.match(STIXPatternParser.NOT)
 
 
-                self.state = 150
+                self.state = 148
                 self.match(STIXPatternParser.ISSUBSET)
-                self.state = 151
+                self.state = 149
                 self.match(STIXPatternParser.StringLiteral)
                 pass
 
             elif la_ == 7:
                 localctx = STIXPatternParser.PropTestIsSupersetContext(self, localctx)
                 self.enterOuterAlt(localctx, 7)
-                self.state = 153
+                self.state = 151
                 self.objectPath()
-                self.state = 155
+                self.state = 153
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
                 if _la==STIXPatternParser.NOT:
-                    self.state = 154
+                    self.state = 152
                     self.match(STIXPatternParser.NOT)
 
 
-                self.state = 157
+                self.state = 155
                 self.match(STIXPatternParser.ISSUPERSET)
-                self.state = 158
+                self.state = 156
                 self.match(STIXPatternParser.StringLiteral)
                 pass
 
             elif la_ == 8:
                 localctx = STIXPatternParser.PropTestParenContext(self, localctx)
                 self.enterOuterAlt(localctx, 8)
-                self.state = 160
+                self.state = 158
                 self.match(STIXPatternParser.LPAREN)
-                self.state = 161
+                self.state = 159
                 self.comparisonExpression(0)
-                self.state = 162
+                self.state = 160
                 self.match(STIXPatternParser.RPAREN)
                 pass
 
@@ -1288,13 +1276,13 @@ class STIXPatternParser ( Parser ):
         self.enterRule(localctx, 16, self.RULE_startStopQualifier)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 166
+            self.state = 164
             self.match(STIXPatternParser.START)
-            self.state = 167
+            self.state = 165
             self.match(STIXPatternParser.StringLiteral)
-            self.state = 168
+            self.state = 166
             self.match(STIXPatternParser.STOP)
-            self.state = 169
+            self.state = 167
             self.match(STIXPatternParser.StringLiteral)
         except RecognitionException as re:
             localctx.exception = re
@@ -1313,12 +1301,14 @@ class STIXPatternParser ( Parser ):
         def WITHIN(self):
             return self.getToken(STIXPatternParser.WITHIN, 0)
 
+        def SECONDS(self):
+            return self.getToken(STIXPatternParser.SECONDS, 0)
+
         def IntLiteral(self):
             return self.getToken(STIXPatternParser.IntLiteral, 0)
 
-        def timeUnit(self):
-            return self.getTypedRuleContext(STIXPatternParser.TimeUnitContext,0)
-
+        def FloatLiteral(self):
+            return self.getToken(STIXPatternParser.FloatLiteral, 0)
 
         def getRuleIndex(self):
             return STIXPatternParser.RULE_withinQualifier
@@ -1338,14 +1328,20 @@ class STIXPatternParser ( Parser ):
 
         localctx = STIXPatternParser.WithinQualifierContext(self, self._ctx, self.state)
         self.enterRule(localctx, 18, self.RULE_withinQualifier)
+        self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 171
+            self.state = 169
             self.match(STIXPatternParser.WITHIN)
-            self.state = 172
-            self.match(STIXPatternParser.IntLiteral)
-            self.state = 173
-            self.timeUnit()
+            self.state = 170
+            _la = self._input.LA(1)
+            if not(_la==STIXPatternParser.IntLiteral or _la==STIXPatternParser.FloatLiteral):
+                self._errHandler.recoverInline(self)
+            else:
+                self._errHandler.reportMatch(self)
+                self.consume()
+            self.state = 171
+            self.match(STIXPatternParser.SECONDS)
         except RecognitionException as re:
             localctx.exception = re
             self._errHandler.reportError(self, re)
@@ -1389,11 +1385,11 @@ class STIXPatternParser ( Parser ):
         self.enterRule(localctx, 20, self.RULE_repeatedQualifier)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 175
+            self.state = 173
             self.match(STIXPatternParser.REPEATS)
-            self.state = 176
+            self.state = 174
             self.match(STIXPatternParser.IntLiteral)
-            self.state = 177
+            self.state = 175
             self.match(STIXPatternParser.TIMES)
         except RecognitionException as re:
             localctx.exception = re
@@ -1445,17 +1441,17 @@ class STIXPatternParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 179
+            self.state = 177
             self.objectType()
-            self.state = 180
+            self.state = 178
             self.match(STIXPatternParser.COLON)
-            self.state = 181
+            self.state = 179
             self.firstPathComponent()
-            self.state = 183
+            self.state = 181
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             if _la==STIXPatternParser.DOT or _la==STIXPatternParser.LBRACK:
-                self.state = 182
+                self.state = 180
                 self.objectPathComponent(0)
 
 
@@ -1496,7 +1492,7 @@ class STIXPatternParser ( Parser ):
         self.enterRule(localctx, 24, self.RULE_objectType)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 185
+            self.state = 183
             self.match(STIXPatternParser.Identifier)
         except RecognitionException as re:
             localctx.exception = re
@@ -1535,7 +1531,7 @@ class STIXPatternParser ( Parser ):
         self.enterRule(localctx, 26, self.RULE_firstPathComponent)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 187
+            self.state = 185
             self.match(STIXPatternParser.Identifier)
         except RecognitionException as re:
             localctx.exception = re
@@ -1635,7 +1631,7 @@ class STIXPatternParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 195
+            self.state = 193
             self._errHandler.sync(self)
             token = self._input.LA(1)
             if token in [STIXPatternParser.DOT]:
@@ -1643,32 +1639,32 @@ class STIXPatternParser ( Parser ):
                 self._ctx = localctx
                 _prevctx = localctx
 
-                self.state = 190
+                self.state = 188
                 self.match(STIXPatternParser.DOT)
-                self.state = 191
+                self.state = 189
                 self.match(STIXPatternParser.Identifier)
                 pass
             elif token in [STIXPatternParser.LBRACK]:
                 localctx = STIXPatternParser.IndexPathStepContext(self, localctx)
                 self._ctx = localctx
                 _prevctx = localctx
-                self.state = 192
+                self.state = 190
                 self.match(STIXPatternParser.LBRACK)
-                self.state = 193
+                self.state = 191
                 _la = self._input.LA(1)
                 if not(_la==STIXPatternParser.IntLiteral or _la==STIXPatternParser.ASTERISK):
                     self._errHandler.recoverInline(self)
                 else:
                     self._errHandler.reportMatch(self)
                     self.consume()
-                self.state = 194
+                self.state = 192
                 self.match(STIXPatternParser.RBRACK)
                 pass
             else:
                 raise NoViableAltException(self)
 
             self._ctx.stop = self._input.LT(-1)
-            self.state = 201
+            self.state = 199
             self._errHandler.sync(self)
             _alt = self._interp.adaptivePredict(self._input,16,self._ctx)
             while _alt!=2 and _alt!=ATN.INVALID_ALT_NUMBER:
@@ -1678,13 +1674,13 @@ class STIXPatternParser ( Parser ):
                     _prevctx = localctx
                     localctx = STIXPatternParser.PathStepContext(self, STIXPatternParser.ObjectPathComponentContext(self, _parentctx, _parentState))
                     self.pushNewRecursionContext(localctx, _startState, self.RULE_objectPathComponent)
-                    self.state = 197
+                    self.state = 195
                     if not self.precpred(self._ctx, 3):
                         from antlr4.error.Errors import FailedPredicateException
                         raise FailedPredicateException(self, "self.precpred(self._ctx, 3)")
-                    self.state = 198
+                    self.state = 196
                     self.objectPathComponent(4) 
-                self.state = 203
+                self.state = 201
                 self._errHandler.sync(self)
                 _alt = self._interp.adaptivePredict(self._input,16,self._ctx)
 
@@ -1741,36 +1737,36 @@ class STIXPatternParser ( Parser ):
         self.enterRule(localctx, 30, self.RULE_setLiteral)
         self._la = 0 # Token type
         try:
-            self.state = 217
+            self.state = 215
             self._errHandler.sync(self)
             la_ = self._interp.adaptivePredict(self._input,18,self._ctx)
             if la_ == 1:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 204
+                self.state = 202
                 self.match(STIXPatternParser.LPAREN)
-                self.state = 205
+                self.state = 203
                 self.match(STIXPatternParser.RPAREN)
                 pass
 
             elif la_ == 2:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 206
+                self.state = 204
                 self.match(STIXPatternParser.LPAREN)
-                self.state = 207
+                self.state = 205
                 self.primitiveLiteral()
-                self.state = 212
+                self.state = 210
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
                 while _la==STIXPatternParser.COMMA:
-                    self.state = 208
+                    self.state = 206
                     self.match(STIXPatternParser.COMMA)
-                    self.state = 209
+                    self.state = 207
                     self.primitiveLiteral()
-                    self.state = 214
+                    self.state = 212
                     self._errHandler.sync(self)
                     _la = self._input.LA(1)
 
-                self.state = 215
+                self.state = 213
                 self.match(STIXPatternParser.RPAREN)
                 pass
 
@@ -1815,17 +1811,17 @@ class STIXPatternParser ( Parser ):
         localctx = STIXPatternParser.PrimitiveLiteralContext(self, self._ctx, self.state)
         self.enterRule(localctx, 32, self.RULE_primitiveLiteral)
         try:
-            self.state = 221
+            self.state = 219
             self._errHandler.sync(self)
             token = self._input.LA(1)
             if token in [STIXPatternParser.IntLiteral, STIXPatternParser.FloatLiteral, STIXPatternParser.HexLiteral, STIXPatternParser.BinaryLiteral, STIXPatternParser.StringLiteral, STIXPatternParser.TimestampLiteral]:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 219
+                self.state = 217
                 self.orderableLiteral()
                 pass
             elif token in [STIXPatternParser.BoolLiteral]:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 220
+                self.state = 218
                 self.match(STIXPatternParser.BoolLiteral)
                 pass
             else:
@@ -1884,72 +1880,9 @@ class STIXPatternParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 223
+            self.state = 221
             _la = self._input.LA(1)
             if not((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << STIXPatternParser.IntLiteral) | (1 << STIXPatternParser.FloatLiteral) | (1 << STIXPatternParser.HexLiteral) | (1 << STIXPatternParser.BinaryLiteral) | (1 << STIXPatternParser.StringLiteral) | (1 << STIXPatternParser.TimestampLiteral))) != 0)):
-                self._errHandler.recoverInline(self)
-            else:
-                self._errHandler.reportMatch(self)
-                self.consume()
-        except RecognitionException as re:
-            localctx.exception = re
-            self._errHandler.reportError(self, re)
-            self._errHandler.recover(self, re)
-        finally:
-            self.exitRule()
-        return localctx
-
-    class TimeUnitContext(ParserRuleContext):
-
-        def __init__(self, parser, parent=None, invokingState=-1):
-            super(STIXPatternParser.TimeUnitContext, self).__init__(parent, invokingState)
-            self.parser = parser
-
-        def MILLISECONDS(self):
-            return self.getToken(STIXPatternParser.MILLISECONDS, 0)
-
-        def SECONDS(self):
-            return self.getToken(STIXPatternParser.SECONDS, 0)
-
-        def MINUTES(self):
-            return self.getToken(STIXPatternParser.MINUTES, 0)
-
-        def HOURS(self):
-            return self.getToken(STIXPatternParser.HOURS, 0)
-
-        def DAYS(self):
-            return self.getToken(STIXPatternParser.DAYS, 0)
-
-        def MONTHS(self):
-            return self.getToken(STIXPatternParser.MONTHS, 0)
-
-        def YEARS(self):
-            return self.getToken(STIXPatternParser.YEARS, 0)
-
-        def getRuleIndex(self):
-            return STIXPatternParser.RULE_timeUnit
-
-        def enterRule(self, listener):
-            if hasattr(listener, "enterTimeUnit"):
-                listener.enterTimeUnit(self)
-
-        def exitRule(self, listener):
-            if hasattr(listener, "exitTimeUnit"):
-                listener.exitTimeUnit(self)
-
-
-
-
-    def timeUnit(self):
-
-        localctx = STIXPatternParser.TimeUnitContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 36, self.RULE_timeUnit)
-        self._la = 0 # Token type
-        try:
-            self.enterOuterAlt(localctx, 1)
-            self.state = 225
-            _la = self._input.LA(1)
-            if not((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << STIXPatternParser.MILLISECONDS) | (1 << STIXPatternParser.SECONDS) | (1 << STIXPatternParser.MINUTES) | (1 << STIXPatternParser.HOURS) | (1 << STIXPatternParser.DAYS) | (1 << STIXPatternParser.MONTHS) | (1 << STIXPatternParser.YEARS))) != 0)):
                 self._errHandler.recoverInline(self)
             else:
                 self._errHandler.reportMatch(self)

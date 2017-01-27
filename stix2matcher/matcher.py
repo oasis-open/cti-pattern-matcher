@@ -1237,44 +1237,19 @@ class MatchListener(STIXPatternListener):
 
     def exitWithinQualifier(self, ctx):
         """
-        Consumes a unit string, produced by exitTimeUnit().
+        Consumes nothing (the unit is always seconds).
         Produces a dateutil.relativedelta.relativedelta object, representing
           the specified interval.
         """
 
-        debug_label = u"exitWithinQualifier"
-        unit = self.__pop(debug_label)
-        value = _literal_terminal_to_python_val(ctx.IntLiteral())
-        if value < 0:
-            raise MatcherException(u"Invalid WITHIN value: {}".format(value))
+        value = _literal_terminal_to_python_val(ctx.FloatLiteral() or ctx.IntLiteral())
+        debug_label = u"exitWithinQualifier ({})".format(value)
+        if value <= 0:
+            raise MatcherException(u"Invalid WITHIN value (must be positive): {}".format(value))
 
-        if unit == u"years":
-            delta = dateutil.relativedelta.relativedelta(years=value)
-        elif unit == u"months":
-            delta = dateutil.relativedelta.relativedelta(months=value)
-        elif unit == u"days":
-            delta = dateutil.relativedelta.relativedelta(days=value)
-        elif unit == u"hours":
-            delta = dateutil.relativedelta.relativedelta(hours=value)
-        elif unit == u"minutes":
-            delta = dateutil.relativedelta.relativedelta(minutes=value)
-        elif unit == u"seconds":
-            delta = dateutil.relativedelta.relativedelta(seconds=value)
-        elif unit == u"milliseconds":
-            delta = dateutil.relativedelta.relativedelta(microseconds=value*1000)
-        else:
-            raise MatcherException(u"Unsupported WITHIN unit: {}".format(unit))
+        delta = dateutil.relativedelta.relativedelta(seconds=value)
 
         self.__push(delta, debug_label)
-
-    def exitTimeUnit(self, ctx):
-        """
-        Consumes nothing
-        Produces the time unit (e.g. "days", "hours", etc) converted to
-          lower case.
-        """
-        unit = ctx.getText().lower()
-        self.__push(unit, u"exitTimeUnit")
 
     def exitComparisonExpression(self, ctx):
         """
