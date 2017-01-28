@@ -16,6 +16,7 @@ import six
 import socket
 import struct
 import sys
+import unicodedata
 
 import antlr4
 import antlr4.error.Errors
@@ -1530,6 +1531,7 @@ class MatchListener(STIXPatternListener):
 
         obs_values = self.__pop(debug_label)
 
+        operand_str = unicodedata.normalize("NFC", operand_str)
         regex = _like_to_regex(operand_str)
         # compile and cache this to improve performance
         compiled_re = re.compile(regex)
@@ -1539,6 +1541,7 @@ class MatchListener(STIXPatternListener):
             if not isinstance(value, six.text_type):
                 return False
 
+            value = unicodedata.normalize("NFC", value)
             result = compiled_re.match(value)
             if ctx.NOT():
                 result = not result
@@ -1572,6 +1575,7 @@ class MatchListener(STIXPatternListener):
         obs_values = self.__pop(debug_label)
 
         regex = _literal_terminal_to_python_val(regex_terminal)
+        regex = unicodedata.normalize("NFC", regex)
         compiled_re = re.compile(regex)
 
         def regex_pred(value):
@@ -1579,6 +1583,7 @@ class MatchListener(STIXPatternListener):
                 return False
 
             # Don't need a full-string match
+            value = unicodedata.normalize("NFC", value)
             result = compiled_re.search(value)
             if ctx.NOT():
                 result = not result
