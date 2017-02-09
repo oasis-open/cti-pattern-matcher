@@ -1,6 +1,3 @@
-import datetime
-
-import dateutil.tz
 import pytest
 
 from stix2matcher.matcher import match
@@ -8,7 +5,9 @@ from stix2matcher.matcher import match
 
 _observations = [
     {
-        "type": "cybox-container",
+        "type": "observed-data",
+        "number_observed": 1,
+        "first_observed": "2011-12-03T21:34:41Z",
         "objects": {
             "0": {
                 "type": "binary_test",
@@ -21,8 +20,6 @@ _observations = [
         }
     }
 ]
-
-_timestamps = [datetime.datetime.now(dateutil.tz.tzutc())] * len(_observations)
 
 
 @pytest.mark.parametrize("pattern", [
@@ -50,7 +47,7 @@ _timestamps = [datetime.datetime.now(dateutil.tz.tzutc())] * len(_observations)
     "[binary_test:bin_hex = '\x01\x02\x03\x04']",
 ])
 def test_binary_match(pattern):
-    assert match(pattern, _observations, _timestamps)
+    assert match(pattern, _observations)
 
 
 @pytest.mark.parametrize("pattern", [
@@ -69,4 +66,4 @@ def test_binary_match(pattern):
     u"[binary_test:name_u < b'YWxpY2U=']",
 ])
 def test_binary_nomatch(pattern):
-    assert not match(pattern, _observations, _timestamps)
+    assert not match(pattern, _observations)

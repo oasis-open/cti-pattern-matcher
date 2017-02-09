@@ -15,7 +15,6 @@ import re
 import six
 import socket
 import struct
-import sys
 import unicodedata
 
 import antlr4
@@ -27,49 +26,50 @@ from stix2matcher.grammars.STIXPatternLexer import STIXPatternLexer
 from stix2matcher.grammars.STIXPatternParser import STIXPatternParser
 
 
-# TODO: convert to using STIX Observed Data. See
-# https://github.com/oasis-open/cti-pattern-matcher/issues/11
-
-# Example cybox-container.  Note that these have no timestamps.
-# Those are assigned externally to CybOX.  A container plus a
-# timestamp is an "observation".
+# Example observed-data SDO.  This represents N observations, where N is
+# the value of the "number_observed" property (in this case, 5).
 #
 # {
-#   "type":"cybox-container",
-#   "spec_version":"3.0",
-#   "objects":{
-#     "0":{
-#       "type":"file-object",
-#       "hashes":{
-#         "sha-256":"bf07a7fbb825fc0aae7bf4a1177b2b31fcf8a3feeaf7092761e18c859ee52"
+#   "type": "observed-data",
+#   "id": "observed-data--b67d30ff-02ac-498a-92f9-32f845f448cf",
+#   "created": "2016-04-06T19:58:16.000Z",
+#   "modified": "2016-04-06T19:58:16.000Z",
+#   "first_observed": "2005-01-21T11:17:41Z",
+#   "last_observed": "2005-01-21T11:22:41Z",
+#   "number_observed": 5,
+#   "objects": {
+#     "0": {
+#       "type": "file",
+#       "hashes": {
+#         "sha-256": "bf07a7fbb825fc0aae7bf4a1177b2b31fcf8a3feeaf7092761e18c859ee52"
 #       }
 #     },
-#     "1":{
-#       "type":"file-object",
-#       "hashes":{
-#         "md5":"22A0FB8F3879FB569F8A3FF65850A82E"
+#     "1": {
+#       "type": "file",
+#       "hashes": {
+#         "md5": "22A0FB8F3879FB569F8A3FF65850A82E"
 #       }
 #     },
-#     "2":{
-#       "type":"file-object",
-#       "hashes":{
-#         "md5":"8D98A25E9D0662B1F4CA3BF22D6F53E9"
+#     "2": {
+#       "type": "file",
+#       "hashes": {
+#         "md5": "8D98A25E9D0662B1F4CA3BF22D6F53E9"
 #       }
 #     },
-#     "3":{
-#       "type":"file-object",
-#       "hashes":{
-#         "sha-256":"aec070645fe53ee3b3763059376134f058cc337247c978add178b6ccdfb00"
+#     "3": {
+#       "type": "file",
+#       "hashes": {
+#         "sha-256": "aec070645fe53ee3b3763059376134f058cc337247c978add178b6ccdfb00"
 #       },
-#       "mime_type":"application/zip",
-#       "extended_properties":{
-#         "archive":{
-#           "file_refs":[
+#       "mime_type": "application/zip",
+#       "extensions": {
+#         "archive-ext": {
+#           "contains_refs": [
 #             "0",
 #             "1",
 #             "2"
 #           ],
-#           "version":"5.0"
+#           "version": "5.0"
 #         }
 #       }
 #     }
@@ -645,7 +645,7 @@ def _dereference_cyber_obs_objs(cyber_obs_objs, cyber_obs_obj_references, ref_pr
 
     :param cyber_obs_objs: The context for reference resolution.  This is a mapping
         from Cyber Observable object ID to Cyber Observable object, i.e. the "objects" property of
-        a container.
+        an observed-data SDO.
     :param cyber_obs_obj_references: An iterable of Cyber Observable object references.  These
         must all be strings, otherwise an exception is raised.
     :param ref_prop_name: For better error messages, the reference property
@@ -853,27 +853,29 @@ class MatchListener(STIXPatternListener):
     affecting correctness.
     """
 
-    # TODO: convert to using STIX Observed Data.
-    def __init__(self, observations, timestamps, verbose=False):
+    def __init__(self, observed_data_sdos, verbose=False):
         """
         Initialize this match listener.
 
-        :param observations: A list of cybox containers.
-        :param timestamps: A list of timestamps, as timezone-aware
-            datetime.datetime objects.  If these are not "aware" objects,
-            comparisons with other timestamps in patterns will fail.  There
-            must be the same number of timestamps, as containers.  They
-            correspond to each other: the i'th timestamp is for the i'th
-            container.
+        :param observed_data_sdos: A list of STIX observed-data SDOs.
         :param verbose: If True, dump detailed information about triggered
             callbacks and stack activity to stdout.  This can provide useful
             information about what the matcher is doing.
         """
-        self.__observations = observations
-        self.__timestamps = timestamps
 
-        # Need one timestamp per observation
-        assert len(self.__observations) == len(self.__timestamps)
+        # This "unpacks" the SDOs, creating repeated observations.  This
+        # doesn't make copies of observations; the same dict is repeated
+        # several times in the list.  Same goes for the timestamps.
+        self.__observations = []
+        self.__timestamps = []
+        for sdo in observed_data_sdos:
+            self.__observations.extend(
+                itertools.repeat(sdo["objects"], sdo["number_observed"])
+            )
+            self.__timestamps.extend(
+                itertools.repeat(_str_to_datetime(sdo["first_observed"]),
+                                 sdo["number_observed"])
+            )
 
         self.__verbose = verbose
         # Holds intermediate results
@@ -1340,7 +1342,7 @@ class MatchListener(STIXPatternListener):
     def exitPropTestEqual(self, ctx):
         """
         Consumes an observation data map, {obs_id: {...}, ...}, representing
-          selected values from Cyber Observable objects in each container
+          selected values from Cyber Observable objects in each observation
           (grouped by observation index and root Cyber Observable object ID).
           See exitObjectPath().
         Produces a map representing those observations with
@@ -1397,7 +1399,7 @@ class MatchListener(STIXPatternListener):
     def exitPropTestOrder(self, ctx):
         """
         Consumes an observation data map, {obs_id: {...}, ...}, representing
-          selected values from Cyber Observable objects in each container
+          selected values from Cyber Observable objects in each observation
           (grouped by observation index and root Cyber Observable object ID).
           See exitObjectPath().
         Produces a map representing those observations with
@@ -1476,7 +1478,7 @@ class MatchListener(STIXPatternListener):
         """
         Consumes (1) a set object from exitSetLiteral(), and (2) an observation
            data map, {obs_id: {...}, ...}, representing selected values from
-           Cyber Observable objects in each container (grouped by observation index and
+           Cyber Observable objects in each observation (grouped by observation index and
            root Cyber Observable object ID).  See exitObjectPath().
         Produces a map representing those observations with
           Cyber Observable object values which pass the test, each with an associated
@@ -1512,7 +1514,7 @@ class MatchListener(STIXPatternListener):
     def exitPropTestLike(self, ctx):
         """
         Consumes an observation data map, {obs_id: {...}, ...}, representing
-          selected values from Cyber Observable objects in each container
+          selected values from Cyber Observable objects in each observation
           (grouped by observation index and root Cyber Observable object ID).
           See exitObjectPath().
         Produces a map representing those observations with
@@ -1555,7 +1557,7 @@ class MatchListener(STIXPatternListener):
     def exitPropTestRegex(self, ctx):
         """
         Consumes an observation data map, {obs_id: {...}, ...}, representing
-          selected values from Cyber Observable objects in each container
+          selected values from Cyber Observable objects in each observation
           (grouped by observation index and root Cyber Observable object ID).
           See exitObjectPath().
         Produces a map representing those observations with
@@ -1597,7 +1599,7 @@ class MatchListener(STIXPatternListener):
     def exitPropTestIsSubset(self, ctx):
         """
         Consumes an observation data map, {obs_id: {...}, ...}, representing
-          selected values from Cyber Observable objects in each container
+          selected values from Cyber Observable objects in each observation
           (grouped by observation index and root Cyber Observable object ID).
           See exitObjectPath().
         Produces a map representing those observations with
@@ -1632,7 +1634,7 @@ class MatchListener(STIXPatternListener):
     def exitPropTestIsSuperset(self, ctx):
         """
         Consumes an observation data map, {obs_id: {...}, ...}, representing
-          selected values from Cyber Observable objects in each container
+          selected values from Cyber Observable objects in each observation
           (grouped by observation index and root Cyber Observable object ID).
           See exitObjectPath().
         Produces a map representing those observations with
@@ -1700,12 +1702,8 @@ class MatchListener(STIXPatternListener):
         results = {}
         for obs_idx, obs in enumerate(self.__observations):
 
-            # Skip observations without objects
-            if u"objects" not in obs:
-                continue
-
             objects_from_this_obs = {}
-            for obj_id, obj in six.iteritems(obs[u"objects"]):
+            for obj_id, obj in six.iteritems(obs):
                 if u"type" in obj and obj[u"type"] == type_:
                     objects_from_this_obs[obj_id] = [obj]
 
@@ -1721,7 +1719,7 @@ class MatchListener(STIXPatternListener):
         properties end in "_ref" or "_refs".  The former must have a string
         value, the latter must be a list of strings.  Any references which
         don't resolve are dropped and don't produce an error.  The references
-        are resolved only against the Cyber Observable objects in the same container as
+        are resolved only against the Cyber Observable objects in the same observation as
         the reference.
 
         If the property isn't a reference, this method does nothing.
@@ -1744,9 +1742,7 @@ class MatchListener(STIXPatternListener):
                 dereferenced_cyber_obs_obj_map = {}
                 for cyber_obs_obj_id, references in six.iteritems(cyber_obs_obj_map):
                     dereferenced_cyber_obs_objs = _dereference_cyber_obs_objs(
-                        # Note that "objects" must be a key of the observation,
-                        # or it wouldn't be on the stack.  See exitObjectType().
-                        self.__observations[obs_idx][u"objects"],
+                        self.__observations[obs_idx],
                         references,
                         prop_name
                     )
@@ -1777,7 +1773,7 @@ class MatchListener(STIXPatternListener):
                                 ))
 
                         dereferenced_cyber_obs_objs = _dereference_cyber_obs_objs(
-                            self.__observations[obs_idx][u"objects"],
+                            self.__observations[obs_idx],
                             reference_list,
                             prop_name
                         )
@@ -1808,8 +1804,8 @@ class MatchListener(STIXPatternListener):
           the reference resolves).  This enables subsequent path steps to step
           into the referenced Cyber Observable object(s).
 
-          If all Cyber Observable objects from a container are filtered out, the
-          container is dropped.
+          If all Cyber Observable objects from an observation are filtered out, the
+          observation is dropped.
         """
 
         prop_name = ctx.Identifier().getText()
@@ -1885,17 +1881,14 @@ class MatchListener(STIXPatternListener):
         self.__push(s, u"exitSetLiteral ({})".format(ctx.getText()))
 
 
-def match(pattern, containers, timestamps, verbose=False):
+def match(pattern, observed_data_sdos, verbose=False):
     """
-    Match the given pattern against the given containers and timestamps.
+    Match the given pattern against the given observations.
 
     :param pattern: The STIX pattern
-    :param containers: A list of cybox containers, as a list of dicts.  STIX
-        JSON should be parsed into native Python structures before calling
+    :param observed_data_sdos: A list of observed-data SDOs, as a list of dicts.
+        STIX JSON should be parsed into native Python structures before calling
         this function.
-    :param timestamps: A list of timestamps corresponding to the containers,
-        as a list of timezone-aware datetime.datetime objects.  There must be
-        the same number of timestamps as containers.
     :param verbose: Whether to dump detailed info about matcher operation
     :return: True if the pattern matches, False if not
     """
@@ -1918,7 +1911,7 @@ def match(pattern, containers, timestamps, verbose=False):
 
     # parser.setTrace(True)
 
-    matcher = MatchListener(containers, timestamps, verbose)
+    matcher = MatchListener(observed_data_sdos, verbose)
     matched = False
     try:
         tree = parser.pattern()
@@ -1966,16 +1959,10 @@ def main():
     Specify a file containing STIX Patterns, one per line.
     """)
     arg_parser.add_argument("-f", "--file", required=True, help="""
-    A file containing JSON list of CybOX containers to match against.
-    """)
-    arg_parser.add_argument("-t", "--timestamps", help="""
-    Specify a file with ISO-formatted timestamps, one per line.  If given, this
-    must have at least as many timestamps as there are containers (extras will
-    be ignored).  If not given, all containers will be assigned the current
-    time.
+    A file containing JSON list of STIX observed-data SDOs to match against.
     """)
     arg_parser.add_argument("-e", "--encoding", default="utf8", help="""
-    Set encoding used for reading container, pattern, and timestamp files.
+    Set encoding used for reading observation and pattern files.
     Must be an encoding name Python understands.  Default is utf8.
     """)
     arg_parser.add_argument("-v", "--verbose", action="store_true",
@@ -1984,28 +1971,7 @@ def main():
     args = arg_parser.parse_args()
 
     with io.open(args.file, encoding=args.encoding) as json_in:
-        containers = json.load(json_in)
-
-    if args.timestamps:
-        with io.open(args.timestamps, encoding=args.encoding) as ts_in:
-            timestamps = []
-            for line in ts_in:
-                line = line.strip()
-                if not line:
-                    continue  # skip blank lines
-                timestamp = _str_to_datetime(line, ignore_case=True)
-                timestamps.append(timestamp)
-    else:
-        timestamps = [datetime.datetime.now(dateutil.tz.tzutc())
-                      for _ in containers]
-
-    if len(timestamps) < len(containers):
-        print(u"There are fewer timestamps than containers! ({}<{})".format(
-            len(timestamps), len(containers)
-        ))
-        sys.exit(1)
-    elif len(timestamps) > len(containers):
-        timestamps = timestamps[:len(containers)]
+        observed_data_sdos = json.load(json_in)
 
     with io.open(args.patterns, encoding=args.encoding) as patterns_in:
         for pattern in patterns_in:
@@ -2015,7 +1981,7 @@ def main():
             if pattern[0] == u"#":
                 continue  # skip commented out lines
             escaped_pattern = pattern.encode("unicode_escape").decode("ascii")
-            if match(pattern, containers, timestamps, args.verbose):
+            if match(pattern, observed_data_sdos, args.verbose):
                 print(u"\nPASS: ", escaped_pattern)
             else:
                 print(u"\nFAIL: ", escaped_pattern)

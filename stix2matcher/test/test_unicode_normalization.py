@@ -1,5 +1,3 @@
-import datetime
-import dateutil.tz
 import pytest
 
 from stix2matcher.matcher import match
@@ -7,6 +5,8 @@ from stix2matcher.matcher import match
 _observations = [
     {
         "type": "cybox-container",
+        "first_observed": "2011-08-08T20:02:48Z",
+        "number_observed": 1,
         "objects": {
             "0": {
                 "type": "test",
@@ -21,8 +21,6 @@ _observations = [
         }
     }
 ]
-
-_timestamps = [datetime.datetime.now(dateutil.tz.tzutc())] * len(_observations)
 
 
 def _all_kv_pairs():
@@ -57,7 +55,7 @@ def _mismatched_kv_pairs():
     for k, v in _all_kv_pairs()
 ])
 def test_unicode_normalization_like_match(pattern):
-    assert match(pattern, _observations, _timestamps)
+    assert match(pattern, _observations)
 
 
 @pytest.mark.parametrize("pattern", [
@@ -65,7 +63,7 @@ def test_unicode_normalization_like_match(pattern):
     for k, v in _all_kv_pairs()
 ])
 def test_unicode_normalization_regex_match(pattern):
-    assert match(pattern, _observations, _timestamps)
+    assert match(pattern, _observations)
 
 
 @pytest.mark.parametrize("pattern", [
@@ -73,7 +71,7 @@ def test_unicode_normalization_regex_match(pattern):
     for k, v in _mismatched_kv_pairs()
 ])
 def test_unicode_normalization_ne_match(pattern):
-    assert match(pattern, _observations, _timestamps)
+    assert match(pattern, _observations)
 
 
 @pytest.mark.parametrize("pattern", [
@@ -81,7 +79,7 @@ def test_unicode_normalization_ne_match(pattern):
     for k, v in _matched_kv_pairs()
 ])
 def test_unicode_normalization_ne_nomatch(pattern):
-    assert not match(pattern, _observations, _timestamps)
+    assert not match(pattern, _observations)
 
 
 @pytest.mark.parametrize("pattern", [
@@ -89,7 +87,7 @@ def test_unicode_normalization_ne_nomatch(pattern):
     for k, v in _matched_kv_pairs()
 ])
 def test_unicode_normalization_eq_match(pattern):
-    assert match(pattern, _observations, _timestamps)
+    assert match(pattern, _observations)
 
 
 @pytest.mark.parametrize("pattern", [
@@ -97,7 +95,7 @@ def test_unicode_normalization_eq_match(pattern):
     for k, v in _mismatched_kv_pairs()
 ])
 def test_unicode_normalization_eq_nomatch(pattern):
-    assert not match(pattern, _observations, _timestamps)
+    assert not match(pattern, _observations)
 
 
 @pytest.mark.parametrize("pattern", [
@@ -105,7 +103,7 @@ def test_unicode_normalization_eq_nomatch(pattern):
     for k, v in _matched_kv_pairs()
 ])
 def test_unicode_normalization_set_match(pattern):
-    assert match(pattern, _observations, _timestamps)
+    assert match(pattern, _observations)
 
 
 @pytest.mark.parametrize("pattern", [
@@ -113,4 +111,4 @@ def test_unicode_normalization_set_match(pattern):
     for k, v in _mismatched_kv_pairs()
 ])
 def test_unicode_normalization_set_nomatch(pattern):
-    assert not match(pattern, _observations, _timestamps)
+    assert not match(pattern, _observations)
