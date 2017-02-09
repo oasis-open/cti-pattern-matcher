@@ -1,11 +1,12 @@
 import pytest
-import dateutil.parser
 
 from stix2matcher.matcher import match, MatcherException
 
 _observations = [
     {
-        "type": "cybox-container",
+        "type": "observed-data",
+        "first_observed": "1994-11-29T13:37:52Z",
+        "number_observed": 1,
         "objects": {
             "0": {
                 "type": u"person",
@@ -14,7 +15,9 @@ _observations = [
         }
     },
     {
-        "type": "cybox-container",
+        "type": "observed-data",
+        "first_observed": "1994-11-29T13:37:57Z",
+        "number_observed": 1,
         "objects": {
             "0": {
                 "type": u"person",
@@ -23,7 +26,9 @@ _observations = [
         }
     },
     {
-        "type": "cybox-container",
+        "type": "observed-data",
+        "first_observed": "1994-11-29T13:38:02Z",
+        "number_observed": 1,
         "objects": {
             "0": {
                 "type": u"person",
@@ -31,15 +36,6 @@ _observations = [
             }
         }
     }
-]
-
-
-_timestamps = [
-    dateutil.parser.parse(t) for t in [
-        "1994-11-29T13:37:52Z",
-        "1994-11-29T13:37:57Z",
-        "1994-11-29T13:38:02Z",
-    ]
 ]
 
 
@@ -61,7 +57,7 @@ _timestamps = [
     "[person:name matches ''] repeats 2 times start '1994-11-29T13:37:50Z' stop '1994-11-29T13:37:58Z'",
 ])
 def test_temp_qual_match(pattern):
-    assert match(pattern, _observations, _timestamps)
+    assert match(pattern, _observations)
 
 
 @pytest.mark.parametrize("pattern", [
@@ -81,7 +77,7 @@ def test_temp_qual_match(pattern):
     "[person:name not like 'foo'] start '1994-11-29T13:37:50Z' stop '1994-11-29T13:37:57Z' repeats 3 times",
 ])
 def test_temp_qual_nomatch(pattern):
-    assert not match(pattern, _observations, _timestamps)
+    assert not match(pattern, _observations)
 
 
 @pytest.mark.parametrize("pattern", [
@@ -99,4 +95,4 @@ def test_temp_qual_nomatch(pattern):
 ])
 def test_temp_qual_error(pattern):
     with pytest.raises(MatcherException):
-        match(pattern, _observations, _timestamps)
+        match(pattern, _observations)

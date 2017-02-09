@@ -1,13 +1,12 @@
-import datetime
-
-import dateutil.tz
 import pytest
 
 from stix2matcher.matcher import match, MatcherException
 
 _observations = [
     {
-        "type": "cybox-container",
+        "type": "observed-data",
+        "first_observed": "1983-04-21T15:31:06Z",
+        "number_observed": 1,
         "objects": {
             "0": {
                 "type": "event",
@@ -26,8 +25,6 @@ _observations = [
     }
 ]
 
-_timestamps = [datetime.datetime.now(dateutil.tz.tzutc())] * len(_observations)
-
 
 @pytest.mark.parametrize("pattern", [
     "[event:good_ts = t'2010-05-21T13:21:43Z']",
@@ -37,7 +34,7 @@ _timestamps = [datetime.datetime.now(dateutil.tz.tzutc())] * len(_observations)
     "[event:good_ts_frac = t'2010-05-21T13:21:43.1234Z']"
 ])
 def test_ts_match(pattern):
-    assert match(pattern, _observations, _timestamps)
+    assert match(pattern, _observations)
 
 
 @pytest.mark.parametrize("pattern", [
@@ -49,7 +46,7 @@ def test_ts_match(pattern):
     "[event:good_ts_frac != t'2010-05-21T13:21:43.1234Z']"
 ])
 def test_ts_nomatch(pattern):
-    assert not match(pattern, _observations, _timestamps)
+    assert not match(pattern, _observations)
 
 
 @pytest.mark.parametrize("pattern", [
@@ -62,7 +59,7 @@ def test_ts_nomatch(pattern):
 ])
 def test_ts_pattern_error(pattern):
     with pytest.raises(MatcherException):
-        match(pattern, _observations, _timestamps)
+        match(pattern, _observations)
 
 
 @pytest.mark.parametrize("pattern", [
@@ -72,4 +69,4 @@ def test_ts_pattern_error(pattern):
 ])
 def test_ts_json_error(pattern):
     with pytest.raises(MatcherException):
-        match(pattern, _observations, _timestamps)
+        match(pattern, _observations)

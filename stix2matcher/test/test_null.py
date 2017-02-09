@@ -1,12 +1,12 @@
-import datetime
-import dateutil
 import pytest
 
 from stix2matcher.matcher import match, MatcherException
 
 _observations = [
     {
-        "type": "cybox-container",
+        "type": "observed-data",
+        "first_observed": "2005-10-09T21:44:58Z",
+        "number_observed": 1,
         "objects": {
             "0": {
                 "type": "null_test",
@@ -15,8 +15,6 @@ _observations = [
         }
     }
 ]
-
-_timestamps = [datetime.datetime.now(dateutil.tz.tzutc())] * len(_observations)
 
 
 @pytest.mark.parametrize("pattern", [
@@ -30,14 +28,14 @@ _timestamps = [datetime.datetime.now(dateutil.tz.tzutc())] * len(_observations)
     "[null_test:name issuperset '12.23.32.12/14']"
 ])
 def test_null_json(pattern):
-    assert not match(pattern, _observations, _timestamps)
+    assert not match(pattern, _observations)
 
 
 @pytest.mark.parametrize("pattern", [
     "[null_test:name != 'alice']"
 ])
 def test_notequal_null_json(pattern):
-    assert match(pattern, _observations, _timestamps)
+    assert match(pattern, _observations)
 
 
 @pytest.mark.parametrize("pattern", [
@@ -50,4 +48,4 @@ def test_notequal_null_json(pattern):
 ])
 def test_null_pattern(pattern):
     with pytest.raises(MatcherException):
-        match(pattern, _observations, _timestamps)
+        match(pattern, _observations)

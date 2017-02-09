@@ -1,12 +1,12 @@
-import datetime
-import dateutil.tz
 import pytest
 
 from stix2matcher.matcher import match
 
 _observations = [
     {
-        "type": "cybox-container",
+        "type": "observed-data",
+        "first_observed": "2004-10-11T21:44:58Z",
+        "number_observed": 1,
         "objects": {
             "a0": {
                 "type": "person",
@@ -16,7 +16,9 @@ _observations = [
         }
     },
     {
-        "type": "cybox-container",
+        "type": "observed-data",
+        "first_observed": "2008-05-09T01:21:58.6Z",
+        "number_observed": 1,
         "objects": {
             "b0": {
                 "type": "person",
@@ -26,7 +28,9 @@ _observations = [
         }
     },
     {
-        "type": "cybox-container",
+        "type": "observed-data",
+        "first_observed": "2006-11-03T07:42:18.96Z",
+        "number_observed": 1,
         "objects": {
             "c0": {
                 "type": "person",
@@ -36,8 +40,6 @@ _observations = [
         }
     }
 ]
-
-_timestamps = [datetime.datetime.now(dateutil.tz.tzutc())] * len(_observations)
 
 
 @pytest.mark.parametrize("pattern", [
@@ -49,7 +51,7 @@ _timestamps = [datetime.datetime.now(dateutil.tz.tzutc())] * len(_observations)
     "[person:age > 20] or [person:name > 'zelda'] and [person:age < 0]"
 ])
 def test_and_or_match(pattern):
-    assert match(pattern, _observations, _timestamps)
+    assert match(pattern, _observations)
 
 
 @pytest.mark.parametrize("pattern", [
@@ -60,4 +62,4 @@ def test_and_or_match(pattern):
     "([person:age > 20] or [person:name > 'zelda']) and [person:age < 0]"
 ])
 def test_and_or_nomatch(pattern):
-    assert not match(pattern, _observations, _timestamps)
+    assert not match(pattern, _observations)
