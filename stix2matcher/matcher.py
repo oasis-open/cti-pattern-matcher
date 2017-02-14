@@ -1496,7 +1496,7 @@ class MatchListener(STIXPatternListener):
         # Only need to check one member; exitSetLiteral() ensures that all
         # members of the set have the same type.
         is_set_of_timestamps = s and \
-                               isinstance(next(iter(s)), datetime.datetime)
+            isinstance(next(iter(s)), datetime.datetime)
 
         def set_pred(value):
             # timestamp hackage: if we have a set of timestamp literals from
