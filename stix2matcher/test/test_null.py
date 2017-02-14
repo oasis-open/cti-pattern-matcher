@@ -21,7 +21,7 @@ _observations = [
     "[null_test:name > 'alice']",
     "[null_test:name <= 'alice']",
     "[null_test:name = 'alice']",
-    "[null_test:name in ('alice', 12, false)]",
+    "[null_test:name in ('alice', 'bob', 'carol')]",
     "[null_test:name like 'alice']",
     "[null_test:name matches 'alice']",
     "[null_test:name issubset '12.23.32.12/14']",
@@ -40,7 +40,7 @@ def test_notequal_null_json(pattern):
 
 @pytest.mark.parametrize("pattern", [
     "[null_test:name = null]",
-    "[null_test:name in ('alice', null, false)]",
+    "[null_test:name in (null, null, null)]",
     "[null_test:name like null]",
     "[null_test:name matches null]",
     "[null_test:name issubset null]",

@@ -10,15 +10,15 @@ _observations = [
         "objects": {
             "0": {
                 "type": "event",
-                "good_ts": "2010-05-21T13:21:43Z",
-                "good_ts_frac": "2010-05-21T13:21:43.1234Z",
+                "good_ts": u"2010-05-21T13:21:43Z",
+                "good_ts_frac": u"2010-05-21T13:21:43.1234Z",
                 "bad_ts": [
-                    "2010-05-21T13:21:43",
-                    "2010-05-21T13:21:43z",
-                    "2010-05-21t13:21:43Z",
-                    "2010/05/21T13:21:43Z",
-                    "2010-05-21T13:21:99Z",
-                    "2010-05-21T13:21Z"
+                    u"2010-05-21T13:21:43",
+                    u"2010-05-21T13:21:43z",
+                    u"2010-05-21t13:21:43Z",
+                    u"2010/05/21T13:21:43Z",
+                    u"2010-05-21T13:21:99Z",
+                    u"2010-05-21T13:21Z"
                 ]
             }
         }
@@ -31,7 +31,9 @@ _observations = [
     "[event:good_ts != t'1974-11-05T05:31:11Z']",
     "[event:good_ts > t'1974-11-05T05:31:11Z']",
     "[event:good_ts < t'3012-08-17T17:43:55Z']",
-    "[event:good_ts_frac = t'2010-05-21T13:21:43.1234Z']"
+    "[event:good_ts_frac = t'2010-05-21T13:21:43.1234Z']",
+    "[event:good_ts in (t'1953-11-26T14:25:33Z', t'2010-05-21T13:21:43Z', t'2000-06-17T17:25:51.44Z')]",
+    "[event:good_ts not in (t'1953-11-26T14:25:33Z', t'1985-07-25T20:27:52Z', t'2000-06-17T17:25:51.44Z')]"
 ])
 def test_ts_match(pattern):
     assert match(pattern, _observations)
@@ -43,7 +45,9 @@ def test_ts_match(pattern):
     "[event:good_ts = t'1974-11-05T05:31:11Z']",
     "[event:good_ts <= t'1974-11-05T05:31:11Z']",
     "[event:good_ts >= t'3012-08-17T17:43:55Z']",
-    "[event:good_ts_frac != t'2010-05-21T13:21:43.1234Z']"
+    "[event:good_ts_frac != t'2010-05-21T13:21:43.1234Z']",
+    "[event:good_ts not in (t'1953-11-26T14:25:33Z', t'2010-05-21T13:21:43Z', t'2000-06-17T17:25:51.44Z')]",
+    "[event:good_ts in (t'1953-11-26T14:25:33Z', t'1985-07-25T20:27:52Z', t'2000-06-17T17:25:51.44Z')]"
 ])
 def test_ts_nomatch(pattern):
     assert not match(pattern, _observations)
