@@ -1369,9 +1369,10 @@ class MatchListener(STIXPatternListener):
         def equality_pred(value):
 
             # timestamp hackage: if we have a timestamp literal from the
-            # pattern, try to interpret the json value as a timestamp too.
-            if literal_terminal.getSymbol().type == \
-                    STIXPatternParser.TimestampLiteral:
+            # pattern and a string from the json, try to interpret the json
+            # value as a timestamp too.
+            if isinstance(literal_value, datetime.datetime) and \
+                    isinstance(value, six.text_type):
                 try:
                     value = _str_to_datetime(value)
                 except ValueError as e:
@@ -1427,9 +1428,10 @@ class MatchListener(STIXPatternListener):
         def order_pred(value):
 
             # timestamp hackage: if we have a timestamp literal from the
-            # pattern, try to interpret the json value as a timestamp too.
-            if literal_terminal.getSymbol().type == \
-                    STIXPatternParser.TimestampLiteral:
+            # pattern and a string from the json, try to interpret the json
+            # value as a timestamp too.
+            if isinstance(literal_value, datetime.datetime) and \
+                    isinstance(value, six.text_type):
                 try:
                     value = _str_to_datetime(value)
                 except ValueError as e:
@@ -1491,7 +1493,24 @@ class MatchListener(STIXPatternListener):
         s = self.__pop(debug_label)  # pop the set
         obs_values = self.__pop(debug_label)  # pop the observation values
 
+        # Only need to check one member; exitSetLiteral() ensures that all
+        # members of the set have the same type.
+        is_set_of_timestamps = s and \
+            isinstance(next(iter(s)), datetime.datetime)
+
         def set_pred(value):
+            # timestamp hackage: if we have a set of timestamp literals from
+            # the pattern and a string from the json, try to interpret the json
+            # value as a timestamp too.
+            if is_set_of_timestamps and isinstance(value, six.text_type):
+                try:
+                    value = _str_to_datetime(value)
+                except ValueError as e:
+                    six.raise_from(
+                        MatcherException(u"Invalid timestamp in JSON: {}".format(
+                            value
+                        )), e)
+
             result = False
             try:
                 result = value in s
@@ -1877,6 +1896,13 @@ class MatchListener(STIXPatternListener):
             literal_terminal = _get_first_terminal_descendant(literal_node)
             literal_value = _literal_terminal_to_python_val(literal_terminal)
             s.add(literal_value)
+
+        # Check for homogeneity of datatypes in the set
+        if s:
+            type_ = type(next(iter(s)))
+            if not all(type(elt) is type_ for elt in s):
+                raise MatcherException("Nonhomogenous set: {}".format(
+                    ctx.getText()))
 
         self.__push(s, u"exitSetLiteral ({})".format(ctx.getText()))
 
