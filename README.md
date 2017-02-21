@@ -23,8 +23,7 @@ Installing the package creates a `stix2-matcher` script:
 
 ```
 $ stix2-matcher -h
-usage: stix2-matcher [-h] -p PATTERNS -f FILE [-t TIMESTAMPS] [-e ENCODING]
-                     [-v]
+usage: stix2-matcher [-h] -p PATTERNS -f FILE [-e ENCODING] [-v]
 
 Match STIX Patterns to STIX Observed Data
 
@@ -32,18 +31,12 @@ optional arguments:
   -h, --help            show this help message and exit
   -p PATTERNS, --patterns PATTERNS
                         Specify a file containing STIX Patterns, one per line.
-  -f FILE, --file FILE  A file containing JSON list of CybOX containers to
-                        match against.
-  -t TIMESTAMPS, --timestamps TIMESTAMPS
-                        Specify a file with ISO-formatted timestamps, one per
-                        line. If given, this must have at least as many
-                        timestamps as there are containers (extras will be
-                        ignored). If not given, all containers will be
-                        assigned the current time.
+  -f FILE, --file FILE  A file containing JSON list of STIX observed-data SDOs
+                        to match against.
   -e ENCODING, --encoding ENCODING
-                        Set encoding used for reading container, pattern, and
-                        timestamp files. Must be an encoding name Python
-                        understands. Default is utf8.
+                        Set encoding used for reading observation and pattern
+                        files. Must be an encoding name Python understands.
+                        Default is utf8.
   -v, --verbose         Be verbose
 ```
 
