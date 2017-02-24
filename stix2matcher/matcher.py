@@ -1205,7 +1205,7 @@ class MatchListener(STIXPatternListener):
 
     def exitObservationExpressionWithin(self, ctx):
         """
-        Consumes (1) a duration, as a dateutil.relativedelta,relativedelta
+        Consumes (1) a duration, as a dateutil.relativedelta.relativedelta
           object (see exitWithinQualifier()), and (2) a list of bindings.
         Produces a list of bindings which are temporally filtered according
           to the given duration.
@@ -1939,7 +1939,7 @@ class MatchListener(STIXPatternListener):
         if s:
             type_ = type(next(iter(s)))
             if not all(type(elt) is type_ for elt in s):
-                raise MatcherException("Nonhomogenous set: {}".format(
+                raise MatcherException(u"Nonhomogenous set: {}".format(
                     ctx.getText()))
 
         self.__push(s, u"exitSetLiteral ({})".format(ctx.getText()))
