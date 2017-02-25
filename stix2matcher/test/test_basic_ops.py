@@ -260,7 +260,12 @@ def test_basic_ops_emptyset_nomatch(pattern):
     assert not match(pattern, _observations)
 
 
-def test_basic_ops_set_err():
+@pytest.mark.parametrize("pattern", [
     # Sets are required to contain elements of a single type.
+    "[test:string in (1, true)]",
+    "[test:string in (1, 2.2, true)]",
+    "[test:string in (1.1, 2.2, true)]",
+])
+def test_basic_ops_set_err(pattern):
     with pytest.raises(MatcherException):
-        match("[test:int in (1, true)]", _observations)
+        match(pattern, _observations)
