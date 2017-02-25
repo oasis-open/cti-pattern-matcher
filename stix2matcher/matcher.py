@@ -1928,19 +1928,50 @@ class MatchListener(STIXPatternListener):
 
         literal_nodes = ctx.primitiveLiteral()
 
-        # make a python set from the set literal.
-        s = set()
+        # Make a python set from the set literal.  Can't go directly to a set
+        # though because values of heterogenous types might overwrite each
+        # other, e.g. 1 and True (which both hash to 1 in my tests).  So
+        # collect the values to an intermediate list first.  Do an initial
+        # homogeneity check as we go.
+        first_type = None
+        is_homogenous = True
+        python_values = []
         for literal_node in literal_nodes:
             literal_terminal = _get_first_terminal_descendant(literal_node)
             literal_value = _literal_terminal_to_python_val(literal_terminal)
-            s.add(literal_value)
+            if first_type is None:
+                first_type = type(literal_value)
+            elif first_type is not type(literal_value):
+                is_homogenous = False
+            python_values.append(literal_value)
 
-        # Check for homogeneity of datatypes in the set
-        if s:
-            type_ = type(next(iter(s)))
-            if not all(type(elt) is type_ for elt in s):
+        if python_values:
+            if is_homogenous:
+                s = set(python_values)
+            elif first_type in (int, float):
+                # Check for a mix of ints and floats; if found, let that
+                # pass through.  Python treats those more interoperably, e.g.
+                # 1.0 == 1, and hash(1.0) == hash(1), so I don't think it's
+                # necessary to promote ints to floats.
+                has_floats = has_ints = has_other = False
+                for value in python_values:
+                    if isinstance(value, int):
+                        has_ints = True
+                    elif isinstance(value, float):
+                        has_floats = True
+                    else:
+                        has_other = True
+                        break
+
+                if has_ints and has_floats and not has_other:
+                    s = set(python_values)
+                    is_homogenous = True
+
+            if not is_homogenous:
                 raise MatcherException(u"Nonhomogenous set: {}".format(
                     ctx.getText()))
+        else:
+            s = set()
 
         self.__push(s, u"exitSetLiteral ({})".format(ctx.getText()))
 

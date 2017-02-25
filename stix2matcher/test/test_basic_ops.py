@@ -13,6 +13,7 @@ _observations = [
                 "type": "test",
                 "int": 5,
                 "float": 12.658,
+                "float_int": 12.0,
                 "bool": True,
                 "string": u"hello",
                 "ip": u"11.22.33.44",
@@ -37,6 +38,7 @@ _observations = [
     "[test:int != b'AQIDBA==']",
     "[test:int != t'1965-07-19T22:41:38Z']",
     "[test:int in (-4, 5, 6)]",
+    "[test:int in (-4, 5, 6.6)]",
     "[test:int not in ('a', 'b', 'c')]"
 ])
 def test_basic_ops_int_match(pattern):
@@ -62,6 +64,7 @@ def test_basic_ops_int_match(pattern):
     "[test:int matches 'l+']",
     "[test:int not matches 'l+']",
     "[test:int not in (-4, 5, 6)]",
+    "[test:int not in (-4, 5, 6.6)]",
     "[test:int in ('a', 'b', 'c')]"
 ])
 def test_basic_ops_int_nomatch(pattern):
@@ -82,6 +85,8 @@ def test_basic_ops_int_nomatch(pattern):
     "[test:float != b'AQIDBA==']",
     "[test:float != t'1965-07-19T22:41:38Z']",
     "[test:float in (-4.21, 12.658, 964.321)]",
+    "[test:float_int in (11, 12, 13)]",
+    "[test:float_int in (11.1, 12, 13)]",
     "[test:float not in ('a', 'b', 'c')]"
 ])
 def test_basic_ops_float_match(pattern):
@@ -107,6 +112,8 @@ def test_basic_ops_float_match(pattern):
     "[test:float matches 'l+']",
     "[test:float not matches 'l+']",
     "[test:float not in (-4.21, 12.658, 964.321)]",
+    "[test:float_int not in (11, 12, 13)]",
+    "[test:float_int not in (11.1, 12, 13)]",
     "[test:float in ('a', 'b', 'c')]"
 ])
 def test_basic_ops_float_nomatch(pattern):
@@ -256,4 +263,4 @@ def test_basic_ops_emptyset_nomatch(pattern):
 def test_basic_ops_set_err():
     # Sets are required to contain elements of a single type.
     with pytest.raises(MatcherException):
-        match("[test:int in (1, true, 'hello')]", _observations)
+        match("[test:int in (1, true)]", _observations)
