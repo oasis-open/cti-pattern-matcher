@@ -869,12 +869,19 @@ class MatchListener(STIXPatternListener):
         self.__observations = []
         self.__timestamps = []
         for sdo in observed_data_sdos:
+
+            number_observed = sdo["number_observed"]
+            if number_observed < 1:
+                raise MatcherException("SDO with invalid number_observed "
+                                       "(must be >= 1): {}".format(
+                                        number_observed))
+
             self.__observations.extend(
-                itertools.repeat(sdo["objects"], sdo["number_observed"])
+                itertools.repeat(sdo, number_observed)
             )
             self.__timestamps.extend(
                 itertools.repeat(_str_to_datetime(sdo["first_observed"]),
-                                 sdo["number_observed"])
+                                 number_observed)
             )
 
         self.__verbose = verbose
@@ -929,15 +936,43 @@ class MatchListener(STIXPatternListener):
 
     def matched(self):
         """
-        After a successful parse, this will tell you whether the pattern
-        matched its input.  You should only call this if the parse succeeded.
+        After a successful parse tree traveral, this will tell you whether the
+        pattern matched its input.  You should only call this if the parse
+        succeeded and traversal completed without errors.  All of the found
+        bindings are returned.
+
+        The returned bindings will be a list of tuples of ints.  These ints
+        correspond to observations, not SDOs.  There is a difference when any
+        SDOs have number_observed > 1.  `None` can also occur in any tuple.
+        This corresponds to a portion of the pattern to which no observation
+        was bound (because a binding was not necessary).  To get the actual
+        SDOs from a binding, see get_sdos_from_binding().  If the pattern
+        didn't match, an empty list is returned.
+
+        :return: The found bindings, if any.
         """
         # At the end of the parse, the top stack element will be a list of
         # all the found bindings (as tuples).  If there is at least one, the
-        # pattern matched.  If the parse failed, the top stack element could
-        # be anything... so don't call this function in that situation!
-        return (len(self.__compute_stack) > 0 and
-                len(self.__compute_stack[0]) > 0)
+        # pattern matched.  If the tree traversal failed, the top stack element
+        # could be anything... so don't call this function in that situation!
+        if self.__compute_stack:
+            return self.__compute_stack[0]
+        return []
+
+    def get_sdos_from_binding(self, binding):
+        """
+        Resolves a binding to a list of SDOs.
+
+        :param binding: A binding, as returned from matched(); it should be an
+            iterable of ints.
+        :return: A list of SDOs.
+        """
+        sdos = []
+        for obs_idx in sorted(val for val in binding if val is not None):
+            if not sdos or sdos[-1] is not self.__observations[obs_idx]:
+                sdos.append(self.__observations[obs_idx])
+
+        return sdos
 
     def exitObservationExpressions(self, ctx):
         """
@@ -1721,8 +1756,11 @@ class MatchListener(STIXPatternListener):
         results = {}
         for obs_idx, obs in enumerate(self.__observations):
 
+            if "objects" not in obs:
+                continue
+
             objects_from_this_obs = {}
-            for obj_id, obj in six.iteritems(obs):
+            for obj_id, obj in six.iteritems(obs["objects"]):
                 if u"type" in obj and obj[u"type"] == type_:
                     objects_from_this_obs[obj_id] = [obj]
 
@@ -1909,14 +1947,17 @@ class MatchListener(STIXPatternListener):
 
 def match(pattern, observed_data_sdos, verbose=False):
     """
-    Match the given pattern against the given observations.
+    Match the given pattern against the given observations.  Returns matching
+    SDOs.  The matcher can find many bindings; this function returns the SDOs
+    corresponding to only the first binding found.
 
     :param pattern: The STIX pattern
     :param observed_data_sdos: A list of observed-data SDOs, as a list of dicts.
         STIX JSON should be parsed into native Python structures before calling
         this function.
     :param verbose: Whether to dump detailed info about matcher operation
-    :return: True if the pattern matches, False if not
+    :return: Matching SDOs if the pattern matched; an empty list if it didn't
+        match.
     """
 
     in_ = antlr4.InputStream(pattern)
@@ -1938,14 +1979,16 @@ def match(pattern, observed_data_sdos, verbose=False):
     # parser.setTrace(True)
 
     matcher = MatchListener(observed_data_sdos, verbose)
-    matched = False
+    matching_sdos = []
     try:
         tree = parser.pattern()
         # print(tree.toStringTree(recog=parser))
 
         antlr4.ParseTreeWalker.DEFAULT.walk(matcher, tree)
 
-        matched = matcher.matched()
+        found_bindings = matcher.matched()
+        if found_bindings:
+            matching_sdos = matcher.get_sdos_from_binding(found_bindings[0])
 
     except antlr4.error.Errors.ParseCancellationException as e:
         # The cancellation exception wraps the real RecognitionException which
@@ -1972,7 +2015,7 @@ def match(pattern, observed_data_sdos, verbose=False):
         six.raise_from(MatcherException(error_listener.error_message),
                        real_exc)
 
-    return matched
+    return matching_sdos
 
 
 def main():
