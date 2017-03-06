@@ -1799,7 +1799,7 @@ class MatchListener(STIXPatternListener):
                 dereferenced_cyber_obs_obj_map = {}
                 for cyber_obs_obj_id, references in six.iteritems(cyber_obs_obj_map):
                     dereferenced_cyber_obs_objs = _dereference_cyber_obs_objs(
-                        self.__observations[obs_idx],
+                        self.__observations[obs_idx]["objects"],
                         references,
                         prop_name
                     )
@@ -1830,7 +1830,7 @@ class MatchListener(STIXPatternListener):
                                 ))
 
                         dereferenced_cyber_obs_objs = _dereference_cyber_obs_objs(
-                            self.__observations[obs_idx],
+                            self.__observations[obs_idx]["objects"],
                             reference_list,
                             prop_name
                         )
