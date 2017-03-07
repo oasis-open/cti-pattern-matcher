@@ -241,27 +241,6 @@ class UnsupportedOperatorError(MatcherInternalError):
         )
 
 
-class TypeMismatchException(MatcherException):
-    """Represents some kind of type mismatch when evaluating a pattern
-    against some data.
-    """
-    def __init__(self, cmp_op, type_from_stix_json, literal_type):
-        """
-        Initialize the exception object.
-
-        :param cmp_op: The comparison operator as a string, e.g. "<="
-        :param type_from_stix_json: A python type instance
-        :param literal_type: A token type (which is an int)
-        """
-        super(TypeMismatchException, self).__init__(
-            u"Type mismatch in '{}' operation: json={}, pattern={}".format(
-                cmp_op,
-                type_from_stix_json,
-                STIXPatternParser.symbolicNames[literal_type]
-            )
-        )
-
-
 class MatcherErrorListener(antlr4.error.ErrorListener.ErrorListener):
     """
     Simple error listener which just remembers the last error message received.
@@ -1481,9 +1460,6 @@ class MatchListener(STIXPatternListener):
 
             if cmp_func is None:
                 return False
-                # raise TypeMismatchException(op_str,
-                #     type(value),
-                #     literal_terminal.getSymbol().type)
 
             try:
                 result = cmp_func(value, literal_value)
