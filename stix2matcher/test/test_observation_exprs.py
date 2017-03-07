@@ -9,8 +9,8 @@ _observations = [
         "number_observed": 1,
         "objects": {
             "a0": {
-                "type": "person",
-                "name": "alice",
+                "type": u"person",
+                "name": u"alice",
                 "age": 10
             }
         }
@@ -21,8 +21,8 @@ _observations = [
         "number_observed": 1,
         "objects": {
             "b0": {
-                "type": "person",
-                "name": "bob",
+                "type": u"person",
+                "name": u"bob",
                 "age": 17
             }
         }
@@ -33,8 +33,8 @@ _observations = [
         "number_observed": 1,
         "objects": {
             "c0": {
-                "type": "person",
-                "name": "carol",
+                "type": u"person",
+                "name": u"carol",
                 "age": 22
             }
         }
@@ -47,19 +47,25 @@ _observations = [
     "[person:name='alice'] or [person:name='carol']",
     "[person:name='alice'] or [person:name='zelda']",
     "[person:age>10] or [person:name='bob'] or [person:name>'amber']",
-    # tests operator precedence
-    "[person:age > 20] or [person:name > 'zelda'] and [person:age < 0]"
+    "[person:name='alice'] followedby [person:name>'bill']",
+    "[person:age > 20] or ([person:name > 'zelda'] followedby [person:age < 0])",
+    "[person:age > 20] or [person:name > 'zelda'] and [person:age < 0]",
+    "([person:name='carol'] followedby [person:name < 'elizabeth']) and [person:age < 15]"
 ])
-def test_and_or_match(pattern):
+def test_observation_ops_match(pattern):
     assert match(pattern, _observations)
 
 
 @pytest.mark.parametrize("pattern", [
     "[person:name='alice'] and [person:name='zelda']",
+    "[person:name='alice'] and [person:age=10]",
+    "[person:name='alice'] followedby [person:age=10]",
     "[person:name='mary'] or [person:name='zelda']",
     "[person:age > 70] or [person:name > 'zelda'] and [person:name MATCHES '^...?$']",
-    # same as precedence test above, with parentheses to alter eval order
-    "([person:age > 20] or [person:name > 'zelda']) and [person:age < 0]"
+    "[person:name='bob'] followedby [person:age<15]",
+    "[person:age > 20] or [person:name > 'zelda'] followedby [person:age < 0]",
+    "([person:age > 20] or [person:name > 'zelda']) and [person:age < 0]",
+    "[person:name='carol'] followedby [person:name < 'elizabeth'] and [person:age < 15]"
 ])
-def test_and_or_nomatch(pattern):
+def test_observation_ops_nomatch(pattern):
     assert not match(pattern, _observations)

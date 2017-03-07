@@ -241,27 +241,6 @@ class UnsupportedOperatorError(MatcherInternalError):
         )
 
 
-class TypeMismatchException(MatcherException):
-    """Represents some kind of type mismatch when evaluating a pattern
-    against some data.
-    """
-    def __init__(self, cmp_op, type_from_stix_json, literal_type):
-        """
-        Initialize the exception object.
-
-        :param cmp_op: The comparison operator as a string, e.g. "<="
-        :param type_from_stix_json: A python type instance
-        :param literal_type: A token type (which is an int)
-        """
-        super(TypeMismatchException, self).__init__(
-            u"Type mismatch in '{}' operation: json={}, pattern={}".format(
-                cmp_op,
-                type_from_stix_json,
-                STIXPatternParser.symbolicNames[literal_type]
-            )
-        )
-
-
 class MatcherErrorListener(antlr4.error.ErrorListener.ErrorListener):
     """
     Simple error listener which just remembers the last error message received.
@@ -1205,7 +1184,7 @@ class MatchListener(STIXPatternListener):
 
     def exitObservationExpressionWithin(self, ctx):
         """
-        Consumes (1) a duration, as a dateutil.relativedelta,relativedelta
+        Consumes (1) a duration, as a dateutil.relativedelta.relativedelta
           object (see exitWithinQualifier()), and (2) a list of bindings.
         Produces a list of bindings which are temporally filtered according
           to the given duration.
@@ -1481,9 +1460,6 @@ class MatchListener(STIXPatternListener):
 
             if cmp_func is None:
                 return False
-                # raise TypeMismatchException(op_str,
-                #     type(value),
-                #     literal_terminal.getSymbol().type)
 
             try:
                 result = cmp_func(value, literal_value)
@@ -1928,19 +1904,45 @@ class MatchListener(STIXPatternListener):
 
         literal_nodes = ctx.primitiveLiteral()
 
-        # make a python set from the set literal.
-        s = set()
+        # Make a python set from the set literal.  Can't go directly to a set
+        # though because values of heterogenous types might overwrite each
+        # other, e.g. 1 and True (which both hash to 1).  So collect the values
+        # to an intermediate list first.
+        first_type = None
+        has_only_numbers = is_homogenous = True
+        python_values = []
         for literal_node in literal_nodes:
             literal_terminal = _get_first_terminal_descendant(literal_node)
             literal_value = _literal_terminal_to_python_val(literal_terminal)
-            s.add(literal_value)
 
-        # Check for homogeneity of datatypes in the set
-        if s:
-            type_ = type(next(iter(s)))
-            if not all(type(elt) is type_ for elt in s):
-                raise MatcherException("Nonhomogenous set: {}".format(
+            if first_type is None:
+                first_type = type(literal_value)
+            elif first_type is not type(literal_value):
+                is_homogenous = False
+
+            # bool is a subclass of int!
+            if not isinstance(literal_value, (int, float)) or \
+                    isinstance(literal_value, bool):
+                has_only_numbers = False
+
+            python_values.append(literal_value)
+
+        if python_values:
+            if is_homogenous:
+                s = set(python_values)
+            elif has_only_numbers:
+                # If it's mix of just ints and floats, let that pass through.
+                # Python treats those more interoperably, e.g. 1.0 == 1, and
+                # hash(1.0) == hash(1), so I don't think it's necessary to
+                # promote ints to floats.
+                s = set(python_values)
+                is_homogenous = True
+
+            if not is_homogenous:
+                raise MatcherException(u"Nonhomogenous set: {}".format(
                     ctx.getText()))
+        else:
+            s = set()
 
         self.__push(s, u"exitSetLiteral ({})".format(ctx.getText()))
 
