@@ -1,13 +1,14 @@
-# Generated from STIXPattern.g4 by ANTLR 4.6
+# Generated from STIXPattern.g4 by ANTLR 4.7
 # encoding: utf-8
 from __future__ import print_function
 from antlr4 import *
 from io import StringIO
+import sys
 
 
 def serializedATN():
     with StringIO() as buf:
-        buf.write(u"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\2")
+        buf.write(u"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\2")
         buf.write(u"\63\u0211\b\1\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6")
         buf.write(u"\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\4\f\t\f\4")
         buf.write(u"\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t")
@@ -67,38 +68,38 @@ def serializedATN():
         buf.write(u"\4\2YYyy\4\2ZZzz\4\2[[{{\4\2\\\\||\5\2\62;CHch\7\2--")
         buf.write(u"\61;??C\\c|\f\2\13\17\"\"\u0087\u0087\u00a2\u00a2\u1682")
         buf.write(u"\u1682\u2002\u200c\u202a\u202b\u2031\u2031\u2061\u2061")
-        buf.write(u"\u3002\u3002\4\2\f\f\17\17\u020a\2\3\3\2\2\2\2\5\3\2")
-        buf.write(u"\2\2\2\7\3\2\2\2\2\t\3\2\2\2\2\13\3\2\2\2\2\r\3\2\2\2")
-        buf.write(u"\2\17\3\2\2\2\2\21\3\2\2\2\2\23\3\2\2\2\2\25\3\2\2\2")
-        buf.write(u"\2\27\3\2\2\2\2\31\3\2\2\2\2\33\3\2\2\2\2\35\3\2\2\2")
-        buf.write(u"\2\37\3\2\2\2\2!\3\2\2\2\2#\3\2\2\2\2%\3\2\2\2\2\'\3")
-        buf.write(u"\2\2\2\2)\3\2\2\2\2+\3\2\2\2\2-\3\2\2\2\2/\3\2\2\2\2")
-        buf.write(u"\61\3\2\2\2\2\63\3\2\2\2\2\65\3\2\2\2\2\67\3\2\2\2\2")
-        buf.write(u"9\3\2\2\2\2;\3\2\2\2\2=\3\2\2\2\2?\3\2\2\2\2A\3\2\2\2")
-        buf.write(u"\2C\3\2\2\2\2E\3\2\2\2\2G\3\2\2\2\2I\3\2\2\2\2K\3\2\2")
-        buf.write(u"\2\2M\3\2\2\2\2O\3\2\2\2\2Q\3\2\2\2\2S\3\2\2\2\2U\3\2")
-        buf.write(u"\2\2\2W\3\2\2\2\2Y\3\2\2\2\2[\3\2\2\2\2]\3\2\2\2\2\u0099")
-        buf.write(u"\3\2\2\2\2\u009b\3\2\2\2\2\u009d\3\2\2\2\3\u00a0\3\2")
-        buf.write(u"\2\2\5\u00ad\3\2\2\2\7\u00bb\3\2\2\2\t\u00c5\3\2\2\2")
-        buf.write(u"\13\u00cf\3\2\2\2\r\u00de\3\2\2\2\17\u00e0\3\2\2\2\21")
-        buf.write(u"\u0100\3\2\2\2\23\u0104\3\2\2\2\25\u0107\3\2\2\2\27\u010b")
-        buf.write(u"\3\2\2\2\31\u0116\3\2\2\2\33\u011b\3\2\2\2\35\u0123\3")
-        buf.write(u"\2\2\2\37\u012e\3\2\2\2!\u0137\3\2\2\2#\u013c\3\2\2\2")
-        buf.write(u"%\u013f\3\2\2\2\'\u0145\3\2\2\2)\u014a\3\2\2\2+\u0152")
-        buf.write(u"\3\2\2\2-\u0157\3\2\2\2/\u015d\3\2\2\2\61\u0164\3\2\2")
-        buf.write(u"\2\63\u016c\3\2\2\2\65\u0183\3\2\2\2\67\u0188\3\2\2\2")
-        buf.write(u"9\u018e\3\2\2\2;\u0190\3\2\2\2=\u0192\3\2\2\2?\u0195")
-        buf.write(u"\3\2\2\2A\u0197\3\2\2\2C\u019a\3\2\2\2E\u019c\3\2\2\2")
-        buf.write(u"G\u019e\3\2\2\2I\u01a0\3\2\2\2K\u01a2\3\2\2\2M\u01a4")
-        buf.write(u"\3\2\2\2O\u01a6\3\2\2\2Q\u01a8\3\2\2\2S\u01aa\3\2\2\2")
-        buf.write(u"U\u01ac\3\2\2\2W\u01ae\3\2\2\2Y\u01b0\3\2\2\2[\u01b2")
-        buf.write(u"\3\2\2\2]\u01b4\3\2\2\2_\u01b6\3\2\2\2a\u01b8\3\2\2\2")
-        buf.write(u"c\u01ba\3\2\2\2e\u01bc\3\2\2\2g\u01be\3\2\2\2i\u01c0")
-        buf.write(u"\3\2\2\2k\u01c2\3\2\2\2m\u01c4\3\2\2\2o\u01c6\3\2\2\2")
-        buf.write(u"q\u01c8\3\2\2\2s\u01ca\3\2\2\2u\u01cc\3\2\2\2w\u01ce")
-        buf.write(u"\3\2\2\2y\u01d0\3\2\2\2{\u01d2\3\2\2\2}\u01d4\3\2\2\2")
-        buf.write(u"\177\u01d6\3\2\2\2\u0081\u01d8\3\2\2\2\u0083\u01da\3")
-        buf.write(u"\2\2\2\u0085\u01dc\3\2\2\2\u0087\u01de\3\2\2\2\u0089")
+        buf.write(u"\u3002\u3002\4\2\f\f\17\17\2\u020a\2\3\3\2\2\2\2\5\3")
+        buf.write(u"\2\2\2\2\7\3\2\2\2\2\t\3\2\2\2\2\13\3\2\2\2\2\r\3\2\2")
+        buf.write(u"\2\2\17\3\2\2\2\2\21\3\2\2\2\2\23\3\2\2\2\2\25\3\2\2")
+        buf.write(u"\2\2\27\3\2\2\2\2\31\3\2\2\2\2\33\3\2\2\2\2\35\3\2\2")
+        buf.write(u"\2\2\37\3\2\2\2\2!\3\2\2\2\2#\3\2\2\2\2%\3\2\2\2\2\'")
+        buf.write(u"\3\2\2\2\2)\3\2\2\2\2+\3\2\2\2\2-\3\2\2\2\2/\3\2\2\2")
+        buf.write(u"\2\61\3\2\2\2\2\63\3\2\2\2\2\65\3\2\2\2\2\67\3\2\2\2")
+        buf.write(u"\29\3\2\2\2\2;\3\2\2\2\2=\3\2\2\2\2?\3\2\2\2\2A\3\2\2")
+        buf.write(u"\2\2C\3\2\2\2\2E\3\2\2\2\2G\3\2\2\2\2I\3\2\2\2\2K\3\2")
+        buf.write(u"\2\2\2M\3\2\2\2\2O\3\2\2\2\2Q\3\2\2\2\2S\3\2\2\2\2U\3")
+        buf.write(u"\2\2\2\2W\3\2\2\2\2Y\3\2\2\2\2[\3\2\2\2\2]\3\2\2\2\2")
+        buf.write(u"\u0099\3\2\2\2\2\u009b\3\2\2\2\2\u009d\3\2\2\2\3\u00a0")
+        buf.write(u"\3\2\2\2\5\u00ad\3\2\2\2\7\u00bb\3\2\2\2\t\u00c5\3\2")
+        buf.write(u"\2\2\13\u00cf\3\2\2\2\r\u00de\3\2\2\2\17\u00e0\3\2\2")
+        buf.write(u"\2\21\u0100\3\2\2\2\23\u0104\3\2\2\2\25\u0107\3\2\2\2")
+        buf.write(u"\27\u010b\3\2\2\2\31\u0116\3\2\2\2\33\u011b\3\2\2\2\35")
+        buf.write(u"\u0123\3\2\2\2\37\u012e\3\2\2\2!\u0137\3\2\2\2#\u013c")
+        buf.write(u"\3\2\2\2%\u013f\3\2\2\2\'\u0145\3\2\2\2)\u014a\3\2\2")
+        buf.write(u"\2+\u0152\3\2\2\2-\u0157\3\2\2\2/\u015d\3\2\2\2\61\u0164")
+        buf.write(u"\3\2\2\2\63\u016c\3\2\2\2\65\u0183\3\2\2\2\67\u0188\3")
+        buf.write(u"\2\2\29\u018e\3\2\2\2;\u0190\3\2\2\2=\u0192\3\2\2\2?")
+        buf.write(u"\u0195\3\2\2\2A\u0197\3\2\2\2C\u019a\3\2\2\2E\u019c\3")
+        buf.write(u"\2\2\2G\u019e\3\2\2\2I\u01a0\3\2\2\2K\u01a2\3\2\2\2M")
+        buf.write(u"\u01a4\3\2\2\2O\u01a6\3\2\2\2Q\u01a8\3\2\2\2S\u01aa\3")
+        buf.write(u"\2\2\2U\u01ac\3\2\2\2W\u01ae\3\2\2\2Y\u01b0\3\2\2\2[")
+        buf.write(u"\u01b2\3\2\2\2]\u01b4\3\2\2\2_\u01b6\3\2\2\2a\u01b8\3")
+        buf.write(u"\2\2\2c\u01ba\3\2\2\2e\u01bc\3\2\2\2g\u01be\3\2\2\2i")
+        buf.write(u"\u01c0\3\2\2\2k\u01c2\3\2\2\2m\u01c4\3\2\2\2o\u01c6\3")
+        buf.write(u"\2\2\2q\u01c8\3\2\2\2s\u01ca\3\2\2\2u\u01cc\3\2\2\2w")
+        buf.write(u"\u01ce\3\2\2\2y\u01d0\3\2\2\2{\u01d2\3\2\2\2}\u01d4\3")
+        buf.write(u"\2\2\2\177\u01d6\3\2\2\2\u0081\u01d8\3\2\2\2\u0083\u01da")
+        buf.write(u"\3\2\2\2\u0085\u01dc\3\2\2\2\u0087\u01de\3\2\2\2\u0089")
         buf.write(u"\u01e0\3\2\2\2\u008b\u01e2\3\2\2\2\u008d\u01e4\3\2\2")
         buf.write(u"\2\u008f\u01e6\3\2\2\2\u0091\u01e8\3\2\2\2\u0093\u01ea")
         buf.write(u"\3\2\2\2\u0095\u01ec\3\2\2\2\u0097\u01ef\3\2\2\2\u0099")
@@ -258,7 +259,6 @@ class STIXPatternLexer(Lexer):
 
     decisionsToDFA = [ DFA(ds, i) for i, ds in enumerate(atn.decisionToState) ]
 
-
     IntLiteral = 1
     FloatLiteral = 2
     HexLiteral = 3
@@ -309,6 +309,8 @@ class STIXPatternLexer(Lexer):
     COMMENT = 48
     LINE_COMMENT = 49
 
+    channelNames = [ u"DEFAULT_TOKEN_CHANNEL", u"HIDDEN" ]
+
     modeNames = [ u"DEFAULT_MODE" ]
 
     literalNames = [ u"<INVALID>",
@@ -343,9 +345,9 @@ class STIXPatternLexer(Lexer):
 
     grammarFileName = u"STIXPattern.g4"
 
-    def __init__(self, input=None):
-        super(STIXPatternLexer, self).__init__(input)
-        self.checkVersion("4.6")
+    def __init__(self, input=None, output=sys.stdout):
+        super(STIXPatternLexer, self).__init__(input, output=output)
+        self.checkVersion("4.7")
         self._interp = LexerATNSimulator(self, self.atn, self.decisionsToDFA, PredictionContextCache())
         self._actions = None
         self._predicates = None

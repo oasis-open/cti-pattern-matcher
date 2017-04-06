@@ -7,9 +7,11 @@ The pattern-matcher is a prototype software tool for matching STIX Observed Data
 ## Requirements
 
 * Python 2.7.6+
-* ANTLR Python Runtime (4.6+)
- * https://pypi.python.org/pypi/antlr4-python2-runtime (Python 2)
- * https://pypi.python.org/pypi/antlr4-python3-runtime (Python 3)
+* ANTLR Python Runtime (4.7+)
+    * https://pypi.python.org/pypi/antlr4-python2-runtime (Python 2)
+    * https://pypi.python.org/pypi/antlr4-python3-runtime (Python 3)
+* typing
+    * https://pypi.python.org/pypi/typing (Python 3.0-3.4)
 * python-dateutil (https://dateutil.readthedocs.io/en/stable/)
 * six (https://six.readthedocs.io/)
 * (For running tests) - pytest (http://pytest.org/latest/getting-started.html)
@@ -53,13 +55,13 @@ repository. If the grammar changes, the code in this repository should be
 updated to match. To do so, use the Java ANTLR package to generate new Python
 source files. (The .jar file is not needed for normal use of the validator).
 
-1. Download antlr-4.6-complete.jar from http://www.antlr.org/download/
+1. Download antlr-4.7-complete.jar from http://www.antlr.org/download/
 2. Clone the stix2-json-schemas repository or download the STIXPattern.g4 file.
 3. Change to the directory containing the STIXPattern.g4 file.
 4. Run the following command
 
     ```bash
-    $ java -jar "/path/to/antlr-4.6-complete.jar" -Dlanguage=Python2 STIXPattern.g4 -o /path/to/cti-pattern-matcher/stix2matcher/grammars
+    $ java -jar "/path/to/antlr-4.7-complete.jar" -Dlanguage=Python2 STIXPattern.g4 -o /path/to/cti-pattern-matcher/stix2matcher/grammars
     ```
     
 5. Commit the resulting files to git.
