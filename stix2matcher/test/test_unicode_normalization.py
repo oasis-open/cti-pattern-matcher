@@ -6,6 +6,7 @@ _observations = [
     {
         "type": "cybox-container",
         "first_observed": "2011-08-08T20:02:48Z",
+        "last_observed": "2011-08-08T20:02:48Z",
         "number_observed": 1,
         "objects": {
             "0": {

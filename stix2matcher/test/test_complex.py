@@ -6,6 +6,7 @@ _observations = [
     {
         "type": "observed-data",
         "first_observed": "2004-10-11T21:44:58Z",
+        "last_observed": "2004-10-11T21:44:58Z",
         "number_observed": 2,
         "objects": {
             "a0": {
@@ -18,6 +19,7 @@ _observations = [
     {
         "type": "observed-data",
         "first_observed": "2004-10-11T21:45:01Z",
+        "last_observed": "2004-10-11T21:45:01Z",
         "number_observed": 3,
         "objects": {
             "b0": {
@@ -30,6 +32,7 @@ _observations = [
     {
         "type": "observed-data",
         "first_observed": "2004-10-11T21:45:02Z",
+        "last_observed": "2004-10-11T21:45:02Z",
         "number_observed": 2,
         "objects": {
             "c0": {

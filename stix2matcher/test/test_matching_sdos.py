@@ -9,6 +9,7 @@ _observations = [
         "id": "observed-data--a49751b8-b041-4c00-96c2-76af472bfbbe",
         "type": "observed-data",
         "first_observed": "1994-11-29T13:37:52Z",
+        "last_observed": "1994-11-29T13:37:52Z",
         "number_observed": 1,
         "objects": {
             "0": {
@@ -21,6 +22,7 @@ _observations = [
         "id": "observed-data--7d34018e-986c-4817-a2c5-21fe95284109",
         "type": "observed-data",
         "first_observed": "1994-11-29T13:37:57Z",
+        "last_observed": "1994-11-29T13:37:57Z",
         "number_observed": 1,
         "objects": {
             "0": {
@@ -33,6 +35,7 @@ _observations = [
         "id": "observed-data--52a5bab7-2cfd-40c6-a35a-b5bcb8afb11b",
         "type": "observed-data",
         "first_observed": "1994-11-29T13:38:02Z",
+        "last_observed": "1994-11-29T13:38:02Z",
         "number_observed": 1,
         "objects": {
             "0": {
