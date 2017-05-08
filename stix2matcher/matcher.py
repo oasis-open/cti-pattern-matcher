@@ -1728,7 +1728,9 @@ class MatchListener(STIXPatternListener):
         Produces a map, {observation-idx: {...}, ...}, representing those
         Cyber Observable objects with the given type.  See exitObjectPath().
         """
-        type_ = ctx.Identifier().getText()
+        type_token = ctx.IdentifierWithoutHyphen() or ctx.IdentifierWithHyphen()
+        type_ = type_token.getText()
+
         results = {}
         for obs_idx, obs in enumerate(self.__observations):
 
@@ -1841,9 +1843,11 @@ class MatchListener(STIXPatternListener):
           observation is dropped.
         """
 
-        prop_name = ctx.Identifier().getText()
-        if prop_name.startswith(u'"'):
-            prop_name = prop_name[1:-1]
+        if ctx.IdentifierWithoutHyphen():
+            prop_name = ctx.IdentifierWithoutHyphen().getText()
+        else:
+            prop_name = _literal_terminal_to_python_val(ctx.StringLiteral())
+
         debug_label = u"exitFirstPathComponent ({})".format(prop_name)
         obs_val = self.__pop(debug_label)
 
@@ -1857,9 +1861,11 @@ class MatchListener(STIXPatternListener):
         """
         Does the same as exitFirstPathComponent().
         """
-        prop_name = ctx.Identifier().getText()
-        if prop_name.startswith(u'"'):
-            prop_name = prop_name[1:-1]
+        if ctx.IdentifierWithoutHyphen():
+            prop_name = ctx.IdentifierWithoutHyphen().getText()
+        else:
+            prop_name = _literal_terminal_to_python_val(ctx.StringLiteral())
+
         debug_label = u"exitKeyPathStep ({})".format(prop_name)
         obs_val = self.__pop(debug_label)
 
