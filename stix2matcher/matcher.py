@@ -689,10 +689,10 @@ def _timestamp_intervals_within(timestamp_intervals, duration):
     # previously unoverlapped interval and obtain a solution, then we didn't
     # find the earliest last_observed time, which is a contradiction w.r.t. the
     # aforementioned construction of the test interval, so that's not possible
-    # either.  So it is impossible to find additional overlaps by moving the
-    # test interval either left or right; overlaps are maximized at our
-    # chosen test interval location.  Therefore our test interval must be a
-    # solution, if one exists.
+    # either.  So it is impossible to improve the overlap by moving the test
+    # interval either left or right; overlaps are maximized at our chosen test
+    # interval location.  Therefore our test interval must be a solution, if
+    # one exists.
 
     earliest_last_observed = min(interval[1] for interval in timestamp_intervals)
     test_interval = (earliest_last_observed, earliest_last_observed + duration)
