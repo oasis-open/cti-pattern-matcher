@@ -602,8 +602,9 @@ _OVERLAP_TOUCH_POINT = 4
 
 def _overlap(min1, max1, min2, max2):
     """
-    Test for overlap between interval [min1, max1] and [min2, max2].  The result
-    is one of four mutually exclusive values:
+    Test for overlap between interval [min1, max1] and [min2, max2].  For the
+    purposes of this function, both intervals are treated as closed.  The
+    result is one of four mutually exclusive values:
 
     - _OVERLAP_NONE: no overlap
     - _OVERLAP: the intervals overlap, such that they are not just touching
@@ -618,11 +619,12 @@ def _overlap(min1, max1, min2, max2):
         both are zero-length (i.e. all parameters are equal).  This is a kind
         of corner case, to disambiguate it from inner/outer touches.
 
-    The "touch" tests allow callers to distinguish between ordinary overlaps
+    The "touch" results allow callers to distinguish between ordinary overlaps
     and "touching" overlaps, and if it was touching, how the intervals touched
-    each other.  This is important since the specification of some pattern
-    features imply requirements that intervals may touch one way but not
-    another.
+    each other.  This essentially allows callers to behave as if one or both
+    if the intervals were not closed.  It pushes a little bit of the burden
+    onto callers, when they don't want to treat both intervals as closed.  But
+    caller code is still pretty simple; I think it simplifies the code overall.
 
     So overall, this function doesn't behave symmetrically.  You must carefully
     consider the order of intervals passed to the function, and what result(s)
@@ -670,36 +672,35 @@ def _timestamp_intervals_within(timestamp_intervals, duration):
     """
 
     # We need to find an interval of length 'duration' which overlaps all
-    # timestamp_intervals (if one exists).  To do this, we construct a test
-    # interval of the required duration from each given interval in a way that
-    # minimizes its overlap with that interval and maximizes its "reach": it
-    # overlaps the given interval and as many of the others as possible.  This
-    # "max reach" interval intersects the given interval at exactly one point,
-    # which is one of its endpoints.  It's kind of "glued" onto, and reaches
-    # out from the end.  In fact, we only need to glue a test interval onto one
-    # end of each timestamp_interval; checking both sides is redundant.  If we
-    # glue a test interval onto the high end of A and reach B, then we can
-    # always glue it onto the low end of B to reach A as well.
-    result = False
-    for idx, (first_observed, last_observed) in enumerate(timestamp_intervals):
+    # timestamp_intervals (if one exists).  It is the premise of this
+    # implementation that if any such intervals exist, one of them must be an
+    # interval which touches at the earliest last_observed time and extends to
+    # the "right" (in the direction of increasing time).  Therefore if that
+    # interval is not a solution, then there are no solutions, and the given
+    # intervals don't satisfy the constraint.
+    #
+    # The intuition is that the interval with the earliest last_observed time
+    # is the furthest left as far as overlaps are concerned.  We construct a
+    # test interval of the required duration which minimally overlaps this
+    # furthest left interval, and maximizes its reach to the right to overlap
+    # as many others as possible.  If we were to move the test interval right,
+    # we lose overlap with our furthest-left interval, so none of those test
+    # intervals can be a solution.  If we were able to move it left to reach a
+    # previously unoverlapped interval and obtain a solution, then we didn't
+    # find the earliest last_observed time, which is a contradiction w.r.t. the
+    # aforementioned construction of the test interval, so that's not possible
+    # either.  So it is impossible to find additional overlaps by moving the
+    # test interval either left or right; overlaps are maximized at our
+    # chosen test interval location.  Therefore our test interval must be a
+    # solution, if one exists.
 
-        # Only glue onto the low end of the timestamp_intervals
-        test_interval = (first_observed - duration, first_observed)
+    earliest_last_observed = min(interval[1] for interval in timestamp_intervals)
+    test_interval = (earliest_last_observed, earliest_last_observed + duration)
 
-        for test_idx, (test_first_observed, test_last_observed) in \
-            enumerate(timestamp_intervals):
-
-            # don't test overlap with the interval we glued onto; we already
-            # know that one intersects.
-            if idx == test_idx:
-                continue
-
-            # Test for any type of overlap
-            if not _overlap(test_first_observed, test_last_observed,
-                            *test_interval):
-                break
-        else:
-            result = True
+    result = True
+    for interval in timestamp_intervals:
+        if not _overlap(interval[0], interval[1], *test_interval):
+            result = False
             break
 
     return result
