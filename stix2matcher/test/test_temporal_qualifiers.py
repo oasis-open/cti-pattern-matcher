@@ -2,6 +2,15 @@ import pytest
 
 from stix2matcher.matcher import match, MatcherException
 
+# I'll specially test some critical internal time-interval related code,
+# since it's easier to test it separately than create lots of SDOs and
+# patterns.
+from stix2matcher.matcher import (_overlap, _OVERLAP_NONE, _OVERLAP,
+                                  _OVERLAP_TOUCH_INNER, _OVERLAP_TOUCH_OUTER,
+                                  _OVERLAP_TOUCH_POINT)
+from stix2matcher.matcher import _timestamp_intervals_within
+
+
 _observations = [
     {
         "type": "observed-data",
@@ -101,13 +110,8 @@ def test_temp_qual_error(pattern):
         match(pattern, _observations)
 
 
-# Do some checking of critical code dealing with timestamp ranges.  It's
-# pretty generic and much easier to test with ints than timestamps.
-from stix2matcher.matcher import (_overlap, _OVERLAP_NONE, _OVERLAP,
-                                  _OVERLAP_TOUCH_INNER, _OVERLAP_TOUCH_OUTER,
-                                  _OVERLAP_TOUCH_POINT)
-from stix2matcher.matcher import _timestamp_intervals_within
-
+# The below tests use ints instead of timestamps.  The code is generic enough
+# and it's much easier to test with simple ints.
 
 @pytest.mark.parametrize("min1,max1,min2,max2,expected_overlap", [
     (1, 1, 1, 1, _OVERLAP_TOUCH_POINT),
@@ -210,4 +214,3 @@ def test_within_nomatch(interval1, interval2, duration):
     pattern = "([person:name='alice'] and [person:name='bob']) " \
               "within {0} seconds".format(duration)
     assert not match(pattern, _observations)
-

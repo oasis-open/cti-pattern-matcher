@@ -593,8 +593,8 @@ def _disjoint(first_seq, *rest_seq):
 
 
 # Constants used as return values of the _overlap() function.
-_OVERLAP_NONE        = 0
-_OVERLAP             = 1
+_OVERLAP_NONE = 0
+_OVERLAP = 1
 _OVERLAP_TOUCH_INNER = 2
 _OVERLAP_TOUCH_OUTER = 3
 _OVERLAP_TOUCH_POINT = 4
@@ -936,7 +936,7 @@ class MatchListener(STIXPatternListener):
         # doesn't make copies of observations; the same dict is repeated
         # several times in the list.  Same goes for the timestamps.
         self.__observations = []
-        self.__time_intervals = [] # 2-tuples of first,last timestamps
+        self.__time_intervals = []  # 2-tuples of first,last timestamps
         for sdo in observed_data_sdos:
 
             number_observed = sdo["number_observed"]
@@ -1332,7 +1332,7 @@ class MatchListener(STIXPatternListener):
             for binding in bindings:
                 in_bounds = all(
                     _overlap(start_time, stop_time, *self.__time_intervals[obs_id])
-                        in (_OVERLAP, _OVERLAP_TOUCH_OUTER)
+                    in (_OVERLAP, _OVERLAP_TOUCH_OUTER)
                     for obs_id in binding if obs_id is not None
                 )
 
