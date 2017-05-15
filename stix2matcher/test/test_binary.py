@@ -8,6 +8,7 @@ _observations = [
         "type": "observed-data",
         "number_observed": 1,
         "first_observed": "2011-12-03T21:34:41Z",
+        "last_observed": "2011-12-03T21:34:41Z",
         "objects": {
             "0": {
                 "type": "binary_test",

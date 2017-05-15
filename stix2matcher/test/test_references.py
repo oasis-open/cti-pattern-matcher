@@ -7,6 +7,7 @@ _observations = [
         "type": "observed-data",
         "number_observed": 1,
         "first_observed": "1984-06-26T13:53:04Z",
+        "last_observed": "1984-06-26T13:53:04Z",
         "objects": {
             "0": {
                 "type": "person",

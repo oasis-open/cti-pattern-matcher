@@ -592,26 +592,116 @@ def _disjoint(first_seq, *rest_seq):
     )
 
 
-def _timestamps_within(timestamps, duration):
-    """
-    Checks whether the given timestamps are within the given duration, i.e.
-    the difference between the earliest and latest is <= the duration.
+# Constants used as return values of the _overlap() function.
+_OVERLAP_NONE = 0
+_OVERLAP = 1
+_OVERLAP_TOUCH_INNER = 2
+_OVERLAP_TOUCH_OUTER = 3
+_OVERLAP_TOUCH_POINT = 4
 
-    :param timestamps: An iterable of timestamps (datetime.datetime)
+
+def _overlap(min1, max1, min2, max2):
+    """
+    Test for overlap between interval [min1, max1] and [min2, max2].  For the
+    purposes of this function, both intervals are treated as closed.  The
+    result is one of four mutually exclusive values:
+
+    - _OVERLAP_NONE: no overlap
+    - _OVERLAP: the intervals overlap, such that they are not just touching
+        at endpoints
+    - _OVERLAP_TOUCH_INNER: the intervals overlap at exactly one point, and
+        that point is max1==min2 (the "inner" two parameters of this function),
+        and at least one is of non-zero length
+    - _OVERLAP_TOUCH_OUTER: the intervals overlap at exactly one point, and
+        that point is min1==max2 (the "outer" two parameters of this function),
+        and at least one is of non-zero length
+    - _OVERLAP_TOUCH_POINT: the intervals overlap at exactly one point, and
+        both are zero-length (i.e. all parameters are equal).  This is a kind
+        of corner case, to disambiguate it from inner/outer touches.
+
+    The "touch" results allow callers to distinguish between ordinary overlaps
+    and "touching" overlaps, and if it was touching, how the intervals touched
+    each other.  This essentially allows callers to behave as if one or both
+    if the intervals were not closed.  It pushes a little bit of the burden
+    onto callers, when they don't want to treat both intervals as closed.  But
+    caller code is still pretty simple; I think it simplifies the code overall.
+
+    So overall, this function doesn't behave symmetrically.  You must carefully
+    consider the order of intervals passed to the function, and what result(s)
+    you're looking for.
+
+    min1 must be <= max1, and analogously for min2 and max2.  There are
+    assertions to emphasize this assumption.  The parameters can be of any type
+    which is comparable for <= and equality.
+
+    :param min1: the lower bound of the first interval
+    :param max1: the upper bound of the first interval
+    :param min2: the lower bound of the second interval
+    :param max2: the upper bound of the second interval
+    :return: The overlap result
+    """
+    assert min1 <= max1
+    assert min2 <= max2
+
+    if min1 == max1 == min2 == max2:
+        return _OVERLAP_TOUCH_POINT
+    elif max1 == min2:
+        return _OVERLAP_TOUCH_INNER
+    elif max2 == min1:
+        return _OVERLAP_TOUCH_OUTER
+    elif min2 <= max1 and min1 <= max2:
+        return _OVERLAP
+
+    return _OVERLAP_NONE
+
+
+def _timestamp_intervals_within(timestamp_intervals, duration):
+    """
+    Checks whether it's possible to choose a timestamp from each of the given
+    intervals such that all are within the given duration.  Viewed another way,
+    this function checks whether an interval of the given duration exists,
+    which overlaps all intervals in timestamp_intervals (including just
+    "touching" on either end).
+
+    :param timestamp_intervals: A sequence of 2-tuples of timestamps
+        (datetime.datetime), each being a first_observed and last_observed
+        timestamp for an observation.
     :param duration: A duration (dateutil.relativedelta.relativedelta).
-    :return: True if the timestamps are within the given duration, False
-        otherwise.
+    :return: True if a set of timestamps exists which satisfies the duration
+        constraint; False otherwise.
     """
 
-    earliest_timestamp = None
-    latest_timestamp = None
-    for timestamp in timestamps:
-        if earliest_timestamp is None or timestamp < earliest_timestamp:
-            earliest_timestamp = timestamp
-        if latest_timestamp is None or timestamp > latest_timestamp:
-            latest_timestamp = timestamp
+    # We need to find an interval of length 'duration' which overlaps all
+    # timestamp_intervals (if one exists).  It is the premise of this
+    # implementation that if any such intervals exist, one of them must be an
+    # interval which touches at the earliest last_observed time and extends to
+    # the "right" (in the direction of increasing time).  Therefore if that
+    # interval is not a solution, then there are no solutions, and the given
+    # intervals don't satisfy the constraint.
+    #
+    # The intuition is that the interval with the earliest last_observed time
+    # is the furthest left as far as overlaps are concerned.  We construct a
+    # test interval of the required duration which minimally overlaps this
+    # furthest left interval, and maximizes its reach to the right to overlap
+    # as many others as possible.  If we were to move the test interval right,
+    # we lose overlap with our furthest-left interval, so none of those test
+    # intervals can be a solution.  If we were able to move it left to reach a
+    # previously unoverlapped interval and obtain a solution, then we didn't
+    # find the earliest last_observed time, which is a contradiction w.r.t. the
+    # aforementioned construction of the test interval, so that's not possible
+    # either.  So it is impossible to improve the overlap by moving the test
+    # interval either left or right; overlaps are maximized at our chosen test
+    # interval location.  Therefore our test interval must be a solution, if
+    # one exists.
 
-    result = (earliest_timestamp + duration) >= latest_timestamp
+    earliest_last_observed = min(interval[1] for interval in timestamp_intervals)
+    test_interval = (earliest_last_observed, earliest_last_observed + duration)
+
+    result = True
+    for interval in timestamp_intervals:
+        if not _overlap(interval[0], interval[1], *test_interval):
+            result = False
+            break
 
     return result
 
@@ -846,7 +936,7 @@ class MatchListener(STIXPatternListener):
         # doesn't make copies of observations; the same dict is repeated
         # several times in the list.  Same goes for the timestamps.
         self.__observations = []
-        self.__timestamps = []
+        self.__time_intervals = []  # 2-tuples of first,last timestamps
         for sdo in observed_data_sdos:
 
             number_observed = sdo["number_observed"]
@@ -858,8 +948,9 @@ class MatchListener(STIXPatternListener):
             self.__observations.extend(
                 itertools.repeat(sdo, number_observed)
             )
-            self.__timestamps.extend(
-                itertools.repeat(_str_to_datetime(sdo["first_observed"]),
+            self.__time_intervals.extend(
+                itertools.repeat((_str_to_datetime(sdo["first_observed"]),
+                                  _str_to_datetime(sdo["last_observed"])),
                                  number_observed)
             )
 
@@ -961,9 +1052,11 @@ class MatchListener(STIXPatternListener):
           are the RHS and LHS operands.
         Produces a joined list of binding tuples.  This essentially produces a
           filtered cartesian cross-product of the LHS and RHS tuples.  Results
-          include those with no duplicate observation IDs, and such that the
-          timestamps on the RHS binding are >= than the timestamps on the
-          LHS binding.
+          include those with no duplicate observation IDs, and such that it is
+          possible to choose legal timestamps (i.e. within the interval defined
+          by the observation's first_observed and last_observed timestamps) for
+          all observations such that the timestamps on the RHS binding are >=
+          than the timestamps on the LHS binding.
         """
         num_operands = len(ctx.observationExpressions())
 
@@ -981,22 +1074,27 @@ class MatchListener(STIXPatternListener):
             joined_bindings = []
             for lhs_binding in lhs_bindings:
 
-                latest_lhs_timestamp = max(
-                    self.__timestamps[obs_id] for obs_id in lhs_binding
+                # To ensure a satisfying selection of timestamps is possible,
+                # we make the most optimistic choices: choose the earliest
+                # possible timestamps for LHS bindings and latest possible for
+                # RHS bindings.  Then as a shortcut, only ensure proper
+                # ordering of the latest LHS timestamp and earliest RHS
+                # timestamp.
+                latest_lhs_first_timestamp = max(
+                    self.__time_intervals[obs_id][0] for obs_id in lhs_binding
                     if obs_id is not None
                 )
 
                 for rhs_binding in rhs_bindings:
 
                     if _disjoint(lhs_binding, rhs_binding):
-                        # make sure the rhs timestamps are later (or equal)
-                        # than all lhs timestamps.
-                        earliest_rhs_timestamp = min(
-                            self.__timestamps[obs_id] for obs_id in rhs_binding
+                        earliest_rhs_last_timestamp = min(
+                            self.__time_intervals[obs_id][1]
+                            for obs_id in rhs_binding
                             if obs_id is not None
                         )
 
-                        if latest_lhs_timestamp <= earliest_rhs_timestamp:
+                        if latest_lhs_first_timestamp <= earliest_rhs_last_timestamp:
                             joined_bindings.append(lhs_binding + rhs_binding)
 
             self.__push(joined_bindings, debug_label)
@@ -1197,9 +1295,9 @@ class MatchListener(STIXPatternListener):
 
         filtered_bindings = []
         for binding in bindings:
-            if _timestamps_within(
-                    (self.__timestamps[obs_id] for obs_id in binding
-                     if obs_id is not None),
+            if _timestamp_intervals_within(
+                    [self.__time_intervals[obs_id] for obs_id in binding
+                     if obs_id is not None],
                     duration):
                 filtered_bindings.append(binding)
 
@@ -1210,7 +1308,13 @@ class MatchListener(STIXPatternListener):
         Consumes (1) a time interval as a pair of datetime.datetime objects,
           and (2) a list of bindings.
         Produces a list of bindings which are temporally filtered according
-          to the given time interval.
+          to the given time interval.  A binding passes the test if it is
+          possible to select legal timestamps for all observations which are
+          within the start/stop interval, not including the stop value, which
+          is disallowed by the spec.  Viewed another way, we require overlap
+          with the SDO interval and start/stop interval, including only touching
+          at the start point, but not including only touching at the stop
+          point.
         """
 
         debug_label = u"exitObservationExpressionStartStop"
@@ -1221,14 +1325,19 @@ class MatchListener(STIXPatternListener):
         bindings = self.__pop(debug_label)
 
         filtered_bindings = []
-        for binding in bindings:
-            in_bounds = all(
-                start_time <= self.__timestamps[obs_id] < stop_time
-                for obs_id in binding if obs_id is not None
-            )
+        # If start and stop are equal, the constraint is impossible to
+        # satisfy, since a value can't be both >= and < the same number.
+        # And of course it's impossible if start > stop.
+        if start_time < stop_time:
+            for binding in bindings:
+                in_bounds = all(
+                    _overlap(start_time, stop_time, *self.__time_intervals[obs_id])
+                    in (_OVERLAP, _OVERLAP_TOUCH_OUTER)
+                    for obs_id in binding if obs_id is not None
+                )
 
-            if in_bounds:
-                filtered_bindings.append(binding)
+                if in_bounds:
+                    filtered_bindings.append(binding)
 
         self.__push(filtered_bindings, debug_label)
 
