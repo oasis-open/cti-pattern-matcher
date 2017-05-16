@@ -1,6 +1,7 @@
 import pytest
 
-from stix2matcher.matcher import match, MatcherException
+from stix2matcher.matcher import match
+from stix2patterns.pattern import ParseException
 
 _observations = [
     {
@@ -33,5 +34,5 @@ def test_quoting(pattern):
     "[some-type:needs-quotes = 1]"
 ])
 def test_quoting_error(pattern):
-    with pytest.raises(MatcherException):
+    with pytest.raises(ParseException):
         match(pattern, _observations)

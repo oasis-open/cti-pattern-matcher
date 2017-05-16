@@ -21,8 +21,8 @@ import antlr4
 import antlr4.error.Errors
 import antlr4.error.ErrorListener
 
+import stix2matcher.pattern
 from stix2matcher.grammars.STIXPatternListener import STIXPatternListener
-from stix2matcher.grammars.STIXPatternLexer import STIXPatternLexer
 from stix2matcher.grammars.STIXPatternParser import STIXPatternParser
 
 
@@ -2077,69 +2077,8 @@ def match(pattern, observed_data_sdos, verbose=False):
         match.
     """
 
-    in_ = antlr4.InputStream(pattern)
-    lexer = STIXPatternLexer(in_)
-    lexer.removeErrorListeners()  # remove the default "console" listener
-    token_stream = antlr4.CommonTokenStream(lexer)
-
-    parser = STIXPatternParser(token_stream)
-    parser.removeErrorListeners()  # remove the default "console" listener
-    error_listener = MatcherErrorListener()
-    parser.addErrorListener(error_listener)
-
-    # I found no public API for this...
-    # The default error handler tries to keep parsing, and I don't
-    # think that's appropriate here.  (These error handlers are only for
-    # handling the built-in RecognitionException errors.)
-    parser._errHandler = antlr4.BailErrorStrategy()
-
-    # To improve error messages, replace "<INVALID>" in the literal
-    # names with symbolic names.  This is a hack, but seemed like
-    # the simplest workaround.
-    for i, lit_name in enumerate(parser.literalNames):
-        if lit_name == u"<INVALID>":
-            parser.literalNames[i] = parser.symbolicNames[i]
-
-    # parser.setTrace(True)
-
-    matcher = MatchListener(observed_data_sdos, verbose)
-    matching_sdos = []
-    try:
-        tree = parser.pattern()
-        # print(tree.toStringTree(recog=parser))
-
-        antlr4.ParseTreeWalker.DEFAULT.walk(matcher, tree)
-
-        found_bindings = matcher.matched()
-        if found_bindings:
-            matching_sdos = matcher.get_sdos_from_binding(found_bindings[0])
-
-    except antlr4.error.Errors.ParseCancellationException as e:
-        # The cancellation exception wraps the real RecognitionException which
-        # caused the parser to bail.
-        real_exc = e.args[0]
-
-        # I want to bail when the first error is hit.  But I also want
-        # a decent error message.  When an error is encountered in
-        # Parser.match(), the BailErrorStrategy produces the
-        # ParseCancellationException.  It is not a subclass of
-        # RecognitionException, so none of the 'except' clauses which would
-        # normally report an error are invoked.
-        #
-        # Error message creation is buried in the ErrorStrategy, and I can
-        # (ab)use the API to get a message: register an error listener with
-        # the parser, force an error report, then get the message out of the
-        # listener.  Error listener registration is above; now we force its
-        # invocation.  Wish this could be cleaner...
-        parser._errHandler.reportError(parser, real_exc)
-
-        # should probably chain exceptions if we can...
-        # Should I report the cancellation or recognition exception as the
-        # cause...?
-        six.raise_from(MatcherException(error_listener.error_message),
-                       real_exc)
-
-    return matching_sdos
+    compiled_pattern = stix2matcher.pattern.Pattern(pattern)
+    return compiled_pattern.match(observed_data_sdos, verbose)
 
 
 def main():

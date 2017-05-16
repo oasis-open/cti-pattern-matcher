@@ -1,6 +1,7 @@
 import pytest
 
 from stix2matcher.matcher import match, MatcherException
+from stix2patterns.pattern import ParseException
 
 _observations = [
     {
@@ -48,5 +49,5 @@ def test_notequal_null_json(pattern):
     "[null_test:name issuperset null]"
 ])
 def test_null_pattern(pattern):
-    with pytest.raises(MatcherException):
+    with pytest.raises(ParseException):
         match(pattern, _observations)

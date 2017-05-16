@@ -1,6 +1,7 @@
 import pytest
 
 from stix2matcher.matcher import match, MatcherException
+from stix2patterns.pattern import ParseException
 
 # I'll specially test some critical internal time-interval related code,
 # since it's easier to test it separately than create lots of SDOs and
@@ -95,7 +96,6 @@ def test_temp_qual_nomatch(pattern):
 @pytest.mark.parametrize("pattern", [
     # WITHIN tests
     "[person:name = 'alice'] within 0 seconds",
-    "[person:name = 'alice'] within 1 second",
     "[person:name = 'alice'] within -123.367 seconds",
 
     # START/STOP tests
@@ -103,12 +103,22 @@ def test_temp_qual_nomatch(pattern):
     "[person:name = 'hannah'] start '1994-11-29T13:37:58Z' stop '1994-11-29T13:37:58z'",
     "[person:name = 'hannah'] start '1994-11-29t13:37:58Z' stop '1994-11-29T13:37:58'",
     "[person:name = 'hannah'] start '1994-11-29T13:37Z' stop '1994-11-29T13:37:58Z'",
-    "[person:name = 'hannah'] start '1994-11-29T13:37:58Z'",
 ])
-def test_temp_qual_error(pattern):
+def test_temp_qual_error_match(pattern):
     with pytest.raises(MatcherException):
         match(pattern, _observations)
 
+
+@pytest.mark.parametrize("pattern", [
+    # WITHIN tests
+    "[person:name = 'alice'] within 1 second",
+
+    # START/STOP tests
+    "[person:name = 'hannah'] start '1994-11-29T13:37:58Z'",
+])
+def test_temp_qual_error_parse(pattern):
+    with pytest.raises(ParseException):
+        match(pattern, _observations)
 
 # The below tests use ints instead of timestamps.  The code is generic enough
 # and it's much easier to test with simple ints.
