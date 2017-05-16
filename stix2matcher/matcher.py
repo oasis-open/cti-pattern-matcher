@@ -22,8 +22,8 @@ import antlr4.error.Errors
 import antlr4.error.ErrorListener
 
 import stix2matcher.pattern
-from stix2matcher.grammars.STIXPatternListener import STIXPatternListener
-from stix2matcher.grammars.STIXPatternParser import STIXPatternParser
+from stix2patterns.grammars.STIXPatternListener import STIXPatternListener
+from stix2patterns.grammars.STIXPatternParser import STIXPatternParser
 
 
 # Example observed-data SDO.  This represents N observations, where N is
