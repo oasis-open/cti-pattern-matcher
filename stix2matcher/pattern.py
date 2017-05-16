@@ -3,6 +3,7 @@ import antlr4
 import stix2patterns.pattern
 import stix2matcher.matcher
 
+
 class Pattern(stix2patterns.pattern.Pattern):
     """
     Represents a pattern in a "compiled" form, for more efficient reuse.
@@ -20,7 +21,7 @@ class Pattern(stix2patterns.pattern.Pattern):
         :param verbose: Whether to dump detailed info about matcher operation
         :return: Matching SDOs if the pattern matched; an empty list if it
             didn't match.
-        :raises stix2matcher.matcher.MatcherException: If an error occurs 
+        :raises stix2matcher.matcher.MatcherException: If an error occurs
             during matching
         """
         matcher = stix2matcher.matcher.MatchListener(observed_data_sdos,

@@ -123,6 +123,7 @@ def test_temp_qual_error_parse(pattern):
 # The below tests use ints instead of timestamps.  The code is generic enough
 # and it's much easier to test with simple ints.
 
+
 @pytest.mark.parametrize("min1,max1,min2,max2,expected_overlap", [
     (1, 1, 1, 1, _OVERLAP_TOUCH_POINT),
     (1, 1, 1, 2, _OVERLAP_TOUCH_INNER),
