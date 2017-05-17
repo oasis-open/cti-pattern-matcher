@@ -2084,7 +2084,7 @@ class Pattern(stix2patterns.pattern.Pattern):
 
         :param observed_data_sdos: A list of observed-data SDOs, as a list of
             dicts.  STIX JSON should be parsed into native Python structures
-            before calling this function.
+            before calling this method.
         :param verbose: Whether to dump detailed info about matcher operation
         :return: Matching SDOs if the pattern matched; an empty list if it
             didn't match.
