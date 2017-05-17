@@ -12,6 +12,7 @@ setup(
         "enum34 ; python_version ~= '3.3.0'",
         "python-dateutil",
         "six",
+        "stix2-patterns==0.3.0"
     ],
     tests_require=[
         "pytest>=2.9.2"
