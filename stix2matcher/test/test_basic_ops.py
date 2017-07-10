@@ -26,14 +26,19 @@ _observations = [
 
 
 @pytest.mark.parametrize("pattern", [
+    "[test:int = 5]",
+    "[test:int not != 5]",
     "[test:int > 3]",
+    "[test:int not < 3]",
     "[test:int < 12]",
     "[test:int > 4.9]",
     "[test:int < 5.1]",
     "[test:int >= 5]",
+    "[test:int not < 5]",
     "[test:int <= 5]",
     "[test:int != false]",
     "[test:int != true]",
+    "[test:int not = true]",
     "[test:int != 'world']",
     "[test:int != h'010203']",
     "[test:int != b'AQIDBA==']",
@@ -47,6 +52,8 @@ def test_basic_ops_int_match(pattern):
 
 
 @pytest.mark.parametrize("pattern", [
+    "[test:int not = 5]",
+    "[test:int not != 8]",
     "[test:int > 8]",
     "[test:int < 2]",
     "[test:int > 5.1]",
@@ -73,7 +80,10 @@ def test_basic_ops_int_nomatch(pattern):
 
 
 @pytest.mark.parametrize("pattern", [
+    "[test:float = 12.658]",
+    "[test:float not != 12.658]",
     "[test:float > 3]",
+    "[test:float not < 3]",
     "[test:float < 22]",
     "[test:float > 12.65799]",
     "[test:float < 12.65801]",
@@ -95,6 +105,8 @@ def test_basic_ops_float_match(pattern):
 
 
 @pytest.mark.parametrize("pattern", [
+    "[test:float not = 12.658]",
+    "[test:float != 12.658]",
     "[test:float > 22]",
     "[test:float < 3]",
     "[test:float > 12.65801]",
@@ -102,6 +114,7 @@ def test_basic_ops_float_match(pattern):
     "[test:float = false]",
     "[test:float = true]",
     "[test:float = 'world']",
+    "[test:float not != 'world']",
     "[test:float = h'010203']",
     "[test:float > h'010203']",
     "[test:float = b'AQIDBA==']",
@@ -125,7 +138,9 @@ def test_basic_ops_float_nomatch(pattern):
     "[test:bool != 1]",
     "[test:bool != 32.567]",
     "[test:bool = true]",
+    "[test:bool not != true]",
     "[test:bool != false]",
+    "[test:bool not = false]",
     "[test:bool != 'world']",
     "[test:bool != h'010203']",
     "[test:bool != b'AQIDBA==']",
@@ -141,7 +156,9 @@ def test_basic_ops_bool_match(pattern):
     "[test:bool = 1]",
     "[test:bool = 32.567]",
     "[test:bool != true]",
+    "[test:bool not = true]",
     "[test:bool = false]",
+    "[test:bool not != false]",
     "[test:bool = 'world']",
     "[test:bool = h'010203']",
     "[test:bool = b'AQIDBA==']",
@@ -163,7 +180,9 @@ def test_basic_ops_bool_nomatch(pattern):
     "[test:string != true]",
     "[test:string != false]",
     "[test:string = 'hello']",
+    "[test:string not != 'hello']",
     "[test:string != 'world']",
+    "[test:string not = 'world']",
     "[test:string > 'alice']",
     "[test:string < 'zelda']",
     "[test:string >= 'hello']",
@@ -187,7 +206,9 @@ def test_basic_ops_string_match(pattern):
     "[test:string = true]",
     "[test:string = false]",
     "[test:string != 'hello']",
+    "[test:string not = 'hello']",
     "[test:string = 'world']",
+    "[test:string not != 'world']",
     "[test:string < 'alice']",
     "[test:string > 'zelda']",
     "[test:string <= 'alice']",

@@ -1514,6 +1514,9 @@ class MatchListener(STIXPatternListener):
             if ctx.NEQ():
                 result = not result
 
+            if ctx.NOT():
+                result = not result
+
             return result
 
         passed_obs = _obs_map_prop_test(obs_values, equality_pred)
@@ -1589,6 +1592,9 @@ class MatchListener(STIXPatternListener):
                 else:
                     # shouldn't ever happen, right?
                     raise UnsupportedOperatorError(op_str)
+
+            if ctx.NOT():
+                result = not result
 
             return result
 
