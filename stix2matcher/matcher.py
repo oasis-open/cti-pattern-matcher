@@ -1482,8 +1482,10 @@ class MatchListener(STIXPatternListener):
         literal_node = ctx.primitiveLiteral()
         literal_terminal = _get_first_terminal_descendant(literal_node)
         literal_value = _literal_terminal_to_python_val(literal_terminal)
-        debug_label = u"exitPropTestEqual ({} {})".format(
-            ctx.getChild(1).getText(),
+        op_tok = ctx.EQ() or ctx.NEQ()
+        debug_label = u"exitPropTestEqual ({}{} {})".format(
+            u"NOT " if ctx.NOT() else u"",
+            op_tok.getText(),
             literal_terminal.getText()
         )
 
@@ -1543,9 +1545,10 @@ class MatchListener(STIXPatternListener):
         literal_node = ctx.orderableLiteral()
         literal_terminal = _get_first_terminal_descendant(literal_node)
         literal_value = _literal_terminal_to_python_val(literal_terminal)
-        op_str = ctx.getChild(1).getText()
-        debug_label = u"exitPropTestOrder ('{}' {})".format(
-            op_str,
+        op_tok = ctx.GT() or ctx.LT() or ctx.GE() or ctx.LE()
+        debug_label = u"exitPropTestOrder ({}{} {})".format(
+            u"NOT " if ctx.NOT() else u"",
+            op_tok.getText(),
             literal_terminal.getText()
         )
 
