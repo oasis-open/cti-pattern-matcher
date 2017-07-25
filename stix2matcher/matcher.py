@@ -1594,7 +1594,7 @@ class MatchListener(STIXPatternListener):
                     result = result >= 0
                 else:
                     # shouldn't ever happen, right?
-                    raise UnsupportedOperatorError(op_str)
+                    raise UnsupportedOperatorError(op_tok.getText())
 
             if ctx.NOT():
                 result = not result
