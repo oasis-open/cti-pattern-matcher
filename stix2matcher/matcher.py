@@ -15,6 +15,7 @@ import re
 import six
 import socket
 import struct
+import sys
 import unicodedata
 
 import antlr4
@@ -2136,6 +2137,7 @@ def main():
     """
     Can be used as a command line tool to test pattern-matcher.
     """
+    return_value = 0
 
     arg_parser = argparse.ArgumentParser(description="Match STIX Patterns to STIX Observed Data")
     arg_parser.add_argument("-p", "--patterns", required=True,  help="""
@@ -2165,10 +2167,13 @@ def main():
                 continue  # skip commented out lines
             escaped_pattern = pattern.encode("unicode_escape").decode("ascii")
             if match(pattern, observed_data_sdos, args.verbose):
-                print(u"\nPASS: ", escaped_pattern)
+                print(u"\nMATCH: ", escaped_pattern)
             else:
-                print(u"\nFAIL: ", escaped_pattern)
+                print(u"\nNO MATCH: ", escaped_pattern)
+                return_value = 1
+
+    return return_value
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())
