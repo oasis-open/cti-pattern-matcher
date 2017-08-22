@@ -2159,24 +2159,28 @@ def main():
 
     args = arg_parser.parse_args()
 
-    with io.open(args.file, encoding=args.encoding) as json_in:
-        observed_data_sdos = json.load(json_in)
+    try:
+        with io.open(args.file, encoding=args.encoding) as json_in:
+            observed_data_sdos = json.load(json_in)
 
-    with io.open(args.patterns, encoding=args.encoding) as patterns_in:
-        for pattern in patterns_in:
-            pattern = pattern.strip()
-            if not pattern:
-                continue  # skip blank lines
-            if pattern[0] == u"#":
-                continue  # skip commented out lines
-            escaped_pattern = pattern.encode("unicode_escape").decode("ascii")
-            if match(pattern, observed_data_sdos, args.verbose):
-                if args.quiet < 1:
-                    print(u"\nMATCH: ", escaped_pattern)
-            else:
-                if args.quiet < 2:
-                    print(u"\nNO MATCH: ", escaped_pattern)
-                return_value = 1
+        with io.open(args.patterns, encoding=args.encoding) as patterns_in:
+            for pattern in patterns_in:
+                pattern = pattern.strip()
+                if not pattern:
+                    continue  # skip blank lines
+                if pattern[0] == u"#":
+                    continue  # skip commented out lines
+                escaped_pattern = pattern.encode("unicode_escape").decode("ascii")
+                if match(pattern, observed_data_sdos, args.verbose):
+                    if args.quiet < 1:
+                        print(u"\nMATCH: ", escaped_pattern)
+                else:
+                    if args.quiet < 2:
+                        print(u"\nNO MATCH: ", escaped_pattern)
+                    return_value = 1
+    except Exception:
+        return_value = 2
+        sys.excepthook(*sys.exc_info())
     return return_value
 
 
