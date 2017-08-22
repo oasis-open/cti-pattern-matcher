@@ -2152,6 +2152,10 @@ def main():
     """)
     arg_parser.add_argument("-v", "--verbose", action="store_true",
                             help="""Be verbose""")
+    arg_parser.add_argument("-q", "--quiet", action="count", help="""
+    Run quietly. One -q will only print out NO MATCH information. Two will
+    produce no match-related output. This option does not affect the action
+    of -v, and error information will still be displayed.""", default=0)
 
     args = arg_parser.parse_args()
 
@@ -2167,11 +2171,12 @@ def main():
                 continue  # skip commented out lines
             escaped_pattern = pattern.encode("unicode_escape").decode("ascii")
             if match(pattern, observed_data_sdos, args.verbose):
-                print(u"\nMATCH: ", escaped_pattern)
+                if args.quiet < 1:
+                    print(u"\nMATCH: ", escaped_pattern)
             else:
-                print(u"\nNO MATCH: ", escaped_pattern)
+                if args.quiet < 2:
+                    print(u"\nNO MATCH: ", escaped_pattern)
                 return_value = 1
-
     return return_value
 
 
