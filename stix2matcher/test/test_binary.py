@@ -42,10 +42,15 @@ _observations = [
     "[binary_test:name_hex > b'YWFyZHZhcms=']",
     "[binary_test:name_hex > 'aardvark']",
 
+    "[binary_test:name_hex matches '\\\\x61li[c\\\\x01]e']",
+    "[binary_test:name_bin matches '\\\\x61li[c\\\\x01]e']",
+    "[binary_test:name_bin not matches '\\\\x62o[b\\\\x01]']",
+
     # some nonprintable binary data tests too.
     "[binary_test:bin_hex = h'01020304']",
     "[binary_test:bin_hex = b'AQIDBA==']",
     "[binary_test:bin_hex = '\x01\x02\x03\x04']",
+    "[binary_test:bin_hex matches '.*\\\\x03']",
 ])
 def test_binary_match(pattern):
     assert match(pattern, _observations)
@@ -56,9 +61,11 @@ def test_binary_match(pattern):
     u"[binary_test:name_bin = '\u0103lice']",
     u"[binary_test:name_bin > '\u0103lice']",
     u"[binary_test:name_bin < '\u0103lice']",
+    u"[binary_test:name_bin matches '\u0103lice']",
     u"[binary_test:name_hex = '\u0103lice']",
     u"[binary_test:name_hex > '\u0103lice']",
     u"[binary_test:name_hex < '\u0103lice']",
+    u"[binary_test:name_hex matches '\u0103lice']",
     u"[binary_test:name_u = h'616c696365']",
     u"[binary_test:name_u > h'616c696365']",
     u"[binary_test:name_u < h'616c696365']",
