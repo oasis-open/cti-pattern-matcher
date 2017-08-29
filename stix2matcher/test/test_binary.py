@@ -41,6 +41,8 @@ _observations = [
     "[binary_test:name_hex > h'616172647661726b']",
     "[binary_test:name_hex > b'YWFyZHZhcms=']",
     "[binary_test:name_hex > 'aardvark']",
+    r"[binary_test:name MATCHES '\\x61lice' ]",
+    "[binary_test:name MATCHES '\\\\x61lice' ]",
 
     # some nonprintable binary data tests too.
     "[binary_test:bin_hex = h'01020304']",
