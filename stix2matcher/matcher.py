@@ -15,6 +15,7 @@ import re
 import six
 import socket
 import struct
+import sys
 import unicodedata
 
 import antlr4
@@ -2136,6 +2137,7 @@ def main():
     """
     Can be used as a command line tool to test pattern-matcher.
     """
+    return_value = 0
 
     arg_parser = argparse.ArgumentParser(description="Match STIX Patterns to STIX Observed Data")
     arg_parser.add_argument("-p", "--patterns", required=True,  help="""
@@ -2150,25 +2152,37 @@ def main():
     """)
     arg_parser.add_argument("-v", "--verbose", action="store_true",
                             help="""Be verbose""")
+    arg_parser.add_argument("-q", "--quiet", action="count", help="""
+    Run quietly. One -q will only print out NO MATCH information. Two will
+    produce no match-related output. This option does not affect the action
+    of -v, and error information will still be displayed.""", default=0)
 
     args = arg_parser.parse_args()
 
-    with io.open(args.file, encoding=args.encoding) as json_in:
-        observed_data_sdos = json.load(json_in)
+    try:
+        with io.open(args.file, encoding=args.encoding) as json_in:
+            observed_data_sdos = json.load(json_in)
 
-    with io.open(args.patterns, encoding=args.encoding) as patterns_in:
-        for pattern in patterns_in:
-            pattern = pattern.strip()
-            if not pattern:
-                continue  # skip blank lines
-            if pattern[0] == u"#":
-                continue  # skip commented out lines
-            escaped_pattern = pattern.encode("unicode_escape").decode("ascii")
-            if match(pattern, observed_data_sdos, args.verbose):
-                print(u"\nPASS: ", escaped_pattern)
-            else:
-                print(u"\nFAIL: ", escaped_pattern)
+        with io.open(args.patterns, encoding=args.encoding) as patterns_in:
+            for pattern in patterns_in:
+                pattern = pattern.strip()
+                if not pattern:
+                    continue  # skip blank lines
+                if pattern[0] == u"#":
+                    continue  # skip commented out lines
+                escaped_pattern = pattern.encode("unicode_escape").decode("ascii")
+                if match(pattern, observed_data_sdos, args.verbose):
+                    if args.quiet < 1:
+                        print(u"\nMATCH: ", escaped_pattern)
+                else:
+                    if args.quiet < 2:
+                        print(u"\nNO MATCH: ", escaped_pattern)
+                    return_value = 1
+    except Exception:
+        return_value = 2
+        sys.excepthook(*sys.exc_info())
+    return return_value
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())
