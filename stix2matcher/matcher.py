@@ -1689,11 +1689,12 @@ class MatchListener(STIXPatternListener):
 
         def like_pred(value):
             # non-strings can't match
-            if not isinstance(value, six.text_type):
-                return False
+            if isinstance(value, six.text_type):
+                value = unicodedata.normalize("NFC", value)
+                result = compiled_re.match(value)
+            else:
+                result = False
 
-            value = unicodedata.normalize("NFC", value)
-            result = compiled_re.match(value)
             if ctx.NOT():
                 result = not result
 
@@ -1787,10 +1788,11 @@ class MatchListener(STIXPatternListener):
         obs_values = self.__pop(debug_label)
 
         def subnet_pred(value):
-            if not isinstance(value, six.text_type):
-                return False
+            if isinstance(value, six.text_type):
+                result = _ip_or_cidr_in_subnet(value, subnet_str)
+            else:
+                result = False
 
-            result = _ip_or_cidr_in_subnet(value, subnet_str)
             if ctx.NOT():
                 result = not result
 
@@ -1822,10 +1824,11 @@ class MatchListener(STIXPatternListener):
         obs_values = self.__pop(debug_label)
 
         def contains_pred(value):
-            if not isinstance(value, six.text_type):
-                return False
+            if isinstance(value, six.text_type):
+                result = _ip_or_cidr_in_subnet(ip_or_subnet_str, value)
+            else:
+                result = False
 
-            result = _ip_or_cidr_in_subnet(ip_or_subnet_str, value)
             if ctx.NOT():
                 result = not result
 
