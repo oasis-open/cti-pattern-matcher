@@ -1747,20 +1747,17 @@ class MatchListener(STIXPatternListener):
                 value = unicodedata.normalize("NFC", value)
                 result = compiled_re.search(value)
 
-                if ctx.NOT():
-                    result = not result
-
             elif isinstance(value, six.binary_type):
                 if is_binary_convertible:
                     result = compiled_bin_re.search(value)
                 else:
                     result = False
 
-                if ctx.NOT():
-                    result = not result
-
             else:
                 result = False
+
+            if ctx.NOT():
+                result = not result
 
             return result
 
