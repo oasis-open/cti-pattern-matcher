@@ -45,7 +45,8 @@ _observations = [
     "[test:int != t'1965-07-19T22:41:38Z']",
     "[test:int in (-4, 5, 6)]",
     "[test:int in (-4, 5, 6.6)]",
-    "[test:int not in ('a', 'b', 'c')]"
+    "[test:int not in ('a', 'b', 'c')]",
+    "[test:int not matches 'l+']",
 ])
 def test_basic_ops_int_match(pattern):
     assert match(pattern, _observations)
@@ -70,7 +71,6 @@ def test_basic_ops_int_match(pattern):
     "[test:int like 'he%']",
     "[test:int not like 'he%']",
     "[test:int matches 'l+']",
-    "[test:int not matches 'l+']",
     "[test:int not in (-4, 5, 6)]",
     "[test:int not in (-4, 5, 6.6)]",
     "[test:int in ('a', 'b', 'c')]"
@@ -98,7 +98,8 @@ def test_basic_ops_int_nomatch(pattern):
     "[test:float in (-4.21, 12.658, 964.321)]",
     "[test:float_int in (11, 12, 13)]",
     "[test:float_int in (11.1, 12, 13)]",
-    "[test:float not in ('a', 'b', 'c')]"
+    "[test:float not in ('a', 'b', 'c')]",
+    "[test:float not matches 'l+']",
 ])
 def test_basic_ops_float_match(pattern):
     assert match(pattern, _observations)
@@ -124,7 +125,6 @@ def test_basic_ops_float_match(pattern):
     "[test:float like 'he%']",
     "[test:float not like 'he%']",
     "[test:float matches 'l+']",
-    "[test:float not matches 'l+']",
     "[test:float not in (-4.21, 12.658, 964.321)]",
     "[test:float_int not in (11, 12, 13)]",
     "[test:float_int not in (11.1, 12, 13)]",
@@ -146,7 +146,8 @@ def test_basic_ops_float_nomatch(pattern):
     "[test:bool != b'AQIDBA==']",
     "[test:bool != t'1965-07-19T22:41:38Z']",
     "[test:bool in (false, true, false)]",
-    "[test:bool not in ('a', 'b', 'c')]"
+    "[test:bool not in ('a', 'b', 'c')]",
+    "[test:bool not matches 'l+']",
 ])
 def test_basic_ops_bool_match(pattern):
     assert match(pattern, _observations)
@@ -166,7 +167,6 @@ def test_basic_ops_bool_match(pattern):
     "[test:bool like 'he%']",
     "[test:bool not like 'he%']",
     "[test:bool matches 'l+']",
-    "[test:bool not matches 'l+']",
     "[test:bool not in (false, true, false)]",
     "[test:bool in ('a', 'b', 'c')]"
 ])

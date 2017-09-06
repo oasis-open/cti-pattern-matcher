@@ -11,12 +11,12 @@ _observations = [
         "last_observed": "2011-12-03T21:34:41Z",
         "objects": {
             "0": {
-                "type": "binary_test",
-                "name": "alice",
+                "type": u"binary_test",
+                "name": u"alice",
                 "name_u": u"\u0103lice",
-                "name_hex": "616c696365",
-                "name_bin": "YWxpY2U=",
-                "bin_hex": "01020304"
+                "name_hex": u"616c696365",
+                "name_bin": u"YWxpY2U=",
+                "bin_hex": u"01020304"
             }
         }
     }
@@ -42,23 +42,34 @@ _observations = [
     "[binary_test:name_hex > b'YWFyZHZhcms=']",
     "[binary_test:name_hex > 'aardvark']",
 
+    "[binary_test:name_hex matches '\\\\x61li[c\\\\x01]e']",
+    "[binary_test:name_bin matches '\\\\x61li[c\\\\x01]e']",
+    "[binary_test:name_bin not matches '\\\\x62o[b\\\\x01]']",
+    u"[binary_test:name_bin not matches '\u0103lice']",
+
     # some nonprintable binary data tests too.
     "[binary_test:bin_hex = h'01020304']",
     "[binary_test:bin_hex = b'AQIDBA==']",
     "[binary_test:bin_hex = '\x01\x02\x03\x04']",
+    "[binary_test:bin_hex matches '.*\\\\x03']",
 ])
 def test_binary_match(pattern):
     assert match(pattern, _observations)
 
 
 @pytest.mark.parametrize("pattern", [
+    "[binary_test:name_bin matches '\\\\x62o[b\\\\x01]']",
+    "[binary_test:name_hex not matches '\\\\x61li[c\\\\x01]e']",
+
     # test codepoint >= 256, in both pattern and json
     u"[binary_test:name_bin = '\u0103lice']",
     u"[binary_test:name_bin > '\u0103lice']",
     u"[binary_test:name_bin < '\u0103lice']",
+    u"[binary_test:name_bin matches '\u0103lice']",
     u"[binary_test:name_hex = '\u0103lice']",
     u"[binary_test:name_hex > '\u0103lice']",
     u"[binary_test:name_hex < '\u0103lice']",
+    u"[binary_test:name_hex matches '\u0103lice']",
     u"[binary_test:name_u = h'616c696365']",
     u"[binary_test:name_u > h'616c696365']",
     u"[binary_test:name_u < h'616c696365']",

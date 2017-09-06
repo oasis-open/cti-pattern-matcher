@@ -1729,13 +1729,33 @@ class MatchListener(STIXPatternListener):
         regex = unicodedata.normalize("NFC", regex)
         compiled_re = re.compile(regex)
 
-        def regex_pred(value):
-            if not isinstance(value, six.text_type):
-                return False
+        # Support for binary pattern matching.
+        is_binary_convertible = all(ord(c) < 256 for c in regex)
+        if is_binary_convertible:
+            if six.PY2:
+                # This will be a pattern compiled from a unicode string, but
+                # python2 doesn't seem to care.  It'll match against a 'str'
+                # just fine.
+                compiled_bin_re = compiled_re
+            else:
+                # Python3 requires an actual binary regex.
+                bin_regex = six.binary_type(ord(c) for c in regex)
+                compiled_bin_re = re.compile(bin_regex)
 
-            # Don't need a full-string match
-            value = unicodedata.normalize("NFC", value)
-            result = compiled_re.search(value)
+        def regex_pred(value):
+            if isinstance(value, six.text_type):
+                value = unicodedata.normalize("NFC", value)
+                result = compiled_re.search(value)
+
+            elif isinstance(value, six.binary_type):
+                if is_binary_convertible:
+                    result = compiled_bin_re.search(value)
+                else:
+                    result = False
+
+            else:
+                result = False
+
             if ctx.NOT():
                 result = not result
 
