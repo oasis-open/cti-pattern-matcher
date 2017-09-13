@@ -1,7 +1,5 @@
 import pytest
-
 from stix2matcher.matcher import match
-
 
 _observations = [
     {

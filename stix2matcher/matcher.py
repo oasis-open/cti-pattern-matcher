@@ -4,28 +4,26 @@ import argparse
 import base64
 import binascii
 import datetime
-import dateutil.relativedelta
-import dateutil.tz
 import io
 import itertools
 import json
 import operator
 import pprint
 import re
-import six
 import socket
 import struct
 import sys
 import unicodedata
 
 import antlr4
-import antlr4.error.Errors
 import antlr4.error.ErrorListener
-
-import stix2patterns.pattern
+import antlr4.error.Errors
+import dateutil.relativedelta
+import dateutil.tz
+import six
 from stix2patterns.grammars.STIXPatternListener import STIXPatternListener
 from stix2patterns.grammars.STIXPatternParser import STIXPatternParser
-
+import stix2patterns.pattern
 
 # Example observed-data SDO.  This represents N observations, where N is
 # the value of the "number_observed" property (in this case, 5).

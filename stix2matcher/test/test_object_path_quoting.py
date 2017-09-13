@@ -1,7 +1,7 @@
-import pytest
-
-from stix2matcher.matcher import match
 from stix2patterns.pattern import ParseException
+
+import pytest
+from stix2matcher.matcher import match
 
 _observations = [
     {

@@ -62,4 +62,7 @@ target/
 # Automatically-built grammar tokens
 *.tokens
 
+# PyCharm
+.idea/
+
 MANIFEST

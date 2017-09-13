@@ -1,4 +1,9 @@
-pytest==3.2.0
-tox==2.7.0
+bumpversion
+pre-commit
+pytest
+pytest-cov
+sphinx
+sphinx-prompt
+tox
 
 -e .
