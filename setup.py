@@ -1,21 +1,21 @@
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 setup(
     name='stix2-matcher',
-    version="0.1.0",
+    version='0.1.0',
     packages=find_packages(),
     description='Match STIX content against STIX patterns',
     install_requires=[
-        "antlr4-python2-runtime==4.7 ; python_version < '3'",
-        "antlr4-python3-runtime==4.7 ; python_version >= '3'",
-        'typing ; python_version<"3.5" and python_version>="3"',
-        "enum34 ; python_version ~= '3.3.0'",
-        "python-dateutil",
-        "six",
-        "stix2-patterns>=0.5.0",
+        'antlr4-python2-runtime==4.7 ; python_version < "3"',
+        'antlr4-python3-runtime==4.7 ; python_version >= "3"',
+        'enum34 ; python_version ~= "3.3.0"',
+        'python-dateutil',
+        'six',
+        'stix2-patterns>=0.5.0',
+        'typing ; python_version < "3.5" and python_version >= "3"',
     ],
     tests_require=[
-        "pytest>=2.9.2"
+        'pytest>=2.9.2'
     ],
     entry_points={
         'console_scripts': [
@@ -31,5 +31,6 @@ setup(
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
     ],
 )

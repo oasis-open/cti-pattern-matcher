@@ -63,7 +63,7 @@ source files. (The .jar file is not needed for normal use of the validator).
     ```bash
     $ java -jar "/path/to/antlr-4.7-complete.jar" -Dlanguage=Python2 STIXPattern.g4 -o /path/to/cti-pattern-matcher/stix2matcher/grammars
     ```
-    
+
 5. Commit the resulting files to git.
 
 ## Governance
