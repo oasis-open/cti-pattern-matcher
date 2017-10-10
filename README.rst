@@ -3,8 +3,9 @@
 cti-pattern-matcher
 ===================
 
-*This is an `OASIS Open Repository`_. See the `Governance`_ section for
-more information.*
+This is an `OASIS Open
+Repository <https://www.oasis-open.org/resources/open-repositories/>`__.
+See the `Governance <#governance>`__ section for more information.
 
 The pattern-matcher is a prototype software tool for matching STIX
 Observed Data content against patterns used in STIX Indicators. The
@@ -116,7 +117,7 @@ particular repository, and the requirement for an `Individual
 Contributor License Agreement`_ that governs intellectual property.
 
 Maintainers
-~~~~~~~~~~~
+-----------
 
 Open Repository `Maintainers`_ are responsible for oversight of this
 project’s community development activities, including evaluation of
@@ -150,12 +151,11 @@ Feedback
 Questions or comments about this Open Repository’s activities should be
 composed as GitHub issues or comments. If use of an issue/comment is not
 possible or appropriate, questions may be directed by email to the
-Maintainer(s) `listed above`_. Please send general questions about Open
+Maintainer(s) `listed above <#currentmaintainers>`__. Please send general questions about Open
 Repository participation to OASIS Staff at
 repository-admin@oasis-open.org and any specific CLA-related questions
 to repository-cla@oasis-open.org.
 
-.. _listed above: #currentMaintainers
 .. _`Open Repositories - Overview and Resources`: https://www.oasis-open.org/resources/open-repositories/
 .. _Frequently Asked Questions: https://www.oasis-open.org/resources/open-repositories/faq
 .. _Open Source Licenses: https://www.oasis-open.org/resources/open-repositories/licenses
@@ -172,7 +172,6 @@ to repository-cla@oasis-open.org.
 .. _approved: https://lists.oasis-open.org/archives/cti/201610/msg00126.html
 .. _bis: https://issues.oasis-open.org/browse/TCADMIN-2477
 .. _OASIS Cyber Threat Intelligence (CTI) TC: https://www.oasis-open.org/committees/cti/
-.. _OASIS Open Repository: https://www.oasis-open.org/resources/open-repositories/
 .. _separate and distinct: https://github.com/oasis-open/cti-pattern-matcher/blob/master/CONTRIBUTING.md#governance-distinct-from-oasis-tc-process
 .. _BSD-3-Clause License: https://www.oasis-open.org/sites/www.oasis-open.org/files/BSD-3-Clause.txt
 .. _“Applicable License”: https://www.oasis-open.org/resources/open-repositories/licenses
@@ -182,7 +181,6 @@ to repository-cla@oasis-open.org.
 .. _Individual Contributor License Agreement: https://www.oasis-open.org/resources/open-repositories/cla/individual-cla
 .. _pytest: http://pytest.org
 .. _stix2-json-schemas: https://github.com/oasis-open/cti-stix2-json-schemas/blob/master/pattern_grammar/STIXPattern.g4
-.. _Governance: #governance
 
 .. |Build_Status| image:: https://travis-ci.org/oasis-open/cti-pattern-matcher.svg?branch=master
    :target: https://travis-ci.org/oasis-open/cti-pattern-matcher
