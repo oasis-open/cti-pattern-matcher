@@ -2122,7 +2122,7 @@ class Pattern(stix2patterns.pattern.Pattern):
         :raises MatcherException: If an error occurs during matching
         """
         matcher = MatchListener(observed_data_sdos, verbose)
-        antlr4.ParseTreeWalker.DEFAULT.walk(matcher, self.__parse_tree)
+        self.walk(matcher)
 
         found_bindings = matcher.matched()
         if found_bindings:
