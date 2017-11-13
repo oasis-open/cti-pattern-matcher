@@ -11,7 +11,7 @@ setup(
         'enum34 ; python_version ~= "3.3.0"',
         'python-dateutil',
         'six',
-        'stix2-patterns>=0.5.0',
+        'stix2-patterns>=0.6.0',
         'typing ; python_version < "3.5" and python_version >= "3"',
     ],
     tests_require=[
