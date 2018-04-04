@@ -34,8 +34,7 @@ Requirements
 
 -  python-dateutil (https://dateutil.readthedocs.io/en/stable/)
 -  six (https://six.readthedocs.io/)
--  (For running tests) - pytest (http://pytest.org/latest/getting-
-started.html)
+-  (For running tests) - pytest (http://pytest.org/latest/getting-started.html)
 
 Installation
 ------------
@@ -94,9 +93,7 @@ the validator).
 
    .. code:: bash
 
-       $ java -jar "/path/to/antlr-4.7-complete.jar" -Dlanguage=
-       Python2 STIXPattern.g4 -o /path/to/cti-pattern-
-       matcher/stix2matcher/grammars
+       $ java -jar "/path/to/antlr-4.7-complete.jar" -Dlanguage=Python2 STIXPattern.g4 -o /path/to/cti-pattern-matcher/stix2matcher/grammars
 
 5. Commit the resulting files to git.
 
@@ -179,58 +176,34 @@ Repository participation to OASIS Staff at
 repository-admin@oasis-open.org and any specific CLA-related questions
 to repository-cla@oasis-open.org.
 
-.. _`TC Open Repositories - Overview and Resources`:
-https://www.oasis-open.org/resources/open-repositories/
-.. _Frequently Asked Questions: https://www.oasis-
-open.org/resources/open-repositories/faq
-.. _Open Source Licenses: https://www.oasis-open.org/resources/open-
-repositories/licenses
-.. _Contributor License Agreements (CLAs): https://www.oasis-
-open.org/resources/open-repositories/cla
-.. _Maintainers’ Guidelines and Agreement: https://www.oasis-
-open.org/resources/open-repositories/maintainers-guide
-.. _Maintainers: https://www.oasis-open.org/resources/open-
-repositories/maintainers-guide
-.. _pull requests: https://github.com/oasis-open/cti-pattern-
-matcher/blob/master/CONTRIBUTING.md#fork-and-pull-collaboration-model
-.. _preserving: https://www.oasis-open.org/policies-guidelines/open-
-repositories#repositoryManagement
-.. _consensus agreements: https://www.oasis-open.org/resources/open-
-repositories/maintainers-guide#additionalMaintainers
+.. _`TC Open Repositories - Overview and Resources`: https://www.oasis-open.org/resources/open-repositories/
+.. _Frequently Asked Questions: https://www.oasis-open.org/resources/open-repositories/faq
+.. _Open Source Licenses: https://www.oasis-open.org/resources/open-repositories/licenses
+.. _Contributor License Agreements (CLAs): https://www.oasis-open.org/resources/open-repositories/cla
+.. _Maintainers’ Guidelines and Agreement: https://www.oasis-open.org/resources/open-repositories/maintainers-guide
+.. _Maintainers: https://www.oasis-open.org/resources/open-repositories/maintainers-guide
+.. _pull requests: https://github.com/oasis-open/cti-pattern-matcher/blob/master/CONTRIBUTING.md#fork-and-pull-collaboration-model
+.. _preserving: https://www.oasis-open.org/policies-guidelines/open-repositories#repositoryManagement
+.. _consensus agreements: https://www.oasis-open.org/resources/open-repositories/maintainers-guide#additionalMaintainers
 .. _Greg Back: mailto:gback@mitre.org
 .. _MITRE: https://www.mitre.org/
 .. _Ivan Kirillov: mailto:ikirillov@mitre.org
-.. _proposed: https://lists.oasis-
-open.org/archives/cti/201610/msg00106.html
-.. _approved: https://lists.oasis-
-open.org/archives/cti/201610/msg00126.html
+.. _proposed: https://lists.oasis-open.org/archives/cti/201610/msg00106.html
+.. _approved: https://lists.oasis-open.org/archives/cti/201610/msg00126.html
 .. _bis: https://issues.oasis-open.org/browse/TCADMIN-2477
-.. _OASIS Cyber Threat Intelligence (CTI) TC: https://www.oasis-
-open.org/committees/cti/
-.. _separate and distinct: https://github.com/oasis-open/cti-pattern-
-matcher/blob/master/CONTRIBUTING.md#governance-distinct-from-oasis-tc-
-process
-.. _BSD-3-Clause License: https://www.oasis-open.org/sites/www.oasis-
-open.org/files/BSD-3-Clause.txt
-.. _“Applicable License”: https://www.oasis-open.org/resources/open-
-repositories/licenses
-.. _“Public Participation Invited: https://github.com/oasis-open/cti-
-pattern-matcher/blob/master/CONTRIBUTING.md#public-participation-
-invited
-.. _OASIS TC Open Repository Guidelines and Procedures:
-https://www.oasis-open.org/policies-guidelines/open-repositories
-.. _LICENSE: https://github.com/oasis-open/cti-pattern-
-matcher/blob/master/LICENSE
-.. _Individual Contributor License Agreement: https://www.oasis-
-open.org/resources/open-repositories/cla/individual-cla
+.. _OASIS Cyber Threat Intelligence (CTI) TC: https://www.oasis-open.org/committees/cti/
+.. _separate and distinct: https://github.com/oasis-open/cti-pattern-matcher/blob/master/CONTRIBUTING.md#governance-distinct-from-oasis-tc-process
+.. _BSD-3-Clause License: https://www.oasis-open.org/sites/www.oasis-open.org/files/BSD-3-Clause.txt
+.. _“Applicable License”: https://www.oasis-open.org/resources/open-repositories/licenses
+.. _“Public Participation Invited: https://github.com/oasis-open/cti-pattern-matcher/blob/master/CONTRIBUTING.md#public-participation-invited
+.. _OASIS TC Open Repository Guidelines and Procedures: https://www.oasis-open.org/policies-guidelines/open-repositories
+.. _LICENSE: https://github.com/oasis-open/cti-pattern-matcher/blob/master/LICENSE
+.. _Individual Contributor License Agreement: https://www.oasis-open.org/resources/open-repositories/cla/individual-cla
 .. _pytest: http://pytest.org
-.. _stix2-json-schemas: https://github.com/oasis-open/cti-stix2-json-
-schemas/blob/master/pattern_grammar/STIXPattern.g4
+.. _stix2-json-schemas: https://github.com/oasis-open/cti-stix2-json-schemas/blob/master/pattern_grammar/STIXPattern.g4
 
-.. |Build_Status| image:: https://travis-ci.org/oasis-open/cti-
-pattern-matcher.svg?branch=master
+.. |Build_Status| image:: https://travis-ci.org/oasis-open/cti-pattern-matcher.svg?branch=master
    :target: https://travis-ci.org/oasis-open/cti-pattern-matcher
-.. |Coverage| image:: https://codecov.io/gh/oasis-open/cti-pattern-
-matcher/branch/master/graph/badge.svg
+.. |Coverage| image:: https://codecov.io/gh/oasis-open/cti-pattern-matcher/branch/master/graph/badge.svg
    :target: https://codecov.io/gh/oasis-open/cti-pattern-matcher
 
