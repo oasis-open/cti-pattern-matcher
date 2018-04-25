@@ -22,7 +22,7 @@ documentation and to verify patterns express the desired criteria.
 Requirements
 ------------
 
--  Python 2.7.6+
+-  Python 2.7 or 3.4+
 -  ANTLR Python Runtime (4.7+)
 
    -  https://pypi.python.org/pypi/antlr4-python2-runtime (Python 2)
@@ -30,7 +30,7 @@ Requirements
 
 -  typing
 
-   -  https://pypi.python.org/pypi/typing (Python 3.0-3.4)
+   -  https://pypi.python.org/pypi/typing (Python 3.4)
 
 -  python-dateutil (https://dateutil.readthedocs.io/en/stable/)
 -  six (https://six.readthedocs.io/)
@@ -206,4 +206,3 @@ to repository-cla@oasis-open.org.
    :target: https://travis-ci.org/oasis-open/cti-pattern-matcher
 .. |Coverage| image:: https://codecov.io/gh/oasis-open/cti-pattern-matcher/branch/master/graph/badge.svg
    :target: https://codecov.io/gh/oasis-open/cti-pattern-matcher
-
