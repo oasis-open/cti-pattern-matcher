@@ -93,7 +93,6 @@ def test_temp_qual_nomatch(pattern):
 @pytest.mark.parametrize("pattern", [
     # WITHIN tests
     "[person:name = 'alice'] within 0 seconds",
-    "[person:name = 'alice'] within -123.367 seconds",
 
     # START/STOP tests
     "[person:name = 'hannah'] start '1994-11-29t13:37:58Z' stop '1994-11-29T13:37:58Z'",
@@ -109,6 +108,7 @@ def test_temp_qual_error_match(pattern):
 @pytest.mark.parametrize("pattern", [
     # WITHIN tests
     "[person:name = 'alice'] within 1 second",
+    "[person:name = 'alice'] within -123.367 seconds",
 
     # START/STOP tests
     "[person:name = 'hannah'] start '1994-11-29T13:37:58Z'",

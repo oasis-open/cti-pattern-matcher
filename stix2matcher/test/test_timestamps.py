@@ -61,20 +61,10 @@ def test_ts_nomatch(pattern):
     "[event:good_ts = t'2010-05-21t13:21:43Z']",
     "[event:good_ts = t'2010/05/21T13:21:43Z']",
     "[event:good_ts = t'2010-05-21T13:21Z']",
+    "[event:good_ts = t'2010-05-21T13:21:99Z']"
 ])
 def test_ts_pattern_error_parse(pattern):
     with pytest.raises(ParseException):
-        match(pattern, _observations)
-
-
-@pytest.mark.parametrize("pattern", [
-    # This one causes MatcherException because the parser doesn't
-    # validate the timestamp content, only its syntax, so the error
-    # isn't caught until match time.
-    "[event:good_ts = t'2010-05-21T13:21:99Z']",
-])
-def test_ts_pattern_error_match(pattern):
-    with pytest.raises(MatcherException):
         match(pattern, _observations)
 
 
