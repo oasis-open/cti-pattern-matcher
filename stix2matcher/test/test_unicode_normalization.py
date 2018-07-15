@@ -51,7 +51,7 @@ def _mismatched_kv_pairs():
 
 
 @pytest.mark.parametrize("pattern", [
-    u"[test:ddots.{} like '{}']".format(k, v)
+    u"[test:ddots.{} LIKE '{}']".format(k, v)
     for k, v in _all_kv_pairs()
 ])
 def test_unicode_normalization_like_match(pattern):
@@ -59,7 +59,7 @@ def test_unicode_normalization_like_match(pattern):
 
 
 @pytest.mark.parametrize("pattern", [
-    u"[test:ddots.{} matches '^{}$']".format(k, v)
+    u"[test:ddots.{} MATCHES '^{}$']".format(k, v)
     for k, v in _all_kv_pairs()
 ])
 def test_unicode_normalization_regex_match(pattern):
@@ -99,7 +99,7 @@ def test_unicode_normalization_eq_nomatch(pattern):
 
 
 @pytest.mark.parametrize("pattern", [
-    u"[test:ddots.{} in ('{}')]".format(k, v)
+    u"[test:ddots.{} IN ('{}')]".format(k, v)
     for k, v in _matched_kv_pairs()
 ])
 def test_unicode_normalization_set_match(pattern):
@@ -107,7 +107,7 @@ def test_unicode_normalization_set_match(pattern):
 
 
 @pytest.mark.parametrize("pattern", [
-    u"[test:ddots.{} in ('{}')]".format(k, v)
+    u"[test:ddots.{} IN ('{}')]".format(k, v)
     for k, v in _mismatched_kv_pairs()
 ])
 def test_unicode_normalization_set_nomatch(pattern):

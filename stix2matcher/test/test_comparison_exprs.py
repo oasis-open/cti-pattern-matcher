@@ -24,21 +24,21 @@ _observations = [
 
 
 @pytest.mark.parametrize("pattern", [
-    "[person:name = 'alice' and person:age < 20]",
-    "[person:name = 'alice' or person:age > 20]",
-    "[person:name = 'alice' or person:age > 1000 and person:age < 0]",
-    "[(person:name = 'carol' or person:name = 'bob') and person:age > 10]",
-    "[(person:name = 'darlene' or person:name = 'carol') and person:age < 0 or person:age > 5]"
+    "[person:name = 'alice' AND person:age < 20]",
+    "[person:name = 'alice' OR person:age > 20]",
+    "[person:name = 'alice' OR person:age > 1000 AND person:age < 0]",
+    "[(person:name = 'carol' OR person:name = 'bob') AND person:age > 10]",
+    "[(person:name = 'darlene' OR person:name = 'carol') AND person:age < 0 OR person:age > 5]"
 ])
 def test_comparison_and_or_match(pattern):
     assert match(pattern, _observations)
 
 
 @pytest.mark.parametrize("pattern", [
-    "[person:name = 'alice' and person:age > 10]",
-    "[person:name = 'carol' or person:age > 20]",
-    "[(person:age = 'alice' or person:age > 1000) and person:age < 0]",
-    "[(person:name = 'darlene' or person:name = 'carol') and (person:age < 0 or person:age > 5)]"
+    "[person:name = 'alice' AND person:age > 10]",
+    "[person:name = 'carol' OR person:age > 20]",
+    "[(person:age = 'alice' OR person:age > 1000) AND person:age < 0]",
+    "[(person:name = 'darlene' OR person:name = 'carol') AND (person:age < 0 OR person:age > 5)]"
 ])
 def test_comparison_and_or_nomatch(pattern):
     assert not match(pattern, _observations)

@@ -40,34 +40,34 @@ _observations = [
     "[binary_test:name_hex > b'YWFyZHZhcms=']",
     "[binary_test:name_hex > 'aardvark']",
 
-    "[binary_test:name_hex matches '\\\\x61li[c\\\\x01]e']",
-    "[binary_test:name_bin matches '\\\\x61li[c\\\\x01]e']",
-    "[binary_test:name_bin not matches '\\\\x62o[b\\\\x01]']",
-    u"[binary_test:name_bin not matches '\u0103lice']",
+    "[binary_test:name_hex MATCHES '\\\\x61li[c\\\\x01]e']",
+    "[binary_test:name_bin MATCHES '\\\\x61li[c\\\\x01]e']",
+    "[binary_test:name_bin NOT MATCHES '\\\\x62o[b\\\\x01]']",
+    u"[binary_test:name_bin NOT MATCHES '\u0103lice']",
 
     # some nonprintable binary data tests too.
     "[binary_test:bin_hex = h'01020304']",
     "[binary_test:bin_hex = b'AQIDBA==']",
     "[binary_test:bin_hex = '\x01\x02\x03\x04']",
-    "[binary_test:bin_hex matches '.*\\\\x03']",
+    "[binary_test:bin_hex MATCHES '.*\\\\x03']",
 ])
 def test_binary_match(pattern):
     assert match(pattern, _observations)
 
 
 @pytest.mark.parametrize("pattern", [
-    "[binary_test:name_bin matches '\\\\x62o[b\\\\x01]']",
-    "[binary_test:name_hex not matches '\\\\x61li[c\\\\x01]e']",
+    "[binary_test:name_bin MATCHES '\\\\x62o[b\\\\x01]']",
+    "[binary_test:name_hex NOT MATCHES '\\\\x61li[c\\\\x01]e']",
 
     # test codepoint >= 256, in both pattern and json
     u"[binary_test:name_bin = '\u0103lice']",
     u"[binary_test:name_bin > '\u0103lice']",
     u"[binary_test:name_bin < '\u0103lice']",
-    u"[binary_test:name_bin matches '\u0103lice']",
+    u"[binary_test:name_bin MATCHES '\u0103lice']",
     u"[binary_test:name_hex = '\u0103lice']",
     u"[binary_test:name_hex > '\u0103lice']",
     u"[binary_test:name_hex < '\u0103lice']",
-    u"[binary_test:name_hex matches '\u0103lice']",
+    u"[binary_test:name_hex MATCHES '\u0103lice']",
     u"[binary_test:name_u = h'616c696365']",
     u"[binary_test:name_u > h'616c696365']",
     u"[binary_test:name_u < h'616c696365']",

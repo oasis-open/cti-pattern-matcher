@@ -1,7 +1,7 @@
 from stix2patterns.pattern import ParseException
 
 # I'll specially test some critical internal time-interval related code,
-# since it's easier to test it separately than create lots of SDOs and
+# since it's easier to test it separately than create lots of SDOs AND
 # patterns.
 import pytest
 from stix2matcher.matcher import (_OVERLAP, _OVERLAP_NONE,
@@ -51,20 +51,20 @@ _observations = [
 
 @pytest.mark.parametrize("pattern", [
     # WITHIN tests
-    "[person:name = 'bob'] within 1 seconds",
-    "[person:name = 'bob'] within .0001 seconds",
-    "[person:name = 'alice'] and [person:name < 'carol'] within 1 seconds",
-    "([person:name = 'alice'] and [person:name < 'carol']) within 5 seconds",
-    "([person:name = 'alice'] and [person:name < 'carol']) within 6 seconds",
-    "([person:name = 'alice'] or [person:name = 'darlene']) within 1 seconds",
+    "[person:name = 'bob'] WITHIN 1 SECONDS",
+    "[person:name = 'bob'] WITHIN .0001 SECONDS",
+    "[person:name = 'alice'] AND [person:name < 'carol'] WITHIN 1 SECONDS",
+    "([person:name = 'alice'] AND [person:name < 'carol']) WITHIN 5 SECONDS",
+    "([person:name = 'alice'] AND [person:name < 'carol']) WITHIN 6 SECONDS",
+    "([person:name = 'alice'] OR [person:name = 'darlene']) WITHIN 1 SECONDS",
 
     # START/STOP tests
-    "[person:name = 'bob'] start '1994-11-29T13:37:57Z' stop '1994-11-29T13:37:58Z'",
-    "[person:name like 'a%'] and [person:name = 'bob'] start '1994-11-29T13:37:57Z' stop '1994-11-29T13:37:58Z'",
-    "([person:name like 'a%'] and [person:name = 'bob']) start '1994-11-29T13:37:50Z' stop '1994-11-29T13:37:58Z'",
-    "[person:name = 'alice'] or [person:name = 'darlene'] start '1994-11-29T13:37:57Z' stop '1994-11-29T13:37:58Z'",
-    "([person:name = 'alice'] or [person:name = 'darlene']) start '1994-11-29T13:37:52Z' stop '1994-11-29T13:37:58Z'",
-    "[person:name matches ''] repeats 2 times start '1994-11-29T13:37:50Z' stop '1994-11-29T13:37:58Z'",
+    "[person:name = 'bob'] START '1994-11-29T13:37:57Z' STOP '1994-11-29T13:37:58Z'",
+    "[person:name LIKE 'a%'] AND [person:name = 'bob'] START '1994-11-29T13:37:57Z' STOP '1994-11-29T13:37:58Z'",
+    "([person:name LIKE 'a%'] AND [person:name = 'bob']) START '1994-11-29T13:37:50Z' STOP '1994-11-29T13:37:58Z'",
+    "[person:name = 'alice'] OR [person:name = 'darlene'] START '1994-11-29T13:37:57Z' STOP '1994-11-29T13:37:58Z'",
+    "([person:name = 'alice'] OR [person:name = 'darlene']) START '1994-11-29T13:37:52Z' STOP '1994-11-29T13:37:58Z'",
+    "[person:name MATCHES ''] REPEATS 2 TIMES START '1994-11-29T13:37:50Z' STOP '1994-11-29T13:37:58Z'",
 ])
 def test_temp_qual_match(pattern):
     assert match(pattern, _observations)
@@ -72,19 +72,19 @@ def test_temp_qual_match(pattern):
 
 @pytest.mark.parametrize("pattern", [
     # WITHIN tests
-    "([person:name = 'alice'] and [person:name < 'carol']) within 4 seconds",
-    "([person:name = 'alice'] and [person:name < 'carol']) within 4.9999 seconds",
-    "[person:name = 'elizabeth'] within 10 seconds",
-    "([person:name < 'alice'] or [person:name = 'darlene']) within 10 seconds",
+    "([person:name = 'alice'] AND [person:name < 'carol']) WITHIN 4 SECONDS",
+    "([person:name = 'alice'] AND [person:name < 'carol']) WITHIN 4.9999 SECONDS",
+    "[person:name = 'elizabeth'] WITHIN 10 SECONDS",
+    "([person:name < 'alice'] OR [person:name = 'darlene']) WITHIN 10 SECONDS",
 
     # START/STOP tests
-    "[person:name = 'bob'] start '1994-11-29T13:37:58Z' stop '1994-11-29T13:37:58Z'",
-    "[person:name = 'bob'] start '1994-11-29T13:37:59Z' stop '1994-11-29T13:37:58Z'",
-    "[person:name = 'bob'] start '1994-11-29T13:37:58Z' stop '1994-11-29T13:37:59Z'",
-    "([person:name like 'a%'] and [person:name = 'bob']) start '1994-11-29T13:37:50Z' stop '1994-11-29T13:37:57Z'",
-    "([person:name like 'z%'] or [person:name = 'darlene']) start '1994-11-29T13:37:50Z' stop '1994-11-29T13:37:57Z'",
-    "[person:name matches ''] repeats 3 times start '1994-11-29T13:37:50Z' stop '1994-11-29T13:37:58Z'",
-    "[person:name not like 'foo'] start '1994-11-29T13:37:50Z' stop '1994-11-29T13:37:57Z' repeats 3 times",
+    "[person:name = 'bob'] START '1994-11-29T13:37:58Z' STOP '1994-11-29T13:37:58Z'",
+    "[person:name = 'bob'] START '1994-11-29T13:37:59Z' STOP '1994-11-29T13:37:58Z'",
+    "[person:name = 'bob'] START '1994-11-29T13:37:58Z' STOP '1994-11-29T13:37:59Z'",
+    "([person:name LIKE 'a%'] AND [person:name = 'bob']) START '1994-11-29T13:37:50Z' STOP '1994-11-29T13:37:57Z'",
+    "([person:name LIKE 'z%'] OR [person:name = 'darlene']) START '1994-11-29T13:37:50Z' STOP '1994-11-29T13:37:57Z'",
+    "[person:name MATCHES ''] REPEATS 3 TIMES START '1994-11-29T13:37:50Z' STOP '1994-11-29T13:37:58Z'",
+    "[person:name NOT LIKE 'foo'] START '1994-11-29T13:37:50Z' STOP '1994-11-29T13:37:57Z' REPEATS 3 TIMES",
 ])
 def test_temp_qual_nomatch(pattern):
     assert not match(pattern, _observations)
@@ -92,13 +92,13 @@ def test_temp_qual_nomatch(pattern):
 
 @pytest.mark.parametrize("pattern", [
     # WITHIN tests
-    "[person:name = 'alice'] within 0 seconds",
+    "[person:name = 'alice'] WITHIN 0 SECONDS",
 
     # START/STOP tests
-    "[person:name = 'hannah'] start '1994-11-29t13:37:58Z' stop '1994-11-29T13:37:58Z'",
-    "[person:name = 'hannah'] start '1994-11-29T13:37:58Z' stop '1994-11-29T13:37:58z'",
-    "[person:name = 'hannah'] start '1994-11-29t13:37:58Z' stop '1994-11-29T13:37:58'",
-    "[person:name = 'hannah'] start '1994-11-29T13:37Z' stop '1994-11-29T13:37:58Z'",
+    "[person:name = 'hannah'] START '1994-11-29t13:37:58Z' STOP '1994-11-29T13:37:58Z'",
+    "[person:name = 'hannah'] START '1994-11-29T13:37:58Z' STOP '1994-11-29T13:37:58z'",
+    "[person:name = 'hannah'] START '1994-11-29t13:37:58Z' STOP '1994-11-29T13:37:58'",
+    "[person:name = 'hannah'] START '1994-11-29T13:37Z' STOP '1994-11-29T13:37:58Z'",
 ])
 def test_temp_qual_error_match(pattern):
     with pytest.raises(MatcherException):
@@ -107,11 +107,11 @@ def test_temp_qual_error_match(pattern):
 
 @pytest.mark.parametrize("pattern", [
     # WITHIN tests
-    "[person:name = 'alice'] within 1 second",
-    "[person:name = 'alice'] within -123.367 seconds",
+    "[person:name = 'alice'] WITHIN 1 second",
+    "[person:name = 'alice'] WITHIN -123.367 SECONDS",
 
     # START/STOP tests
-    "[person:name = 'hannah'] start '1994-11-29T13:37:58Z'",
+    "[person:name = 'hannah'] START '1994-11-29T13:37:58Z'",
 ])
 def test_temp_qual_error_parse(pattern):
     with pytest.raises(ParseException):
@@ -201,8 +201,8 @@ def test_within_match(interval1, interval2, duration):
     _observations[1]["first_observed"] = interval2[0]
     _observations[1]["last_observed"] = interval2[1]
 
-    pattern = "([person:name='alice'] and [person:name='bob']) " \
-              "within {0} seconds".format(duration)
+    pattern = "([person:name='alice'] AND [person:name='bob']) " \
+              "WITHIN {0} SECONDS".format(duration)
     assert match(pattern, _observations)
 
 
@@ -219,6 +219,6 @@ def test_within_nomatch(interval1, interval2, duration):
     _observations[1]["first_observed"] = interval2[0]
     _observations[1]["last_observed"] = interval2[1]
 
-    pattern = "([person:name='alice'] and [person:name='bob']) " \
-              "within {0} seconds".format(duration)
+    pattern = "([person:name='alice'] AND [person:name='bob']) " \
+              "WITHIN {0} SECONDS".format(duration)
     assert not match(pattern, _observations)
