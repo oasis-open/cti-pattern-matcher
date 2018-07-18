@@ -47,18 +47,18 @@ _observations = [
 # These SDOs have number_observed > 1; these patterns require contributions
 # of several observations from several SDOs to satisfy.
 @pytest.mark.parametrize("pattern", [
-    "[person:age < 20] repeats 5 times",
-    "[person:age < 20] repeats 2 times repeats 2 times",
-    "[person:name > 'aaron'] repeats 5 times within 1 seconds",
-    "([person:age < 30] and [person:name > 'aaron']) within 2 seconds repeats 3 times",
+    "[person:age < 20] REPEATS 5 TIMES",
+    "[person:age < 20] REPEATS 2 TIMES REPEATS 2 TIMES",
+    "[person:name > 'aaron'] REPEATS 5 TIMES WITHIN 1 SECONDS",
+    "([person:age < 30] AND [person:name > 'aaron']) WITHIN 2 SECONDS REPEATS 3 TIMES",
 ])
 def test_complex_match(pattern):
     assert match(pattern, _observations)
 
 
 @pytest.mark.parametrize("pattern", [
-    "[person:age < 20] repeats 10 times",
-    "[person:age < 20] repeats 2 times repeats 3 times"
+    "[person:age < 20] REPEATS 10 TIMES",
+    "[person:age < 20] REPEATS 2 TIMES REPEATS 3 TIMES"
 ])
 def test_complex_nomatch(pattern):
     assert not match(pattern, _observations)

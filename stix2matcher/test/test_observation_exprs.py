@@ -45,29 +45,29 @@ _observations = [
 
 
 @pytest.mark.parametrize("pattern", [
-    "[person:name='alice'] and [person:age>20]",
-    "[person:name='alice'] or [person:name='carol']",
-    "[person:name='alice'] or [person:name='zelda']",
-    "[person:age>10] or [person:name='bob'] or [person:name>'amber']",
-    "[person:name='alice'] followedby [person:name>'bill']",
-    "[person:age > 20] or ([person:name > 'zelda'] followedby [person:age < 0])",
-    "[person:age > 20] or [person:name > 'zelda'] and [person:age < 0]",
-    "([person:name='carol'] followedby [person:name < 'elizabeth']) and [person:age < 15]"
+    "[person:name='alice'] AND [person:age>20]",
+    "[person:name='alice'] OR [person:name='carol']",
+    "[person:name='alice'] OR [person:name='zelda']",
+    "[person:age>10] OR [person:name='bob'] OR [person:name>'amber']",
+    "[person:name='alice'] FOLLOWEDBY [person:name>'bill']",
+    "[person:age > 20] OR ([person:name > 'zelda'] FOLLOWEDBY [person:age < 0])",
+    "[person:age > 20] OR [person:name > 'zelda'] AND [person:age < 0]",
+    "([person:name='carol'] FOLLOWEDBY [person:name < 'elizabeth']) AND [person:age < 15]"
 ])
 def test_observation_ops_match(pattern):
     assert match(pattern, _observations)
 
 
 @pytest.mark.parametrize("pattern", [
-    "[person:name='alice'] and [person:name='zelda']",
-    "[person:name='alice'] and [person:age=10]",
-    "[person:name='alice'] followedby [person:age=10]",
-    "[person:name='mary'] or [person:name='zelda']",
-    "[person:age > 70] or [person:name > 'zelda'] and [person:name MATCHES '^...?$']",
-    "[person:name='bob'] followedby [person:age<15]",
-    "[person:age > 20] or [person:name > 'zelda'] followedby [person:age < 0]",
-    "([person:age > 20] or [person:name > 'zelda']) and [person:age < 0]",
-    "[person:name='carol'] followedby [person:name < 'elizabeth'] and [person:age < 15]"
+    "[person:name='alice'] AND [person:name='zelda']",
+    "[person:name='alice'] AND [person:age=10]",
+    "[person:name='alice'] FOLLOWEDBY [person:age=10]",
+    "[person:name='mary'] OR [person:name='zelda']",
+    "[person:age > 70] OR [person:name > 'zelda'] AND [person:name MATCHES '^...?$']",
+    "[person:name='bob'] FOLLOWEDBY [person:age<15]",
+    "[person:age > 20] OR [person:name > 'zelda'] FOLLOWEDBY [person:age < 0]",
+    "([person:age > 20] OR [person:name > 'zelda']) AND [person:age < 0]",
+    "[person:name='carol'] FOLLOWEDBY [person:name < 'elizabeth'] AND [person:age < 15]"
 ])
 def test_observation_ops_nomatch(pattern):
     assert not match(pattern, _observations)

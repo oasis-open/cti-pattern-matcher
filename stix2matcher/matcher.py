@@ -79,10 +79,12 @@ import stix2patterns.pattern
 # Coercers from strings (what all token values are) to python types.
 # Set and regex literals are not handled here; they're a different beast...
 _TOKEN_TYPE_COERCERS = {
-    STIXPatternParser.IntLiteral: int,
+    STIXPatternParser.IntPosLiteral: int,
+    STIXPatternParser.IntNegLiteral: int,
     STIXPatternParser.StringLiteral: lambda s: s[1:-1].replace(u"\\'", u"'").replace(u"\\\\", u"\\"),
     STIXPatternParser.BoolLiteral: lambda s: s.lower() == u"true",
-    STIXPatternParser.FloatLiteral: float,
+    STIXPatternParser.FloatPosLiteral: float,
+    STIXPatternParser.FloatNegLiteral: float,
     STIXPatternParser.BinaryLiteral: lambda s: base64.standard_b64decode(s[2:-1]),
     STIXPatternParser.HexLiteral: lambda s: binascii.a2b_hex(s[2:-1]),
     STIXPatternParser.TimestampLiteral: lambda t: _str_to_datetime(t[2:-1]),
@@ -317,7 +319,7 @@ def _step_into_objs(objs, step):
     stepped_cyber_obs_objs = []
     if isinstance(step, int):
         for obj in objs:
-            if isinstance(obj, list) and step < len(obj):
+            if isinstance(obj, list) and 0 <= step < len(obj):
                 stepped_cyber_obs_objs.append(obj[step])
             # can't index non-lists
     elif isinstance(step, six.text_type):
@@ -857,7 +859,7 @@ def _compute_expected_binding_size(ctx):
         child_count = _compute_expected_binding_size(
             ctx.observationExpression())
         rep_count = _literal_terminal_to_python_val(
-            ctx.repeatedQualifier().IntLiteral())
+            ctx.repeatedQualifier().IntPosLiteral())
 
         if rep_count < 1:
             raise MatcherException(u"Invalid repetition count: {}".format(
@@ -1247,7 +1249,7 @@ class MatchListener(STIXPatternListener):
         """
 
         rep_count = _literal_terminal_to_python_val(
-            ctx.repeatedQualifier().IntLiteral()
+            ctx.repeatedQualifier().IntPosLiteral()
         )
         debug_label = u"exitObservationExpressionRepeated ({})".format(
             rep_count
@@ -1367,7 +1369,7 @@ class MatchListener(STIXPatternListener):
           the specified interval.
         """
 
-        value = _literal_terminal_to_python_val(ctx.FloatLiteral() or ctx.IntLiteral())
+        value = _literal_terminal_to_python_val(ctx.FloatPosLiteral() or ctx.IntPosLiteral())
         debug_label = u"exitWithinQualifier ({})".format(value)
         if value <= 0:
             raise MatcherException(u"Invalid WITHIN value (must be positive): {}".format(value))
@@ -2020,10 +2022,10 @@ class MatchListener(STIXPatternListener):
         Does the same as exitFirstPathComponent(), but takes a list index
         step.
         """
-        if ctx.IntLiteral():
-            index = _literal_terminal_to_python_val(ctx.IntLiteral())
-            if index < 0:
-                raise MatcherException(u"Invalid list index: {}".format(index))
+        if ctx.IntPosLiteral() or ctx.IntNegLiteral():
+            index = _literal_terminal_to_python_val(
+                ctx.IntPosLiteral() or ctx.IntNegLiteral()
+            )
             debug_label = u"exitIndexPathStep ({})".format(index)
             obs_val = self.__pop(debug_label)
 

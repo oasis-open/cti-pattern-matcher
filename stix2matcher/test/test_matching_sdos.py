@@ -52,10 +52,10 @@ _observations = [
     # only one binding is possible for each pattern.
     ("[person:name='alice']",
      "observed-data--a49751b8-b041-4c00-96c2-76af472bfbbe"),
-    ("[person:name='bob'] and [person:name='carol']",
+    ("[person:name='bob'] AND [person:name='carol']",
         ("observed-data--7d34018e-986c-4817-a2c5-21fe95284109",
          "observed-data--52a5bab7-2cfd-40c6-a35a-b5bcb8afb11b")),
-    ("[person:name='carol'] or [person:name>'zelda']",
+    ("[person:name='carol'] OR [person:name>'zelda']",
      "observed-data--52a5bab7-2cfd-40c6-a35a-b5bcb8afb11b")
 ])
 def test_matching_sdos(pattern, expected_ids):
