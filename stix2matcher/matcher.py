@@ -2186,6 +2186,10 @@ def main():
         with io.open(args.file, encoding=args.encoding) as json_in:
             observed_data_sdos = json.load(json_in)
 
+        # Support single SDOs by converting to a list.
+        if not isinstance(observed_data_sdos, list):
+            observed_data_sdos = [observed_data_sdos]
+
         with io.open(args.patterns, encoding=args.encoding) as patterns_in:
             for pattern in patterns_in:
                 pattern = pattern.strip()
