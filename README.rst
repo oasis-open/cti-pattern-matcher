@@ -149,7 +149,7 @@ agreements`_.
 
 **Current Maintainers of this TC Open Repository**
 
--  `Greg Back`_; GitHub ID: https://github.com/gtback/; WWW: `MITRE`_
+-  `Chris Lenk`_; GitHub ID: https://github.com/clenk/; WWW: `MITRE`_
 -  `Ivan Kirillov`_; GitHub ID: https://github.com/ikiril01/; WWW:
    `MITRE`_
 
@@ -185,7 +185,7 @@ to repository-cla@oasis-open.org.
 .. _pull requests: https://github.com/oasis-open/cti-pattern-matcher/blob/master/CONTRIBUTING.md#fork-and-pull-collaboration-model
 .. _preserving: https://www.oasis-open.org/policies-guidelines/open-repositories#repositoryManagement
 .. _consensus agreements: https://www.oasis-open.org/resources/open-repositories/maintainers-guide#additionalMaintainers
-.. _Greg Back: mailto:gback@mitre.org
+.. _Chris Lenk: mailto:clenk@mitre.org
 .. _MITRE: https://www.mitre.org/
 .. _Ivan Kirillov: mailto:ikirillov@mitre.org
 .. _proposed: https://lists.oasis-open.org/archives/cti/201610/msg00106.html
