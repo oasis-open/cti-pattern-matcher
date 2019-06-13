@@ -3,6 +3,7 @@ from __future__ import print_function
 import argparse
 import base64
 import binascii
+import copy
 import datetime
 import io
 import itertools
@@ -959,6 +960,10 @@ class MatchListener(STIXPatternListener):
         # Holds intermediate results
         self.__compute_stack = []
 
+        # Holds each value observed for a named capture group within regexes.
+        # Used to check for inter-observable patterns.
+        self.interobs_group_matches = {}
+
     def __push(self, val, label=None):
         """Utility for pushing a value onto the compute stack.
         In verbose mode, show what's being pushed.  'label' lets you prefix
@@ -1764,6 +1769,17 @@ class MatchListener(STIXPatternListener):
 
         passed_obs = _obs_map_prop_test(obs_values, regex_pred)
 
+        # store which matching group (defined in interobs pattern) matched on what string for each Observable
+        for obs_id, container in obs_values.items():
+            value = str(container[list(container.keys())[0]][0])
+            for match in compiled_re.finditer(value):
+                for group, val in match.groupdict().items():
+                    grp_dict = self.interobs_group_matches.get(group, {})
+                    obs_list = grp_dict.get(obs_id, [])
+                    obs_list.append(val) if val not in obs_list else None
+                    grp_dict[obs_id] = obs_list
+                    self.interobs_group_matches[group] = grp_dict
+
         self.__push(passed_obs, debug_label)
 
     def exitPropTestIsSubset(self, ctx):
@@ -2128,11 +2144,68 @@ class Pattern(stix2patterns.pattern.Pattern):
 
         found_bindings = matcher.matched()
         if found_bindings:
-            matching_sdos = matcher.get_sdos_from_binding(found_bindings[0])
+            valid_bindings = self.validate_inter_observable_patterns(matcher, found_bindings)
+            if valid_bindings:
+                matching_sdos = valid_bindings[0]
+            else:
+                matching_sdos = []
         else:
             matching_sdos = []
 
         return matching_sdos
+
+    @staticmethod
+    def validate_inter_observable_patterns(matcher, found_bindings):
+        """
+        remove elements from found_bindings, if they violate the inter-observable patterns
+        this will remove elements if:
+        - within the same observable multiple values are found for the same matching group
+        - across observables different values are found for the same matching group
+        """
+        def is_valid_inter_obserbable(found_binding, interobs_group_matches):
+            if len(found_binding) == 1:
+                # only one SDO available; if multiple values are observed for one inter-observable,
+                # the pattern does not evaluate to True.
+                for _, sdo_ids in interobs_group_matches.items():
+                    for _, values in sdo_ids.items():
+                        if len(values) > 1:
+                            return False
+            else:
+                # multiple SDOs, check if binding fulfils inter-observable patterns
+                check = {}
+                for io_grp, sdo_ids in interobs_group_matches.items():
+                    for _, values in sdo_ids.items():
+                        grp = check.get(io_grp, None)
+                        if grp is None:
+                            # first iteration, take all values
+                            grp = values
+                        else:
+                            # check intersection of values; if none remain, pattern does not hold
+                            grp = list(set(grp) & set(values))
+                            if not grp:
+                                return False
+                        check[io_grp] = grp
+            return True
+
+        if not matcher.interobs_group_matches:
+            return [matcher.get_sdos_from_binding(sdo) for sdo in found_bindings]
+        else:
+            for found_binding in found_bindings[:]:
+                inter_obs = copy.deepcopy(matcher.interobs_group_matches)
+
+                # prepare dictionary - only use relevant sdos for the current binding
+                for io_grp, sdo_ids in list(inter_obs.items()):
+                    for sdo_id, _ in list(sdo_ids.items()):
+                        if sdo_id not in found_binding:
+                            del sdo_ids[sdo_id]
+                    if not sdo_ids:
+                        del inter_obs[io_grp]
+
+                if not is_valid_inter_obserbable(found_binding, inter_obs):
+                    found_bindings.remove(found_binding)
+        if found_bindings:
+            return [matcher.get_sdos_from_binding(sdo) for sdo in found_bindings]
+        return []
 
 
 def match(pattern, observed_data_sdos, verbose=False):
