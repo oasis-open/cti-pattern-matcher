@@ -49,18 +49,24 @@ _observations = [
 
 
 @pytest.mark.parametrize("pattern", [
-    "[person:name MATCHES '(?P<v1>[a-z]+)'] AND [person:name MATCHES 'm(?P<v1>[a-z]+)']",  # same value across observables (name of person B is the same as person A, but with a leading 'm')
-    "[person:name MATCHES '(?P<v2>[a-z]+)' AND person:city_ref.name MATCHES '(?P<v2>[a-z]+)town']",  # same value across properties (home of person is its name plus 'town'-suffix)
-    "[person:name MATCHES '(?P<v3>[a-z]).(?P=v3)']",  # same value within a property (first letter of name is the same as third letter)
+    # same value across observables (name of person B is the same as person A, but with a leading 'm')
+    "[person:name MATCHES '(?P<v1>[a-z]+)'] AND [person:name MATCHES 'm(?P<v1>[a-z]+)']",
+    # same value across properties (home of person is its name plus 'town'-suffix)
+    "[person:name MATCHES '(?P<v2>[a-z]+)' AND person:city_ref.name MATCHES '(?P<v2>[a-z]+)town']",
+    # same value within a property (first letter of name is the same as third letter)
+    "[person:name MATCHES '(?P<v3>[a-z]).(?P=v3)']",
 ])
 def test_observation_ops_match(pattern):
     assert match(pattern, _observations)
 
 
 @pytest.mark.parametrize("pattern", [
-    "[person:name MATCHES '(?P<v1>[a-z]+)'] AND [person:name MATCHES '(?P<v1>[a-z]+)']",  # same value across observables (two persons with the same name)
-    "[person:name MATCHES '(?P<v2>[a-z]+)' AND person:city_ref.name MATCHES '(?P<v2>[a-z]+)']",  # same value across properties (home of person is the same as name)
-    "[person:name MATCHES '(?P<v3>[a-z])(?P=v3)']",  # same value within a property (first letter of name is the same as second letter)
+    # same value across observables (two persons with the same name)
+    "[person:name MATCHES '(?P<v1>[a-z]+)'] AND [person:name MATCHES '(?P<v1>[a-z]+)']",
+    # same value across properties (home of person is the same as name)
+    "[person:name MATCHES '(?P<v2>[a-z]+)' AND person:city_ref.name MATCHES '(?P<v2>[a-z]+)']",
+    # same value within a property (first letter of name is the same as second letter)
+    "[person:name MATCHES '(?P<v3>[a-z])(?P=v3)']",
 ])
 def test_observation_ops_nomatch(pattern):
     assert not match(pattern, _observations)
