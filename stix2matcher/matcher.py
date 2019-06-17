@@ -1771,7 +1771,11 @@ class MatchListener(STIXPatternListener):
 
         # store which matching group (defined in interobs pattern) matched on what string for each Observable
         for obs_id, container in obs_values.items():
-            value = str(container[list(container.keys())[0]][0])
+            value = container[list(container.keys())[0]][0]
+            if not isinstance(value, (str, unicode)):
+                continue
+            if isinstance(value, unicode):
+                value = value.encode('utf-8')
             for match in compiled_re.finditer(value):
                 for group, val in match.groupdict().items():
                     grp_dict = self.interobs_group_matches.get(group, {})
