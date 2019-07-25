@@ -152,6 +152,8 @@ agreements`_.
 -  `Chris Lenk`_; GitHub ID: https://github.com/clenk/; WWW: `MITRE`_
 -  `Ivan Kirillov`_; GitHub ID: https://github.com/ikiril01/; WWW:
    `MITRE`_
+-  `Jason Keirstead <mailto:Jason.Keirstead@ca.ibm.com>`__; GitHub ID:
+   https://github.com/JasonKeirstead; WWW: `IBM <http://www.ibm.com/>`__
 
 About OASIS TC Open Repositories
 -----------------------------
