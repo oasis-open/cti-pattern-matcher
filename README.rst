@@ -154,6 +154,10 @@ agreements`_.
    `MITRE`_
 -  `Jason Keirstead <mailto:Jason.Keirstead@ca.ibm.com>`__; GitHub ID:
    https://github.com/JasonKeirstead; WWW: `IBM <http://www.ibm.com/>`__
+-  `Md Azam <mailto:mdazam@ca.ibm.com>`__; GitHub ID:
+   https://github.com/mdazam1942; WWW: `IBM <http://www.ibm.com/>`__
+-  `Danny Elliott <mailto:Danny.Elliott@ibm.com>`__; GitHub ID:
+   https://github.com/delliott90; WWW: `IBM <http://www.ibm.com/>`__
 
 About OASIS TC Open Repositories
 -----------------------------
