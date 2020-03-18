@@ -6,8 +6,6 @@ setup(
     packages=find_packages(),
     description='Match STIX content against STIX patterns',
     install_requires=[
-        'antlr4-python2-runtime==4.7 ; python_version < "3"',
-        'antlr4-python3-runtime==4.7 ; python_version >= "3"',
         'python-dateutil',
         'six',
         'stix2-patterns>=1.0.0',
