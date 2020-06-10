@@ -150,8 +150,6 @@ agreements`_.
 **Current Maintainers of this TC Open Repository**
 
 -  `Chris Lenk`_; GitHub ID: https://github.com/clenk/; WWW: `MITRE`_
--  `Ivan Kirillov`_; GitHub ID: https://github.com/ikiril01/; WWW:
-   `MITRE`_
 -  `Jason Keirstead <mailto:Jason.Keirstead@ca.ibm.com>`__; GitHub ID:
    https://github.com/JasonKeirstead; WWW: `IBM <http://www.ibm.com/>`__
 -  `Md Azam <mailto:mdazam@ca.ibm.com>`__; GitHub ID:
@@ -193,7 +191,6 @@ to repository-cla@oasis-open.org.
 .. _consensus agreements: https://www.oasis-open.org/resources/open-repositories/maintainers-guide#additionalMaintainers
 .. _Chris Lenk: mailto:clenk@mitre.org
 .. _MITRE: https://www.mitre.org/
-.. _Ivan Kirillov: mailto:ikirillov@mitre.org
 .. _proposed: https://lists.oasis-open.org/archives/cti/201610/msg00106.html
 .. _approved: https://lists.oasis-open.org/archives/cti/201610/msg00126.html
 .. _bis: https://issues.oasis-open.org/browse/TCADMIN-2477
