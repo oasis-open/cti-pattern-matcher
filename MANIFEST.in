@@ -1,5 +1,8 @@
+include .isort.cfg
+include .pre-commit-config.yaml
 include *.md
 include *.txt
 include LICENSE
+include CHANGELOG.rst
 include tox.ini
 recursive-include stix2matcher/test/testcases *.json
