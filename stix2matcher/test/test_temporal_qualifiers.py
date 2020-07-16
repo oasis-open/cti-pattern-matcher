@@ -1,9 +1,9 @@
-from stix2patterns.pattern import ParseException
-
 # I'll specially test some critical internal time-interval related code,
 # since it's easier to test it separately than create lots of SDOs AND
 # patterns.
 import pytest
+from stix2patterns.pattern import ParseException
+
 from stix2matcher.matcher import (_OVERLAP, _OVERLAP_NONE,
                                   _OVERLAP_TOUCH_INNER, _OVERLAP_TOUCH_OUTER,
                                   _OVERLAP_TOUCH_POINT, MatcherException,
