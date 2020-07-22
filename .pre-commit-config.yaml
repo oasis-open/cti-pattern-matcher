@@ -1,5 +1,5 @@
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    sha: ea227f024bd89d638aea319c92806737e3375979
+    rev: ea227f024bd89d638aea319c92806737e3375979
     hooks:
     -   id: trailing-whitespace
     -   id: flake8
@@ -7,6 +7,6 @@
         - --max-line-length=160
     -   id: check-merge-conflict
 -   repo: https://github.com/FalconSocial/pre-commit-python-sorter
-    sha: b57843b0b874df1d16eb0bef00b868792cb245c2
+    rev: b57843b0b874df1d16eb0bef00b868792cb245c2
     hooks:
     -   id: python-import-sorter

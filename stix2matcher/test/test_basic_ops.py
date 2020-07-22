@@ -1,4 +1,5 @@
 import pytest
+
 from stix2matcher.matcher import MatcherException, match
 
 _observations = [

@@ -1,6 +1,6 @@
+import pytest
 from stix2patterns.pattern import ParseException
 
-import pytest
 from stix2matcher.matcher import MatcherException, match
 
 _observations = [
