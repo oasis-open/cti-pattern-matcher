@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 import pytest
 
 from stix2matcher.matcher import match
@@ -63,3 +65,38 @@ def test_complex_match(pattern):
 ])
 def test_complex_nomatch(pattern):
     assert not match(pattern, _observations)
+
+
+_observations_combinatorial_explosion = []
+for i in range(20):
+    time = datetime(2004, 10, 11, 21, 44, 58) + timedelta(seconds=i)
+    time_str = time.isoformat("T") + "Z"
+    _observations_combinatorial_explosion.append(
+        {
+            "type": "observed-data",
+            "first_observed": time_str,
+            "last_observed": time_str,
+            "number_observed": 1,
+            "objects": {
+                "a0": {
+                    "type": u"person",
+                    "name": u"alice",
+                    "age": 10
+                }
+            }
+        }
+    )
+
+
+@pytest.mark.parametrize("pattern", [
+    "[person:age < 20] REPEATS 10 TIMES",
+])
+def test_combinatorial_explosion_match(pattern):
+    assert match(pattern, _observations_combinatorial_explosion)
+
+
+@pytest.mark.parametrize("pattern", [
+    "[person:age < 20] REPEATS 10 TIMES WITHIN 8 SECONDS",
+])
+def test_combinatorial_explosion_nomatch(pattern):
+    assert not match(pattern, _observations_combinatorial_explosion)
