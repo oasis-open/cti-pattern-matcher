@@ -1070,42 +1070,94 @@ class MatchListener(STIXPatternListener):
             msg = u"Unexpected number of observationExpressions children: {}"
             raise MatcherInternalError(msg.format(num_operands))
 
-        if num_operands == 2:
-            debug_label = u"exitObservationExpressions"
+        if num_operands == 0:
+            # If only the one observationExpressionOr child, we don't need to do
+            # anything to the top of the stack.
+            return
 
-            rhs_bindings = list(self.__pop(debug_label))
-            lhs_bindings = list(self.__pop(debug_label))
+        # num_operands == 2
+        debug_label = u"exitObservationExpressions"
 
-            joined_bindings = []
-            for lhs_binding in lhs_bindings:
+        rhs_bindings = self.__pop(debug_label)
+        lhs_bindings = self.__pop(debug_label)
 
-                # To ensure a satisfying selection of timestamps is possible,
-                # we make the most optimistic choices: choose the earliest
-                # possible timestamps for LHS bindings and latest possible for
-                # RHS bindings.  Then as a shortcut, only ensure proper
-                # ordering of the latest LHS timestamp and earliest RHS
-                # timestamp.
-                latest_lhs_first_timestamp = max(
-                    self.__time_intervals[obs_id][0] for obs_id in lhs_binding
-                    if obs_id is not None
-                )
+        # we need to return the filtered cartesian product of rhs_bindings
+        # and lhs_bindings but they are generators:
+        # we need to store the generated elements
+        def joined_bindings():
+            _rhs_cache = []
+            _lhs_cache = []
+            _next_rhs_binding = next(rhs_bindings, None)
+            _next_lhs_binding = next(lhs_bindings, None)
+            if _next_rhs_binding is None or _next_lhs_binding is None:
+                # cache and one generator are empty
+                return
+            while _next_rhs_binding is not None or _next_lhs_binding is not None:
+                # while there are new bindings to explore
+                if _next_rhs_binding is not None:
+                    # if there is a new rhs binding yield valid combinations
+                    yield from self.__followed_by_right_join(_lhs_cache, _next_rhs_binding)
+                    # update cache
+                    _rhs_cache.append(_next_rhs_binding)
+                    _next_rhs_binding = next(rhs_bindings, None)
 
-                for rhs_binding in rhs_bindings:
+                if _next_lhs_binding is not None:
+                    # if there is a new rhs binding yield valid combinations
+                    yield from self.__followed_by_left_join(_next_lhs_binding, _rhs_cache)
+                    # update cache
+                    _lhs_cache.append(_next_lhs_binding)
+                    _next_lhs_binding = next(lhs_bindings, None)
 
-                    if _disjoint(lhs_binding, rhs_binding):
-                        earliest_rhs_last_timestamp = min(
-                            self.__time_intervals[obs_id][1]
-                            for obs_id in rhs_binding
-                            if obs_id is not None
-                        )
 
-                        if latest_lhs_first_timestamp <= earliest_rhs_last_timestamp:
-                            joined_bindings.append(lhs_binding + rhs_binding)
+        self.__push(joined_bindings(), debug_label)
 
-            self.__push(iter(joined_bindings), debug_label)
+    def __followed_by_left_join(self, lhs_binding, rhs_bindings):
+        # Yield all valid FOLLOWEDBY joins between a single lhs_binding
+        # and a list of rhs_bindings
 
-        # If only the one observationExpressionOr child, we don't need to do
-        # anything to the top of the stack.
+        # To ensure a satisfying selection of timestamps is possible,
+        # we make the most optimistic choices: choose the earliest
+        # possible timestamps for LHS bindings and latest possible for
+        # RHS bindings.  Then as a shortcut, only ensure proper
+        # ordering of the latest LHS timestamp and earliest RHS
+        # timestamp.
+        latest_lhs_first_timestamp = self.__latest_first_timestamp(lhs_binding)
+
+        for rhs_binding in rhs_bindings:
+
+            if _disjoint(lhs_binding, rhs_binding):
+                earliest_rhs_last_timestamp = self.__earliest_last_timestamp(rhs_binding)
+
+                if latest_lhs_first_timestamp <= earliest_rhs_last_timestamp:
+                    yield (lhs_binding + rhs_binding)
+
+    def __followed_by_right_join(self, lhs_bindings, rhs_binding):
+        # Yield all valid FOLLOWEDBY joins between a list of lhs_bindings
+        # and a single rhs_binding
+
+        earliest_rhs_last_timestamp = self.__earliest_last_timestamp(rhs_binding)
+
+        for lhs_binding in lhs_bindings:
+
+            if _disjoint(lhs_binding, rhs_binding):
+                latest_lhs_first_timestamp = self.__latest_first_timestamp(lhs_binding)
+
+                if latest_lhs_first_timestamp <= earliest_rhs_last_timestamp:
+                    yield (lhs_binding + rhs_binding)
+
+    def __latest_first_timestamp(self, binding):
+        return max(
+            self.__time_intervals[obs_id][0]
+            for obs_id in binding
+            if obs_id is not None
+        )
+
+    def __earliest_last_timestamp(self, binding):
+        return  min(
+            self.__time_intervals[obs_id][1]
+            for obs_id in binding
+            if obs_id is not None
+        )
 
     def exitObservationExpressionOr(self, ctx):
         """
@@ -1145,53 +1197,58 @@ class MatchListener(STIXPatternListener):
             msg = u"Unexpected number of observationExpressionOr children: {}"
             raise MatcherInternalError(msg.format(num_operands))
 
-        if num_operands == 2:
-            debug_label = u"exitObservationExpressionOr"
+        if num_operands == 0:
+            return
 
-            rhs_bindings = list(self.__pop(debug_label))
-            lhs_bindings = list(self.__pop(debug_label))
+        # num_operands == 2:
+        debug_label = u"exitObservationExpressionOr"
 
-            # Compute tuples of None values, for each side (rhs/lhs), whose
-            # lengths are equal to the bindings on those sides.  These will
-            # be concatenated with actual bindings to produce the results.
-            # These are kind of like None'd "placeholder" bindings, since we
-            # want each joined binding to include actual bindings from only the
-            # left or right side, not both.  We fill in None's for the side
-            # we don't want to include.
-            #
-            # There are special cases when one side has no bindings.
-            # We would like the resulting binding sizes to match up to the
-            # number of observation expressions in the pattern, but if one
-            # side's bindings are empty, we can't easily tell what size they
-            # would have been.  So I traverse that part of the subtree to
-            # obtain a size.  Algorithm correctness doesn't depend on this
-            # "filler", but it helps users understand how the resulting
-            # bindings match up with the pattern.
-            if lhs_bindings and rhs_bindings:
-                lhs_binding_none = (None,) * len(lhs_bindings[0])
-                rhs_binding_none = (None,) * len(rhs_bindings[0])
-            elif lhs_bindings:
-                right_binding_size = _compute_expected_binding_size(
-                    ctx.observationExpressionOr(1))
-                lhs_binding_none = (None,) * len(lhs_bindings[0])
-                rhs_binding_none = (None,) * right_binding_size
-            elif rhs_bindings:
-                left_binding_size = _compute_expected_binding_size(
-                    ctx.observationExpressionOr(0))
-                lhs_binding_none = (None,) * left_binding_size
-                rhs_binding_none = (None,) * len(rhs_bindings[0])
+        rhs_bindings = self.__pop(debug_label)
+        lhs_bindings = self.__pop(debug_label)
 
-            joined_bindings = [
-                lhs_binding + rhs_binding_none
-                for lhs_binding in lhs_bindings
-            ]
+        # Compute tuples of None values, for each side (rhs/lhs), whose
+        # lengths are equal to the bindings on those sides.  These will
+        # be concatenated with actual bindings to produce the results.
+        # These are kind of like None'd "placeholder" bindings, since we
+        # want each joined binding to include actual bindings from only the
+        # left or right side, not both.  We fill in None's for the side
+        # we don't want to include.
+        #
+        # There are special cases when one side has no bindings.
+        # We would like the resulting binding sizes to match up to the
+        # number of observation expressions in the pattern, but if one
+        # side's bindings are empty, we can't easily tell what size they
+        # would have been.  So I traverse that part of the subtree to
+        # obtain a size.  Algorithm correctness doesn't depend on this
+        # "filler", but it helps users understand how the resulting
+        # bindings match up with the pattern.
+        first_lhs_binding = next(lhs_bindings, None)
+        first_rhs_binding = next(rhs_bindings, None)
+        if first_lhs_binding is not None:
+            lhs_binding_none = (None,) * len(first_lhs_binding)
+        else:
+            left_binding_size = _compute_expected_binding_size(
+                ctx.observationExpressionOr(0))
+            lhs_binding_none = (None,) * left_binding_size
+        if first_rhs_binding is not None:
+            rhs_binding_none = (None,) * len(first_rhs_binding)
+        else:
+            right_binding_size = _compute_expected_binding_size(
+                ctx.observationExpressionOr(0))
+            rhs_binding_none = (None,) * right_binding_size
 
-            joined_bindings.extend(
-                lhs_binding_none + rhs_binding
-                for rhs_binding in rhs_bindings
-            )
+        def joined_bindings():
+            _lhs_binding = first_lhs_binding
+            _rhs_binding = first_rhs_binding
+            while _lhs_binding is not None or _rhs_binding is not None:
+                if _lhs_binding is not None:
+                    yield _lhs_binding + rhs_binding_none
+                    _lhs_binding = next(lhs_bindings, None)
+                if _rhs_binding is not None:
+                    yield lhs_binding_none + _rhs_binding
+                    _rhs_binding = next(rhs_bindings, None)
 
-            self.__push(iter(joined_bindings), debug_label)
+        self.__push(joined_bindings(), debug_label)
 
     def exitObservationExpressionAnd(self, ctx):
         """
@@ -1211,19 +1268,48 @@ class MatchListener(STIXPatternListener):
             msg = u"Unexpected number of observationExpressionAnd children: {}"
             raise MatcherInternalError(msg.format(num_operands))
 
-        if num_operands == 2:
-            debug_label = u"exitObservationExpressionAnd"
+        if num_operands == 0:
+            return
 
-            rhs_bindings = list(self.__pop(debug_label))
-            lhs_bindings = list(self.__pop(debug_label))
+        # num_operands == 2:
+        debug_label = u"exitObservationExpressionAnd"
 
-            joined_bindings = []
-            for lhs_binding in lhs_bindings:
-                for rhs_binding in rhs_bindings:
-                    if _disjoint(lhs_binding, rhs_binding):
-                        joined_bindings.append(lhs_binding + rhs_binding)
+        rhs_bindings = self.__pop(debug_label)
+        lhs_bindings = self.__pop(debug_label)
 
-            self.__push(iter(joined_bindings), debug_label)
+        # we need to return the cartesian product of rhs_bindings and lhs_bindings
+        # but they are generators: we need to store the generated elements
+        def joined_bindings():
+            _rhs_cache = []
+            _lhs_cache = []
+            _next_rhs_binding = next(rhs_bindings, None)
+            _next_lhs_binding = next(lhs_bindings, None)
+            if _next_rhs_binding is None or _next_lhs_binding is None:
+                # cache and one generator are empty
+                return
+            while _next_rhs_binding is not None or _next_lhs_binding is not None:
+                # while there are new bindings to explore
+                if _next_rhs_binding is not None:
+                    # if there is a new rhs binding
+                    for lhs_binding in _lhs_cache:
+                        # yield valid combinations
+                        if _disjoint(lhs_binding, _next_rhs_binding):
+                            yield (lhs_binding + _next_rhs_binding)
+                    # update cache
+                    _rhs_cache.append(_next_rhs_binding)
+                    _next_rhs_binding = next(rhs_bindings, None)
+
+                if _next_lhs_binding is not None:
+                    # if there is a new rhs binding
+                    for rhs_binding in _rhs_cache:
+                        # yield valid combinations
+                        if _disjoint(_next_lhs_binding, rhs_binding):
+                            yield (_next_lhs_binding + rhs_binding)
+                    # update cache
+                    _lhs_cache.append(_next_lhs_binding)
+                    _next_lhs_binding = next(lhs_bindings, None)
+
+        self.__push(joined_bindings(), debug_label)
 
     def exitObservationExpressionSimple(self, ctx):
         """
@@ -1296,17 +1382,21 @@ class MatchListener(STIXPatternListener):
         debug_label = u"exitObservationExpressionWithin"
 
         duration = self.__pop(debug_label)
-        bindings = list(self.__pop(debug_label))
+        bindings = self.__pop(debug_label)
 
-        filtered_bindings = []
-        for binding in bindings:
-            if _timestamp_intervals_within(
-                    [self.__time_intervals[obs_id] for obs_id in binding
-                     if obs_id is not None],
-                    duration):
-                filtered_bindings.append(binding)
+        def check_within(binding):
+            return _timestamp_intervals_within(
+                [
+                    self.__time_intervals[obs_id]
+                    for obs_id in binding
+                    if obs_id is not None
+                ],
+                duration
+            )
 
-        self.__push(iter(filtered_bindings), debug_label)
+        filtered_bindings = filter(check_within, bindings)
+
+        self.__push(filtered_bindings, debug_label)
 
     def exitObservationExpressionStartStop(self, ctx):
         """
@@ -1327,22 +1417,24 @@ class MatchListener(STIXPatternListener):
         # In this case, these are start and stop timestamps as
         # datetime.datetime objects (see exitStartStopQualifier()).
         start_time, stop_time = self.__pop(debug_label)
-        bindings = list(self.__pop(debug_label))
+        bindings = self.__pop(debug_label)
 
-        filtered_bindings = []
-        # If start and stop are equal, the constraint is impossible to
-        # satisfy, since a value can't be both >= and < the same number.
-        # And of course it's impossible if start > stop.
-        if start_time < stop_time:
-            for binding in bindings:
-                in_bounds = all(
+        def check_within(binding):
+            return all(
                     _overlap(start_time, stop_time, *self.__time_intervals[obs_id])
                     in (_OVERLAP, _OVERLAP_TOUCH_OUTER)
                     for obs_id in binding if obs_id is not None
                 )
 
-                if in_bounds:
-                    filtered_bindings.append(binding)
+        filtered_bindings = filter(check_within, bindings)
+
+        # If start and stop are equal, the constraint is impossible to
+        # satisfy, since a value can't be both >= and < the same number.
+        # And of course it's impossible if start > stop.
+        if start_time < stop_time:
+            filtered_bindings = filter(check_within, bindings)
+        else:
+            filtered_bindings = iter(())
 
         self.__push(iter(filtered_bindings), debug_label)
 
