@@ -815,30 +815,34 @@ def _filtered_combinations(values, combo_size, filter_pred=None):
     :param combo_size: The desired combination size (must be >= 1)
     :param filter_pred: The filter predicate.  If None (the default), no
         filtering is done.
-    :return: The combinations, as a list of tuples.
+    :return: The combinations, as a generator of tuples.
     """
+
+    values = list(values)  # TODO: work directly on generator
 
     if combo_size < 1:
         raise ValueError(u"combo_size must be >= 1")
     elif combo_size > len(values):
         # Not enough values to make any combo
-        return []
+        yield from ()
     elif combo_size == 1:
         # Each value is its own combo
-        return [(value,) for value in values
-                if filter_pred is None or filter_pred(value)]
+        yield from (
+            (value,) for value in values
+            if filter_pred is None or filter_pred(value)
+        )
     else:
 
         sub_combos = _filtered_combinations(values[1:], combo_size - 1,
                                             filter_pred)
 
-        combos = [(values[0],) + sub_combo
-                  for sub_combo in sub_combos
-                  if filter_pred is None or filter_pred(values[0], *sub_combo)]
+        yield from (
+            (values[0],) + sub_combo
+            for sub_combo in sub_combos
+            if filter_pred is None or filter_pred(values[0], *sub_combo)
+        )
 
-        combos += _filtered_combinations(values[1:], combo_size, filter_pred)
-
-        return combos
+        yield from _filtered_combinations(values[1:], combo_size, filter_pred)
 
 
 def _compute_expected_binding_size(ctx):
@@ -1012,23 +1016,23 @@ class MatchListener(STIXPatternListener):
         succeeded and traversal completed without errors.  All of the found
         bindings are returned.
 
-        The returned bindings will be a list of tuples of ints.  These ints
+        The returned bindings will be a generator of tuples of ints.  These ints
         correspond to observations, not SDOs.  There is a difference when any
         SDOs have number_observed > 1.  `None` can also occur in any tuple.
         This corresponds to a portion of the pattern to which no observation
         was bound (because a binding was not necessary).  To get the actual
         SDOs from a binding, see get_sdos_from_binding().  If the pattern
-        didn't match, an empty list is returned.
+        didn't match, an empty generator is returned.
 
         :return: The found bindings, if any.
         """
-        # At the end of the parse, the top stack element will be a list of
+        # At the end of the parse, the top stack element will be a generator of
         # all the found bindings (as tuples).  If there is at least one, the
         # pattern matched.  If the tree traversal failed, the top stack element
         # could be anything... so don't call this function in that situation!
         if self.__compute_stack:
-            return self.__compute_stack[0]
-        return []
+            yield from self.__compute_stack[0]
+        return
 
     def get_sdos_from_binding(self, binding):
         """
@@ -1049,9 +1053,9 @@ class MatchListener(STIXPatternListener):
         """
         Implements the FOLLOWEDBY operator.  If there are two child nodes:
 
-        Consumes two lists of binding tuples from the top of the stack, which
+        Consumes two generators of binding tuples from the top of the stack, which
           are the RHS and LHS operands.
-        Produces a joined list of binding tuples.  This essentially produces a
+        Produces a joined generator of binding tuples.  This essentially produces a
           filtered cartesian cross-product of the LHS and RHS tuples.  Results
           include those with no duplicate observation IDs, and such that it is
           possible to choose legal timestamps (i.e. within the interval defined
@@ -1069,8 +1073,8 @@ class MatchListener(STIXPatternListener):
         if num_operands == 2:
             debug_label = u"exitObservationExpressions"
 
-            rhs_bindings = self.__pop(debug_label)
-            lhs_bindings = self.__pop(debug_label)
+            rhs_bindings = list(self.__pop(debug_label))
+            lhs_bindings = list(self.__pop(debug_label))
 
             joined_bindings = []
             for lhs_binding in lhs_bindings:
@@ -1098,7 +1102,7 @@ class MatchListener(STIXPatternListener):
                         if latest_lhs_first_timestamp <= earliest_rhs_last_timestamp:
                             joined_bindings.append(lhs_binding + rhs_binding)
 
-            self.__push(joined_bindings, debug_label)
+            self.__push(iter(joined_bindings), debug_label)
 
         # If only the one observationExpressionOr child, we don't need to do
         # anything to the top of the stack.
@@ -1108,9 +1112,9 @@ class MatchListener(STIXPatternListener):
         Implements the pattern-level OR operator.  If there are two child
         nodes:
 
-        Consumes two lists of binding tuples from the top of the stack, which
+        Consumes two generators of binding tuples from the top of the stack, which
           are the RHS and LHS operands.
-        Produces a joined list of binding tuples.  This produces a sort of
+        Produces a joined generator of binding tuples.  This produces a sort of
           outer join: result tuples include the LHS values with all RHS
           values set to None, and vice versa.  Result bindings with values
           from both LHS and RHS are not included, to improve scalability
@@ -1144,8 +1148,8 @@ class MatchListener(STIXPatternListener):
         if num_operands == 2:
             debug_label = u"exitObservationExpressionOr"
 
-            rhs_bindings = self.__pop(debug_label)
-            lhs_bindings = self.__pop(debug_label)
+            rhs_bindings = list(self.__pop(debug_label))
+            lhs_bindings = list(self.__pop(debug_label))
 
             # Compute tuples of None values, for each side (rhs/lhs), whose
             # lengths are equal to the bindings on those sides.  These will
@@ -1187,16 +1191,16 @@ class MatchListener(STIXPatternListener):
                 for rhs_binding in rhs_bindings
             )
 
-            self.__push(joined_bindings, debug_label)
+            self.__push(iter(joined_bindings), debug_label)
 
     def exitObservationExpressionAnd(self, ctx):
         """
         Implements the pattern-level AND operator.  If there are two child
         nodes:
 
-        Consumes two lists of binding tuples from the top of the stack, which
+        Consumes two generators of binding tuples from the top of the stack, which
           are the RHS and LHS operands.
-        Produces a joined list of binding tuples.  All joined tuples are
+        Produces a joined generator of binding tuples.  All joined tuples are
           produced which include lhs and rhs values without having any
           duplicate observation IDs.
         """
@@ -1210,8 +1214,8 @@ class MatchListener(STIXPatternListener):
         if num_operands == 2:
             debug_label = u"exitObservationExpressionAnd"
 
-            rhs_bindings = self.__pop(debug_label)
-            lhs_bindings = self.__pop(debug_label)
+            rhs_bindings = list(self.__pop(debug_label))
+            lhs_bindings = list(self.__pop(debug_label))
 
             joined_bindings = []
             for lhs_binding in lhs_bindings:
@@ -1219,33 +1223,33 @@ class MatchListener(STIXPatternListener):
                     if _disjoint(lhs_binding, rhs_binding):
                         joined_bindings.append(lhs_binding + rhs_binding)
 
-            self.__push(joined_bindings, debug_label)
+            self.__push(iter(joined_bindings), debug_label)
 
     def exitObservationExpressionSimple(self, ctx):
         """
         Consumes a the results of the inner comparison expression.  See
         exitComparisonExpression().
-        Produces: a list of 1-tuples of the IDs.  At this stage, the root
+        Produces: a generator of 1-tuples of the IDs.  At this stage, the root
         Cyber Observable object IDs are no longer needed, and are dropped.
 
         This is a preparatory transformative step, so that higher-level
-        processing has consistent structures to work with (always lists of
+        processing has consistent structures to work with (always generator of
         tuples).
         """
 
         debug_label = u"exitObservationExpression (simple)"
         obs_ids = self.__pop(debug_label)
-        obs_id_tuples = [(obs_id,) for obs_id in obs_ids.keys()]
+        obs_id_tuples = ((obs_id,) for obs_id in obs_ids.keys())
         self.__push(obs_id_tuples, debug_label)
 
     # Don't need to do anything for exitObservationExpressionCompound
 
     def exitObservationExpressionRepeated(self, ctx):
         """
-        Consumes a list of bindings for the qualified observation expression.
-        Produces a list of bindings which account for the repetition.  The
-          length of each new binding is equal to the length of the old bindings
-          times the repeat count.
+        Consumes a genrator of bindings for the qualified observation expression.
+        Produces a genrator of bindings which account for the repetition. The
+        length of each new binding is equal to the length of the old bindings
+        times the repeat count.
         """
 
         rep_count = _literal_terminal_to_python_val(
@@ -1267,32 +1271,32 @@ class MatchListener(STIXPatternListener):
             # as-is.
             filtered_bindings = bindings
         else:
-            # A list of tuples goes in (bindings)
+            # A generator of tuples goes in (bindings)
             filtered_bindings = _filtered_combinations(bindings, rep_count,
                                                        _disjoint)
-            # ... and a list of tuples of tuples comes out
+            # ... and a generator of tuples of tuples comes out
             # (filtered_bindings).  The following flattens each outer
             # tuple.  I could have also written a generic flattener, but
             # since this structure is predictable, I could do something
             # simpler.  Other code dealing with bindings doesn't expect any
             # nested structure, so I do the flattening here.
-            filtered_bindings = [tuple(itertools.chain.from_iterable(binding))
-                                 for binding in filtered_bindings]
+            filtered_bindings = (tuple(itertools.chain.from_iterable(binding))
+                                 for binding in filtered_bindings)
 
         self.__push(filtered_bindings, debug_label)
 
     def exitObservationExpressionWithin(self, ctx):
         """
         Consumes (1) a duration, as a dateutil.relativedelta.relativedelta
-          object (see exitWithinQualifier()), and (2) a list of bindings.
-        Produces a list of bindings which are temporally filtered according
+          object (see exitWithinQualifier()), and (2) a generator of bindings.
+        Produces a generator of bindings which are temporally filtered according
           to the given duration.
         """
 
         debug_label = u"exitObservationExpressionWithin"
 
         duration = self.__pop(debug_label)
-        bindings = self.__pop(debug_label)
+        bindings = list(self.__pop(debug_label))
 
         filtered_bindings = []
         for binding in bindings:
@@ -1302,13 +1306,13 @@ class MatchListener(STIXPatternListener):
                     duration):
                 filtered_bindings.append(binding)
 
-        self.__push(filtered_bindings, debug_label)
+        self.__push(iter(filtered_bindings), debug_label)
 
     def exitObservationExpressionStartStop(self, ctx):
         """
         Consumes (1) a time interval as a pair of datetime.datetime objects,
-          and (2) a list of bindings.
-        Produces a list of bindings which are temporally filtered according
+          and (2) a generator of bindings.
+        Produces a generator of bindings which are temporally filtered according
           to the given time interval.  A binding passes the test if it is
           possible to select legal timestamps for all observations which are
           within the start/stop interval, not including the stop value, which
@@ -1323,7 +1327,7 @@ class MatchListener(STIXPatternListener):
         # In this case, these are start and stop timestamps as
         # datetime.datetime objects (see exitStartStopQualifier()).
         start_time, stop_time = self.__pop(debug_label)
-        bindings = self.__pop(debug_label)
+        bindings = list(self.__pop(debug_label))
 
         filtered_bindings = []
         # If start and stop are equal, the constraint is impossible to
@@ -1340,7 +1344,7 @@ class MatchListener(STIXPatternListener):
                 if in_bounds:
                     filtered_bindings.append(binding)
 
-        self.__push(filtered_bindings, debug_label)
+        self.__push(iter(filtered_bindings), debug_label)
 
     def exitStartStopQualifier(self, ctx):
         """
@@ -2126,11 +2130,8 @@ class Pattern(stix2patterns.pattern.Pattern):
         matcher = MatchListener(observed_data_sdos, verbose)
         self.walk(matcher)
 
-        found_bindings = matcher.matched()
-        if found_bindings:
-            matching_sdos = matcher.get_sdos_from_binding(found_bindings[0])
-        else:
-            matching_sdos = []
+        first_binding = next(matcher.matched(), [])
+        matching_sdos = matcher.get_sdos_from_binding(first_binding)
 
         return matching_sdos
 
