@@ -789,7 +789,7 @@ def _obs_map_prop_test(obs_map, predicate):
     return passed_obs
 
 
-def _filtered_combinations(values, combo_size, filter_pred=None):
+def _filtered_combinations(value_generator, combo_size, filter_pred=None):
     """
     Finds combinations of values of the given size, from the given sequence,
     filtered according to the given predicate.
@@ -818,31 +818,69 @@ def _filtered_combinations(values, combo_size, filter_pred=None):
     :return: The combinations, as a generator of tuples.
     """
 
-    values = list(values)  # TODO: work directly on generator
+    if combo_size < 1:
+        raise ValueError(u"combo_size must be >= 1")
+    elif combo_size == 1:
+        # Each value is its own combo
+        yield from (
+            (value,) for value in value_generator
+            if filter_pred is None or filter_pred(value)
+        )
+        return
+
+    # combo_size > 1
+    # generate up to combo_size values
+    generated_values = [x for _, x in zip(range(combo_size - 1), value_generator)]
+
+    for next_value in value_generator:
+        sub_combos = _filtered_combinations_from_list(
+            generated_values,
+            combo_size - 1,
+            filter_pred,
+        )
+
+        yield from (
+            sub_combo + (next_value,)
+            for sub_combo in sub_combos
+            if filter_pred is None or filter_pred(next_value, *sub_combo)
+        )
+        generated_values.append(next_value)
+
+
+def _filtered_combinations_from_list(value_list, combo_size, filter_pred=None):
+    """
+    _filtered_combinations that works on lists
+
+    :param value_list: The sequence of values
+    :param combo_size: The desired combination size (must be >= 1)
+    :param filter_pred: The filter predicate.  If None (the default), no
+        filtering is done.
+    :return: The combinations, as a generator of tuples.
+    """
 
     if combo_size < 1:
         raise ValueError(u"combo_size must be >= 1")
-    elif combo_size > len(values):
+    elif combo_size > len(value_list):
         # Not enough values to make any combo
         yield from ()
     elif combo_size == 1:
         # Each value is its own combo
         yield from (
-            (value,) for value in values
+            (value,) for value in value_list
             if filter_pred is None or filter_pred(value)
         )
     else:
 
-        sub_combos = _filtered_combinations(values[1:], combo_size - 1,
+        sub_combos = _filtered_combinations_from_list(value_list[1:], combo_size - 1,
                                             filter_pred)
 
         yield from (
-            (values[0],) + sub_combo
+            (value_list[0],) + sub_combo
             for sub_combo in sub_combos
-            if filter_pred is None or filter_pred(values[0], *sub_combo)
+            if filter_pred is None or filter_pred(value_list[0], *sub_combo)
         )
 
-        yield from _filtered_combinations(values[1:], combo_size, filter_pred)
+        yield from _filtered_combinations_from_list(value_list[1:], combo_size, filter_pred)
 
 
 def _compute_expected_binding_size(ctx):

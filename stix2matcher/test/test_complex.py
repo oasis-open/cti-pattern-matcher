@@ -95,6 +95,7 @@ for i in range(20):
     "[person:age < 20] REPEATS 10 TIMES AND [person:age < 20]",
     "[person:age < 20] REPEATS 10 TIMES OR [person:age < 20]",
     "[person:age < 20] REPEATS 10 TIMES FOLLOWEDBY [person:age < 20]",
+    "[person:age < 20] REPEATS 5 TIMES REPEATS 2 TIMES",
     " AND ".join("[person:age < 20]" for _ in range(10)),
     " OR ".join("[person:age < 20]" for _ in range(10)),
 ])
