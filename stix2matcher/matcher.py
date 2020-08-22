@@ -871,8 +871,11 @@ def _filtered_combinations_from_list(value_list, combo_size, filter_pred=None):
         )
     else:
 
-        sub_combos = _filtered_combinations_from_list(value_list[1:], combo_size - 1,
-                                            filter_pred)
+        sub_combos = _filtered_combinations_from_list(
+            value_list[1:],
+            combo_size - 1,
+            filter_pred,
+        )
 
         yield from (
             (value_list[0],) + sub_combo
@@ -1149,7 +1152,6 @@ class MatchListener(STIXPatternListener):
                     _lhs_cache.append(_next_lhs_binding)
                     _next_lhs_binding = next(lhs_bindings, None)
 
-
         self.__push(joined_bindings(), debug_label)
 
     def __followed_by_left_join(self, lhs_binding, rhs_bindings):
@@ -1194,7 +1196,7 @@ class MatchListener(STIXPatternListener):
         )
 
     def __earliest_last_timestamp(self, binding):
-        return  min(
+        return min(
             self.__time_intervals[obs_id][1]
             for obs_id in binding
             if obs_id is not None
