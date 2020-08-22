@@ -960,6 +960,9 @@ class MatchListener(STIXPatternListener):
     many bindings, rather than just the first one found, as might
     be the case with a backtracking algorithm.
 
+    Actually, through the use of generators to represent sets of bindings an
+    implicit form of backtracking limits the memory usage.
+
     I made the conscious decision to skip some bindings in one particular case,
     to improve scalability (see exitObservationExpressionOr()) without
     affecting correctness.
