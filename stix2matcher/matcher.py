@@ -789,32 +789,36 @@ def _obs_map_prop_test(obs_map, predicate):
     return passed_obs
 
 
-def _filtered_combinations(value_generator, combo_size, filter_pred=None):
+def _filtered_combinations(value_generator, combo_size, pre_filter=None, post_filter=None):
     """
     Finds combinations of values of the given size, from the given sequence,
-    filtered according to the given predicate.
+    filtered according to the given predicates.
 
-    This function builds up the combinations incrementally, and the predicate
-    is invoked with partial results.  This allows many combinations to be
-    ruled out early.  If the predicate returns True, the combination is kept,
-    otherwise it is discarded.
+    This function builds up the combinations incrementally.
+    `pre_filter` is invoked between two individual elements, before
+    combinations are built.  This ensure that for any two elements in a given
+    combination `pre_filter` returns True.
 
-    The predicate is invoked with each combination value as a separate
+    The post_filter predicate is invoked on partial (and final) combinations.
+    It can be used to check more global properties.
+    It is invoked with each combination value as a separate
     argument.  E.g. if (1,2,3) is a candidate combination (or partial
     combination), the predicate is invoked as pred(1, 2, 3).  So the predicate
     will probably need a "*args"-style argument for capturing variable
     numbers of positional arguments.
 
     Because of the way combinations are built up incrementally, the predicate
-    may assume that args 1 through N already satisfy the predicate (they've
+    may assume that args 1 through N-1 already satisfy the predicate (they've
     already been run through it), which may allow you to optimize the
-    implementation.  Arg 0 is the "new" arg being tested to see if can be
-    prepended to the rest of the args.
+    implementation.  Arg 0 (or Arg N) is the "new" arg being tested to see if
+    it can be prepended (or appended) to the rest of the args.
 
     :param values: The sequence of values
     :param combo_size: The desired combination size (must be >= 1)
-    :param filter_pred: The filter predicate.  If None (the default), no
-        filtering is done.
+    :param pre_filter: The pre filter predicate.
+        If None (the default), no filtering is done.
+    :param post_filter: The post filter predicate.
+        If None (the default), no filtering is done.
     :return: The combinations, as a generator of tuples.
     """
 
@@ -824,30 +828,36 @@ def _filtered_combinations(value_generator, combo_size, filter_pred=None):
         # Each value is its own combo
         yield from (
             (value,) for value in value_generator
-            if filter_pred is None or filter_pred(value)
+            if post_filter is None or post_filter(value)
         )
         return
 
     # combo_size > 1
-    # generate up to combo_size values
+    # generate up to combo_size - 1 values
     generated_values = [x for _, x in zip(range(combo_size - 1), value_generator)]
 
     for next_value in value_generator:
+        filtered_values = [
+            candidate
+            for candidate in generated_values
+            if pre_filter is None or pre_filter(candidate, next_value)
+        ]
         sub_combos = _filtered_combinations_from_list(
-            generated_values,
+            filtered_values,
             combo_size - 1,
-            filter_pred,
+            pre_filter,
+            post_filter,
         )
 
         yield from (
             sub_combo + (next_value,)
             for sub_combo in sub_combos
-            if filter_pred is None or filter_pred(next_value, *sub_combo)
+            if post_filter is None or post_filter(*sub_combo, next_value)
         )
         generated_values.append(next_value)
 
 
-def _filtered_combinations_from_list(value_list, combo_size, filter_pred=None):
+def _filtered_combinations_from_list(value_list, combo_size, pre_filter=None, post_filter=None):
     """
     _filtered_combinations that works on lists
 
@@ -867,23 +877,35 @@ def _filtered_combinations_from_list(value_list, combo_size, filter_pred=None):
         # Each value is its own combo
         yield from (
             (value,) for value in value_list
-            if filter_pred is None or filter_pred(value)
+            if post_filter is None or post_filter(value)
         )
     else:
 
+        filtered_values = [
+            candidate
+            for candidate in value_list[1:]
+            if pre_filter is None or pre_filter(value_list[0], candidate)
+        ]
+
         sub_combos = _filtered_combinations_from_list(
-            value_list[1:],
+            filtered_values,
             combo_size - 1,
-            filter_pred,
+            pre_filter,
+            post_filter,
         )
 
         yield from (
             (value_list[0],) + sub_combo
             for sub_combo in sub_combos
-            if filter_pred is None or filter_pred(value_list[0], *sub_combo)
+            if post_filter is None or post_filter(value_list[0], *sub_combo)
         )
 
-        yield from _filtered_combinations_from_list(value_list[1:], combo_size, filter_pred)
+        yield from _filtered_combinations_from_list(
+            value_list[1:],
+            combo_size,
+            pre_filter,
+            post_filter,
+        )
 
 
 def _compute_expected_binding_size(ctx):
@@ -1402,7 +1424,7 @@ class MatchListener(STIXPatternListener):
         else:
             # A generator of tuples goes in (bindings)
             filtered_bindings = _filtered_combinations(bindings, rep_count,
-                                                       _disjoint)
+                                                       pre_filter=_disjoint)
             # ... and a generator of tuples of tuples comes out
             # (filtered_bindings).  The following flattens each outer
             # tuple.  I could have also written a generic flattener, but
