@@ -870,21 +870,19 @@ def _filtered_combinations_from_list(value_list, combo_size, pre_filter=None, po
 
     if combo_size < 1:
         raise ValueError(u"combo_size must be >= 1")
-    elif combo_size > len(value_list):
-        # Not enough values to make any combo
-        yield from ()
     elif combo_size == 1:
         # Each value is its own combo
         yield from (
             (value,) for value in value_list
             if post_filter is None or post_filter(value)
         )
-    else:
+        return
 
+    for i in range(len(value_list) + 1 - combo_size):
         filtered_values = [
             candidate
-            for candidate in value_list[1:]
-            if pre_filter is None or pre_filter(value_list[0], candidate)
+            for candidate in value_list[i + 1:]
+            if pre_filter is None or pre_filter(value_list[i], candidate)
         ]
 
         sub_combos = _filtered_combinations_from_list(
@@ -895,16 +893,9 @@ def _filtered_combinations_from_list(value_list, combo_size, pre_filter=None, po
         )
 
         yield from (
-            (value_list[0],) + sub_combo
+            (value_list[i],) + sub_combo
             for sub_combo in sub_combos
-            if post_filter is None or post_filter(value_list[0], *sub_combo)
-        )
-
-        yield from _filtered_combinations_from_list(
-            value_list[1:],
-            combo_size,
-            pre_filter,
-            post_filter,
+            if post_filter is None or post_filter(value_list[i], *sub_combo)
         )
 
 
