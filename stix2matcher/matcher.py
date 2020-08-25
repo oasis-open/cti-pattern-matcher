@@ -1448,9 +1448,9 @@ class MatchListener(STIXPatternListener):
                 duration
             )
 
-        filtered_bindings = filter(check_within, bindings)
+        filtered_bindings = (binding for binding in bindings if check_within(binding))
 
-        self.__push(iter(filtered_bindings), debug_label)
+        self.__push(filtered_bindings, debug_label)
 
     def exitObservationExpressionStartStop(self, ctx):
         """
@@ -1484,11 +1484,11 @@ class MatchListener(STIXPatternListener):
         # satisfy, since a value can't be both >= and < the same number.
         # And of course it's impossible if start > stop.
         if start_time < stop_time:
-            filtered_bindings = filter(check_within, bindings)
+            filtered_bindings = (binding for binding in bindings if check_within(binding))
         else:
-            filtered_bindings = ()
+            filtered_bindings = iter(())
 
-        self.__push(iter(filtered_bindings), debug_label)
+        self.__push(filtered_bindings, debug_label)
 
     def exitStartStopQualifier(self, ctx):
         """
