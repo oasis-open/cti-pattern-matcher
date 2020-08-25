@@ -826,10 +826,9 @@ def _filtered_combinations(value_generator, combo_size, pre_filter=None, post_fi
         raise ValueError(u"combo_size must be >= 1")
     elif combo_size == 1:
         # Each value is its own combo
-        yield from (
-            (value,) for value in value_generator
-            if post_filter is None or post_filter(value)
-        )
+        for value in value_generator:
+            if post_filter is None or post_filter(value):
+                yield (value,)
         return
 
     # combo_size > 1
@@ -849,11 +848,10 @@ def _filtered_combinations(value_generator, combo_size, pre_filter=None, post_fi
             post_filter,
         )
 
-        yield from (
-            sub_combo + (next_value,)
-            for sub_combo in sub_combos
-            if post_filter is None or post_filter(*sub_combo, next_value)
-        )
+        for sub_combo in sub_combos:
+            if post_filter is None or post_filter(*(sub_combo + (next_value,))):
+                yield sub_combo + (next_value,)
+
         generated_values.append(next_value)
 
 
@@ -872,10 +870,9 @@ def _filtered_combinations_from_list(value_list, combo_size, pre_filter=None, po
         raise ValueError(u"combo_size must be >= 1")
     elif combo_size == 1:
         # Each value is its own combo
-        yield from (
-            (value,) for value in value_list
-            if post_filter is None or post_filter(value)
-        )
+        for value in value_list:
+            if post_filter is None or post_filter(value):
+                yield (value,)
         return
 
     for i in range(len(value_list) + 1 - combo_size):
@@ -892,11 +889,9 @@ def _filtered_combinations_from_list(value_list, combo_size, pre_filter=None, po
             post_filter,
         )
 
-        yield from (
-            (value_list[i],) + sub_combo
-            for sub_combo in sub_combos
-            if post_filter is None or post_filter(value_list[i], *sub_combo)
-        )
+        for sub_combo in sub_combos:
+            if post_filter is None or post_filter(value_list[i], *sub_combo):
+                yield (value_list[i],) + sub_combo
 
 
 def _compute_expected_binding_size(ctx):
@@ -1088,7 +1083,8 @@ class MatchListener(STIXPatternListener):
         # pattern matched.  If the tree traversal failed, the top stack element
         # could be anything... so don't call this function in that situation!
         if self.__compute_stack:
-            yield from self.__compute_stack[0]
+            for binding in self.__compute_stack[0]:
+                yield binding
         return
 
     def get_sdos_from_binding(self, binding):
@@ -1153,14 +1149,16 @@ class MatchListener(STIXPatternListener):
                 # while there are new bindings to explore
                 if _next_rhs_binding is not None:
                     # if there is a new rhs binding yield valid combinations
-                    yield from self.__followed_by_right_join(_lhs_cache, _next_rhs_binding)
+                    for combination in self.__followed_by_right_join(_lhs_cache, _next_rhs_binding):
+                        yield combination
                     # update cache
                     _rhs_cache.append(_next_rhs_binding)
                     _next_rhs_binding = next(rhs_bindings, None)
 
                 if _next_lhs_binding is not None:
                     # if there is a new rhs binding yield valid combinations
-                    yield from self.__followed_by_left_join(_next_lhs_binding, _rhs_cache)
+                    for combination in self.__followed_by_left_join(_next_lhs_binding, _rhs_cache):
+                        yield combination
                     # update cache
                     _lhs_cache.append(_next_lhs_binding)
                     _next_lhs_binding = next(lhs_bindings, None)
@@ -1452,7 +1450,7 @@ class MatchListener(STIXPatternListener):
 
         filtered_bindings = filter(check_within, bindings)
 
-        self.__push(filtered_bindings, debug_label)
+        self.__push(iter(filtered_bindings), debug_label)
 
     def exitObservationExpressionStartStop(self, ctx):
         """
@@ -1488,9 +1486,9 @@ class MatchListener(STIXPatternListener):
         if start_time < stop_time:
             filtered_bindings = filter(check_within, bindings)
         else:
-            filtered_bindings = iter(())
+            filtered_bindings = ()
 
-        self.__push(filtered_bindings, debug_label)
+        self.__push(iter(filtered_bindings), debug_label)
 
     def exitStartStopQualifier(self, ctx):
         """
