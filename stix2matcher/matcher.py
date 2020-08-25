@@ -1482,8 +1482,6 @@ class MatchListener(STIXPatternListener):
                     for obs_id in binding if obs_id is not None
                 )
 
-        filtered_bindings = filter(check_within, bindings)
-
         # If start and stop are equal, the constraint is impossible to
         # satisfy, since a value can't be both >= and < the same number.
         # And of course it's impossible if start > stop.
@@ -1492,7 +1490,7 @@ class MatchListener(STIXPatternListener):
         else:
             filtered_bindings = iter(())
 
-        self.__push(iter(filtered_bindings), debug_label)
+        self.__push(filtered_bindings, debug_label)
 
     def exitStartStopQualifier(self, ctx):
         """
