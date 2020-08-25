@@ -1473,7 +1473,7 @@ class MatchListener(STIXPatternListener):
         start_time, stop_time = self.__pop(debug_label)
         bindings = self.__pop(debug_label)
 
-        def check_within(binding):
+        def check_overlap(binding):
             return all(
                     _overlap(start_time, stop_time, *self.__time_intervals[obs_id])
                     in (_OVERLAP, _OVERLAP_TOUCH_OUTER)
@@ -1484,7 +1484,7 @@ class MatchListener(STIXPatternListener):
         # satisfy, since a value can't be both >= and < the same number.
         # And of course it's impossible if start > stop.
         if start_time < stop_time:
-            filtered_bindings = (binding for binding in bindings if check_within(binding))
+            filtered_bindings = (binding for binding in bindings if check_overlap(binding))
         else:
             filtered_bindings = iter(())
 
