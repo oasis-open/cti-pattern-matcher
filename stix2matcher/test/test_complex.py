@@ -99,6 +99,7 @@ for i in range(20):
     "[person:age < 20] REPEATS 2 TIMES REPEATS 5 TIMES",
     " AND ".join("[person:age < 20]" for _ in range(10)),
     " OR ".join("[person:age < 20]" for _ in range(10)),
+    "([person:age < 20] FOLLOWEDBY [person:age > 5]) REPEATS 10 TIMES",
 ])
 def test_combinatorial_explosion_match(pattern):
     assert match(pattern, _observations_combinatorial_explosion)

@@ -829,6 +829,56 @@ def _filtered_combinations(value_generator, combo_size):
         generated_values.append(next_value)
 
 
+def _tuple_size(value):
+    """
+    return number of non-None elements
+    """
+    return sum(idx is not None for idx in value)
+
+
+def _ceildiv(a, b):
+    return -(-a // b)
+
+
+def _bound_largest_combination(value_list):
+    """
+    Returns an upper bound on the largest disjoint combination
+
+    Given a valid combination of disjoint tuples, replacing a tuple
+    with a sub-tuple (smaller and included) leads to a valid combination
+    of the same size. Thus we can bound size of largest possible combination
+    by considering small tuples first.
+
+    :param value_list: List of tuples of obs (internal) ids
+    """
+    if value_list == []:
+        return 0
+
+    # First get max tuple size
+    max_size = max(_tuple_size(value) for value in value_list)
+
+    # init array of sets of obs_idx
+    obs_idx = [set() for _ in range(max_size + 1)]
+    for value in value_list:
+        obs_idx[_tuple_size(value)] |= {idx for idx in value if idx is not None}
+
+    # build largest combination
+    # considering that all possible tuples are availables
+    consumed_idx = set()
+    combination_size = 0
+    for i in range(1, max_size):
+        available_idx = obs_idx[i] - consumed_idx
+        # each tuple consumes i idx
+        # (rounded up since we remove all idx from bigger tuples)
+        combination_size += _ceildiv(len(available_idx), i)
+        # update mark all idx as consumed
+        consumed_idx |= available_idx
+    # last size does not need rounding up
+    available_idx = obs_idx[max_size] - consumed_idx
+    combination_size += len(available_idx) // max_size
+    return combination_size
+
+
 def _filtered_combinations_from_list(value_list, combo_size):
     """
     _filtered_combinations that works on lists
@@ -844,6 +894,9 @@ def _filtered_combinations_from_list(value_list, combo_size):
         # Each value is its own combo
         for value in value_list:
             yield (value,)
+        return
+    elif _bound_largest_combination(value_list) < combo_size:
+        # there is no way we can build a combination large enough
         return
 
     for i in range(len(value_list) + 1 - combo_size):
