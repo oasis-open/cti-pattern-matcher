@@ -81,7 +81,7 @@ for i in range(20):
                 "a0": {
                     "type": u"person",
                     "name": u"alice",
-                    "age": 10
+                    "age": i % 20
                 }
             }
         }

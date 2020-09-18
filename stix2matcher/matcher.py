@@ -789,6 +789,10 @@ def _obs_map_prop_test(obs_map, predicate):
     return passed_obs
 
 
+class NotEnoughValues(ValueError):
+    pass
+
+
 def _filtered_combinations(value_generator, combo_size):
     """
     Finds disjoint combinations of values of the given size from the given sequence.
@@ -822,9 +826,11 @@ def _filtered_combinations(value_generator, combo_size):
             filtered_values,
             combo_size - 1,
         )
-
-        for sub_combo in sub_combos:
-            yield sub_combo + (next_value,)
+        try:
+            for sub_combo in sub_combos:
+                yield sub_combo + (next_value,)
+        except NotEnoughValues:
+            pass
 
         generated_values.append(next_value)
 
@@ -895,9 +901,12 @@ def _filtered_combinations_from_list(value_list, combo_size):
         for value in value_list:
             yield (value,)
         return
-    elif _bound_largest_combination(value_list) < combo_size:
+
+    bound = _bound_largest_combination(value_list)
+    if bound < combo_size:
         # there is no way we can build a combination large enough
-        return
+        # `combo_size - bound` tuples are missing
+        raise NotEnoughValues(combo_size - bound)
 
     for i in range(len(value_list) + 1 - combo_size):
         filtered_values = [
@@ -911,8 +920,35 @@ def _filtered_combinations_from_list(value_list, combo_size):
             combo_size - 1,
         )
 
-        for sub_combo in sub_combos:
-            yield (value_list[i],) + sub_combo
+        yielded_combos = False
+        try:
+            for sub_combo in sub_combos:
+                yield (value_list[i],) + sub_combo
+                yielded_combos = True
+        except NotEnoughValues as e:
+            if yielded_combos:
+                continue
+            # retrieve number of missing values to build a combo of size `combo_size - 1`
+            # from `filtered_values` (value_list[i + 1:] disjoint value_list[i])
+            missing_values = e.args[0]
+            # Bound number of additional values we can expect if we do not remove
+            # those that intersect with value_list[i]
+            # - it is smaller than the number of values we removed
+            # - and smaller than `_tuple_size(value_list[i])` because they all intersect
+            #   value_list[i] and can not intersect each other to be in the same combo
+            max_add_values = min(
+                len(value_list[i + 1:]) - len(filtered_values),
+                _tuple_size(value_list[i]),
+            )
+            # +1 because we now want combo of size `combo_size` (not `combo_size - 1`)
+            expected_missing_values = missing_values + 1 - max_add_values
+            if expected_missing_values > 0:
+                # no need to inspect `value_list[i + 1:]` and others
+                # there is no way we can build a combo large enough
+                if i == 0:
+                    raise NotEnoughValues(expected_missing_values)
+                else:
+                    return
 
 
 def _compute_expected_binding_size(ctx):
