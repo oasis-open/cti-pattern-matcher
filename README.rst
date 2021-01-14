@@ -205,7 +205,7 @@ to repository-cla@oasis-open.org.
 .. _pytest: http://pytest.org
 .. _stix2-json-schemas: https://github.com/oasis-open/cti-stix2-json-schemas/blob/master/pattern_grammar/STIXPattern.g4
 
-.. |Build_Status| image:: https://travis-ci.org/oasis-open/cti-pattern-matcher.svg?branch=master
-   :target: https://travis-ci.org/oasis-open/cti-pattern-matcher
+.. |Build_Status| image:: https://github.com/oasis-open/cti-pattern-matcher/workflows/cti-pattern-matcher2%20test%20harness/badge.svg
+   :target: https://github.com/oasis-open/cti-pattern-matcher/actions?query=workflow%3A%22cti-pattern-matcher+test+harness%22
 .. |Coverage| image:: https://codecov.io/gh/oasis-open/cti-pattern-matcher/branch/master/graph/badge.svg
    :target: https://codecov.io/gh/oasis-open/cti-pattern-matcher
