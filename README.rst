@@ -29,13 +29,17 @@ Requirements
 
 -  python-dateutil (https://dateutil.readthedocs.io/en/stable/)
 -  six (https://six.readthedocs.io/)
+-  stix2-patterns (https://github.com/oasis-open/cti-pattern-validator)
 -  (For running tests) - pytest (http://pytest.org/latest/getting-started.html)
 
 Installation
 ------------
 
-To install pattern-matcher, first install all required dependencies,
-then run ``python setup.py install`` in the root of this repository.
+Install with `pip <https://pip.pypa.io/en/stable/>`__:
+
+.. code-block:: bash
+
+  $ pip install stix2-matcher
 
 Usage
 -----
