@@ -22,15 +22,10 @@ documentation and to verify patterns express the desired criteria.
 Requirements
 ------------
 
--  Python 2.7 or 3.4+
+-  Python 3.6+
 -  ANTLR Python Runtime (4.7+)
 
-   -  https://pypi.python.org/pypi/antlr4-python2-runtime (Python 2)
    -  https://pypi.python.org/pypi/antlr4-python3-runtime (Python 3)
-
--  typing
-
-   -  https://pypi.python.org/pypi/typing (Python 3.4)
 
 -  python-dateutil (https://dateutil.readthedocs.io/en/stable/)
 -  six (https://six.readthedocs.io/)
@@ -93,7 +88,7 @@ the validator).
 
    .. code:: bash
 
-       $ java -jar "/path/to/antlr-4.7-complete.jar" -Dlanguage=Python2 STIXPattern.g4 -o /path/to/cti-pattern-matcher/stix2matcher/grammars
+       $ java -jar "/path/to/antlr-4.7-complete.jar" -Dlanguage=Python3 STIXPattern.g4 -o /path/to/cti-pattern-matcher/stix2matcher/grammars
 
 5. Commit the resulting files to git.
 
