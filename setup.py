@@ -1,10 +1,21 @@
+#!/usr/bin/env python
+from codecs import open
+
 from setuptools import find_packages, setup
+
+
+def get_long_description():
+    with open('README.rst') as f:
+        return f.read()
+
 
 setup(
     name='stix2-matcher',
     version='1.0.0',
     packages=find_packages(),
+    long_description=get_long_description(),
     description='Match STIX content against STIX patterns',
+    long_description_content_type='text/x-rst',
     install_requires=[
         'python-dateutil',
         'six',

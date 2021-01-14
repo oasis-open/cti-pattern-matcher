@@ -110,10 +110,10 @@ distinct`_ from the OASIS TC Process and related policies.
 
 All contributions made to this TC Open Repository are subject to open
 source license terms expressed in the `BSD-3-Clause License`_. That
-license was selected as the declared `“Applicable License”`_ when the
+license was selected as the declared `"Applicable License"`_ when the
 TC Open Repository was created.
 
-As documented in `“Public Participation Invited`_\ “, contributions to
+As documented in `"Public Participation Invited"`_\ “, contributions to
 this OASIS TC Open Repository are invited from all parties, whether
 affiliated with OASIS or not. Participants must have a GitHub account,
 but no fees or OASIS membership obligations are required.
@@ -153,7 +153,7 @@ agreements`_.
    https://github.com/delliott90; WWW: `IBM <http://www.ibm.com/>`__
 
 About OASIS TC Open Repositories
------------------------------
+--------------------------------
 
 -  `TC Open Repositories - Overview and Resources`_
 -  `Frequently Asked Questions`_
@@ -176,6 +176,7 @@ repository-admin@oasis-open.org and any specific CLA-related questions
 to repository-cla@oasis-open.org.
 
 .. _`TC Open Repositories - Overview and Resources`: https://www.oasis-open.org/resources/open-repositories/
+.. _`OASIS TC Open Repository`: https://www.oasis-open.org/resources/open-repositories/
 .. _Frequently Asked Questions: https://www.oasis-open.org/resources/open-repositories/faq
 .. _Open Source Licenses: https://www.oasis-open.org/resources/open-repositories/licenses
 .. _Contributor License Agreements (CLAs): https://www.oasis-open.org/resources/open-repositories/cla
@@ -192,8 +193,8 @@ to repository-cla@oasis-open.org.
 .. _OASIS Cyber Threat Intelligence (CTI) TC: https://www.oasis-open.org/committees/cti/
 .. _separate and distinct: https://github.com/oasis-open/cti-pattern-matcher/blob/master/CONTRIBUTING.md#governance-distinct-from-oasis-tc-process
 .. _BSD-3-Clause License: https://www.oasis-open.org/sites/www.oasis-open.org/files/BSD-3-Clause.txt
-.. _“Applicable License”: https://www.oasis-open.org/resources/open-repositories/licenses
-.. _“Public Participation Invited: https://github.com/oasis-open/cti-pattern-matcher/blob/master/CONTRIBUTING.md#public-participation-invited
+.. _"Applicable License": https://www.oasis-open.org/resources/open-repositories/licenses
+.. _"Public Participation Invited": https://github.com/oasis-open/cti-pattern-matcher/blob/master/CONTRIBUTING.md#public-participation-invited
 .. _OASIS TC Open Repository Guidelines and Procedures: https://www.oasis-open.org/policies-guidelines/open-repositories
 .. _LICENSE: https://github.com/oasis-open/cti-pattern-matcher/blob/master/LICENSE
 .. _Individual Contributor License Agreement: https://www.oasis-open.org/resources/open-repositories/cla/individual-cla
