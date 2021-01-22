@@ -1,15 +1,25 @@
+#!/usr/bin/env python
+from codecs import open
+
 from setuptools import find_packages, setup
+
+
+def get_long_description():
+    with open('README.rst') as f:
+        return f.read()
+
 
 setup(
     name='stix2-matcher',
-    version='0.1.0',
+    version='1.0.0',
     packages=find_packages(),
+    long_description=get_long_description(),
     description='Match STIX content against STIX patterns',
+    long_description_content_type='text/x-rst',
     install_requires=[
         'python-dateutil',
         'six',
         'stix2-patterns>=1.0.0',
-        'typing ; python_version < "3.5" and python_version >= "3"',
     ],
     tests_require=[
         'pytest>=2.9.2'
@@ -22,11 +32,7 @@ setup(
     classifiers=[
         'Development Status :: 3 - Alpha',
         'License :: OSI Approved :: BSD License',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',

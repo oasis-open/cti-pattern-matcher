@@ -22,25 +22,24 @@ documentation and to verify patterns express the desired criteria.
 Requirements
 ------------
 
--  Python 2.7 or 3.4+
+-  Python 3.6+
 -  ANTLR Python Runtime (4.7+)
 
-   -  https://pypi.python.org/pypi/antlr4-python2-runtime (Python 2)
    -  https://pypi.python.org/pypi/antlr4-python3-runtime (Python 3)
-
--  typing
-
-   -  https://pypi.python.org/pypi/typing (Python 3.4)
 
 -  python-dateutil (https://dateutil.readthedocs.io/en/stable/)
 -  six (https://six.readthedocs.io/)
+-  stix2-patterns (https://github.com/oasis-open/cti-pattern-validator)
 -  (For running tests) - pytest (http://pytest.org/latest/getting-started.html)
 
 Installation
 ------------
 
-To install pattern-matcher, first install all required dependencies,
-then run ``python setup.py install`` in the root of this repository.
+Install with `pip <https://pip.pypa.io/en/stable/>`__:
+
+.. code-block:: bash
+
+  $ pip install stix2-matcher
 
 Usage
 -----
@@ -93,7 +92,7 @@ the validator).
 
    .. code:: bash
 
-       $ java -jar "/path/to/antlr-4.7-complete.jar" -Dlanguage=Python2 STIXPattern.g4 -o /path/to/cti-pattern-matcher/stix2matcher/grammars
+       $ java -jar "/path/to/antlr-4.7-complete.jar" -Dlanguage=Python3 STIXPattern.g4 -o /path/to/cti-pattern-matcher/stix2matcher/grammars
 
 5. Commit the resulting files to git.
 
@@ -115,10 +114,10 @@ distinct`_ from the OASIS TC Process and related policies.
 
 All contributions made to this TC Open Repository are subject to open
 source license terms expressed in the `BSD-3-Clause License`_. That
-license was selected as the declared `“Applicable License”`_ when the
+license was selected as the declared `"Applicable License"`_ when the
 TC Open Repository was created.
 
-As documented in `“Public Participation Invited`_\ “, contributions to
+As documented in `"Public Participation Invited"`_\ “, contributions to
 this OASIS TC Open Repository are invited from all parties, whether
 affiliated with OASIS or not. Participants must have a GitHub account,
 but no fees or OASIS membership obligations are required.
@@ -158,7 +157,7 @@ agreements`_.
    https://github.com/delliott90; WWW: `IBM <http://www.ibm.com/>`__
 
 About OASIS TC Open Repositories
------------------------------
+--------------------------------
 
 -  `TC Open Repositories - Overview and Resources`_
 -  `Frequently Asked Questions`_
@@ -181,6 +180,7 @@ repository-admin@oasis-open.org and any specific CLA-related questions
 to repository-cla@oasis-open.org.
 
 .. _`TC Open Repositories - Overview and Resources`: https://www.oasis-open.org/resources/open-repositories/
+.. _`OASIS TC Open Repository`: https://www.oasis-open.org/resources/open-repositories/
 .. _Frequently Asked Questions: https://www.oasis-open.org/resources/open-repositories/faq
 .. _Open Source Licenses: https://www.oasis-open.org/resources/open-repositories/licenses
 .. _Contributor License Agreements (CLAs): https://www.oasis-open.org/resources/open-repositories/cla
@@ -197,15 +197,15 @@ to repository-cla@oasis-open.org.
 .. _OASIS Cyber Threat Intelligence (CTI) TC: https://www.oasis-open.org/committees/cti/
 .. _separate and distinct: https://github.com/oasis-open/cti-pattern-matcher/blob/master/CONTRIBUTING.md#governance-distinct-from-oasis-tc-process
 .. _BSD-3-Clause License: https://www.oasis-open.org/sites/www.oasis-open.org/files/BSD-3-Clause.txt
-.. _“Applicable License”: https://www.oasis-open.org/resources/open-repositories/licenses
-.. _“Public Participation Invited: https://github.com/oasis-open/cti-pattern-matcher/blob/master/CONTRIBUTING.md#public-participation-invited
+.. _"Applicable License": https://www.oasis-open.org/resources/open-repositories/licenses
+.. _"Public Participation Invited": https://github.com/oasis-open/cti-pattern-matcher/blob/master/CONTRIBUTING.md#public-participation-invited
 .. _OASIS TC Open Repository Guidelines and Procedures: https://www.oasis-open.org/policies-guidelines/open-repositories
 .. _LICENSE: https://github.com/oasis-open/cti-pattern-matcher/blob/master/LICENSE
 .. _Individual Contributor License Agreement: https://www.oasis-open.org/resources/open-repositories/cla/individual-cla
 .. _pytest: http://pytest.org
 .. _stix2-json-schemas: https://github.com/oasis-open/cti-stix2-json-schemas/blob/master/pattern_grammar/STIXPattern.g4
 
-.. |Build_Status| image:: https://travis-ci.org/oasis-open/cti-pattern-matcher.svg?branch=master
-   :target: https://travis-ci.org/oasis-open/cti-pattern-matcher
+.. |Build_Status| image:: https://github.com/oasis-open/cti-pattern-matcher/workflows/cti-pattern-matcher2%20test%20harness/badge.svg
+   :target: https://github.com/oasis-open/cti-pattern-matcher/actions?query=workflow%3A%22cti-pattern-matcher+test+harness%22
 .. |Coverage| image:: https://codecov.io/gh/oasis-open/cti-pattern-matcher/branch/master/graph/badge.svg
    :target: https://codecov.io/gh/oasis-open/cti-pattern-matcher
