@@ -20,6 +20,7 @@ import antlr4.error.ErrorListener
 import antlr4.error.Errors
 import dateutil.relativedelta
 import dateutil.tz
+import dateutil.parser
 import six
 from stix2patterns.grammars.STIXPatternListener import STIXPatternListener
 from stix2patterns.grammars.STIXPatternParser import STIXPatternParser
@@ -481,7 +482,10 @@ def _str_to_datetime(timestamp_str, ignore_case=False):
     else:
         fmt = u"%Y-%m-%dT%H:%M:%SZ"
 
-    dt = datetime.datetime.strptime(timestamp_str, fmt)
+    try:
+        dt = datetime.datetime.strptime(timestamp_str, fmt)
+    except ValueError:
+        dt = dateutil.parser.parse(timestamp_str)
     dt = dt.replace(tzinfo=dateutil.tz.tzutc())
 
     return dt
