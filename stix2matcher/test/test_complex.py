@@ -104,7 +104,6 @@ def test_combinatorial_explosion_match(pattern):
     assert match(pattern, _observations_combinatorial_explosion)
 
 
-@pytest.mark.skip(reason="Too slow with the current implementation")
 @pytest.mark.parametrize("pattern", [
     "[person:age < 20] REPEATS 10 TIMES WITHIN 8 SECONDS",
 ])
