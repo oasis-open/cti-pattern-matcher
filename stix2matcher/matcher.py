@@ -1367,7 +1367,7 @@ class MatchListener(STIXPatternListener):
 
     def exitObservationExpressionSimple(self, ctx):
         """
-        Consumes a the results of the inner comparison expression.  See
+        Consumes the results of the inner comparison expression.  See
         exitComparisonExpression().
         Produces: a generator of 1-tuples of the IDs.  At this stage, the root
         Cyber Observable object IDs are no longer needed, and are dropped.
@@ -1386,8 +1386,8 @@ class MatchListener(STIXPatternListener):
 
     def exitObservationExpressionRepeated(self, ctx):
         """
-        Consumes a genrator of bindings for the qualified observation expression.
-        Produces a genrator of bindings which account for the repetition. The
+        Consumes a generator of bindings for the qualified observation expression.
+        Produces a generator of bindings which account for the repetition. The
         length of each new binding is equal to the length of the old bindings
         times the repeat count.
         """
