@@ -478,6 +478,11 @@ def _str_to_datetime(timestamp_str, ignore_case=False):
     # Can't create a pattern with an optional part... so use two patterns
     if u"." in timestamp_str:
         fmt = u"%Y-%m-%dT%H:%M:%S.%fZ"
+        # maximum supported precision by Datetime is microsecond
+        timestamp_parts = timestamp_str.split(u".")
+        if len(timestamp_parts[1]) > 7 and timestamp_parts[1].endswith(u"Z"):
+            timestamp_parts[1] = timestamp_parts[1][:6] + timestamp_parts[1][-1:]
+            timestamp_str = u".".join(timestamp_parts)
     else:
         fmt = u"%Y-%m-%dT%H:%M:%SZ"
 
