@@ -993,10 +993,6 @@ class MatchListener(STIXPatternListener):
             callbacks and stack activity to stdout.  This can provide useful
             information about what the matcher is doing.
         """
-
-        # This "unpacks" the SDOs, creating repeated observations.  This
-        # doesn't make copies of observations; the same dict is repeated
-        # several times in the list.  Same goes for the timestamps.
         self.__observations = []
         self.__time_intervals = []  # 2-tuples of first,last timestamps
         for sdo in observed_data_sdos:
@@ -1007,14 +1003,10 @@ class MatchListener(STIXPatternListener):
                                        "(must be >= 1): {}".format(
                                         number_observed))
 
-            self.__observations.extend(
-                itertools.repeat(sdo, number_observed)
-            )
-            self.__time_intervals.extend(
-                itertools.repeat((_str_to_datetime(sdo["first_observed"]),
-                                  _str_to_datetime(sdo["last_observed"])),
-                                 number_observed)
-            )
+            self.__observations.append(sdo)
+
+            self.__time_intervals.append((_str_to_datetime(sdo["first_observed"]),
+                                          _str_to_datetime(sdo["last_observed"])))
 
         self.__verbose = verbose
         # Holds intermediate results
@@ -1074,8 +1066,7 @@ class MatchListener(STIXPatternListener):
         bindings are returned.
 
         The returned bindings will be a generator of tuples of ints.  These ints
-        correspond to observations, not SDOs.  There is a difference when any
-        SDOs have number_observed > 1.  `None` can also occur in any tuple.
+        correspond to SDOs.  `None` can also occur in any tuple.
         This corresponds to a portion of the pattern to which no observation
         was bound (because a binding was not necessary).  To get the actual
         SDOs from a binding, see get_sdos_from_binding().  If the pattern
@@ -1089,7 +1080,8 @@ class MatchListener(STIXPatternListener):
         # could be anything... so don't call this function in that situation!
         if self.__compute_stack:
             for binding in self.__compute_stack[0]:
-                yield binding
+                # convert back from complex instance_id to obs_index
+                yield tuple(map(self.get_obs_index_filtered, binding))
         return
 
     def get_sdos_from_binding(self, binding):
@@ -1106,6 +1098,47 @@ class MatchListener(STIXPatternListener):
                 sdos.append(self.__observations[obs_idx])
 
         return sdos
+
+    @staticmethod
+    def get_obs_index(instance_id):
+        """
+        Calculates the observable index from instance index.
+        :param instance_id: an instance id representation, created by
+        create_instance_index(obs_idx, inst_idx)
+        :return: int: the original observation index
+        """
+        if instance_id is None:
+            return None
+        return instance_id[0]
+
+    @staticmethod
+    def get_obs_index_filtered(instance_id):
+        """
+        Same as `get_obs_index(instance_index)`, but returns `None`
+        if instance_index is not 0. Useful with a filter predicate
+        to make sure every observable is included only once.
+        :param instance_id: an instance id representation, created by
+        create_instance_index(obs_idx, inst_idx)
+        :return: int: the original observation index for the first
+        instance of each observable and `None` for the rest.
+        """
+        if instance_id is None:
+            return None
+        return instance_id[0] if instance_id[1] == 0 else None
+
+    @staticmethod
+    def create_instance_id(obs_idx: int, inst_idx: int):
+        """
+        Creates instance index from an observable index and instance id.
+        This complex index is used after the initial filtering of the
+        observables to represent the "real" appearance if the objects
+        for REPEATS, FOLLOWEDBY and other high level operators.
+        :param obs_idx: index of the observed_data object
+        :param inst_idx: id of the instance, based on the `number_occured`
+        field.
+        :returns a Tuple, representing the complex instance id
+        """
+        return obs_idx, inst_idx
 
     def exitObservationExpressions(self, ctx):
         """
@@ -1206,16 +1239,18 @@ class MatchListener(STIXPatternListener):
 
     def __latest_first_timestamp(self, binding):
         return max(
-            self.__time_intervals[obs_id][0]
-            for obs_id in binding
-            if obs_id is not None
+            # time interval is based on the original obs_index
+            self.__time_intervals[self.get_obs_index(inst_id)][0]
+            for inst_id in binding
+            if inst_id is not None
         )
 
     def __earliest_last_timestamp(self, binding):
         return min(
-            self.__time_intervals[obs_id][1]
-            for obs_id in binding
-            if obs_id is not None
+            # time interval is based on the original obs_index
+            self.__time_intervals[self.get_obs_index(inst_id)][1]
+            for inst_id in binding
+            if inst_id is not None
         )
 
     def exitObservationExpressionOr(self, ctx):
@@ -1372,7 +1407,7 @@ class MatchListener(STIXPatternListener):
 
     def exitObservationExpressionSimple(self, ctx):
         """
-        Consumes a the results of the inner comparison expression.  See
+        Consumes the results of the inner comparison expression.  See
         exitComparisonExpression().
         Produces: a generator of 1-tuples of the IDs.  At this stage, the root
         Cyber Observable object IDs are no longer needed, and are dropped.
@@ -1384,15 +1419,19 @@ class MatchListener(STIXPatternListener):
 
         debug_label = u"exitObservationExpression (simple)"
         obs_ids = self.__pop(debug_label)
-        obs_id_tuples = ((obs_id,) for obs_id in obs_ids.keys())
+        # "Unpack" the instances of observables based on `number_observed`
+        # field by creating complex instance_id
+        obs_id_tuples = ((self.create_instance_id(obs_id, i),) for obs_id in obs_ids.keys()
+                         for i in range(0, self.__observations[obs_id]['number_observed']))
+
         self.__push(obs_id_tuples, debug_label)
 
     # Don't need to do anything for exitObservationExpressionCompound
 
     def exitObservationExpressionRepeated(self, ctx):
         """
-        Consumes a genrator of bindings for the qualified observation expression.
-        Produces a genrator of bindings which account for the repetition. The
+        Consumes a generator of bindings for the qualified observation expression.
+        Produces a generator of bindings which account for the repetition. The
         length of each new binding is equal to the length of the old bindings
         times the repeat count.
         """
@@ -1446,9 +1485,10 @@ class MatchListener(STIXPatternListener):
         def check_within(binding):
             return _timestamp_intervals_within(
                 [
-                    self.__time_intervals[obs_id]
-                    for obs_id in binding
-                    if obs_id is not None
+                    # time interval is based on the original obs_index
+                    self.__time_intervals[self.get_obs_index(inst_id)]
+                    for inst_id in binding
+                    if inst_id is not None
                 ],
                 duration
             )
@@ -1480,7 +1520,10 @@ class MatchListener(STIXPatternListener):
 
         def check_overlap(binding):
             return all(
-                    _overlap(start_time, stop_time, *self.__time_intervals[obs_id])
+                    _overlap(start_time, stop_time, *self.__time_intervals[
+                        # time interval is based on the original obs_index
+                        self.get_obs_index(obs_id)
+                    ])
                     in (_OVERLAP, _OVERLAP_TOUCH_OUTER)
                     for obs_id in binding if obs_id is not None
                 )
