@@ -11,7 +11,7 @@ def get_long_description():
 
 setup(
     name='stix2-matcher',
-    version='1.0.0',
+    version='2.0.0',
     packages=find_packages(),
     long_description=get_long_description(),
     description='Match STIX content against STIX patterns',
@@ -19,7 +19,7 @@ setup(
     install_requires=[
         'python-dateutil',
         'six',
-        'stix2-patterns>=1.0.0',
+        'stix2-patterns>=2.0.0',
     ],
     tests_require=[
         'pytest>=2.9.2'
