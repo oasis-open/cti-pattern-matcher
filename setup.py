@@ -19,7 +19,7 @@ setup(
     install_requires=[
         'python-dateutil',
         'six',
-        'stix2-patterns>=2.0.0',
+        'stix2-patterns>=1.0.0',
     ],
     tests_require=[
         'pytest>=2.9.2'
