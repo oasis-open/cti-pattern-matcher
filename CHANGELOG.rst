@@ -1,6 +1,10 @@
 CHANGELOG
 =========
 
+2.0.1 - 2021-03-26
+
+* Fixes packaging bug
+
 2.0.0 - 2021-03-26
 
 * #68 Adds support for Python 3.9 (@2xyo)
