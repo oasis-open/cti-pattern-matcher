@@ -794,36 +794,18 @@ def _obs_map_prop_test(obs_map, predicate):
     return passed_obs
 
 
-def _filtered_combinations(value_generator, combo_size, pre_filter=None, post_filter=None):
+class NotEnoughValues(ValueError):
+    pass
+
+
+def _filtered_combinations(value_generator, combo_size):
     """
-    Finds combinations of values of the given size, from the given sequence,
-    filtered according to the given predicates.
+    Finds disjoint combinations of values of the given size from the given sequence.
 
     This function builds up the combinations incrementally.
-    `pre_filter` is invoked between two individual elements, before
-    combinations are built.  This ensure that for any two elements in a given
-    combination `pre_filter` returns True.
-
-    The post_filter predicate is invoked on partial (and final) combinations.
-    It can be used to check more global properties.
-    It is invoked with each combination value as a separate
-    argument.  E.g. if (1,2,3) is a candidate combination (or partial
-    combination), the predicate is invoked as pred(1, 2, 3).  So the predicate
-    will probably need a "*args"-style argument for capturing variable
-    numbers of positional arguments.
-
-    Because of the way combinations are built up incrementally, the predicate
-    may assume that args 1 through N-1 already satisfy the predicate (they've
-    already been run through it), which may allow you to optimize the
-    implementation.  Arg 0 (or Arg N) is the "new" arg being tested to see if
-    it can be prepended (or appended) to the rest of the args.
 
     :param values: The sequence of values
     :param combo_size: The desired combination size (must be >= 1)
-    :param pre_filter: The pre filter predicate.
-        If None (the default), no filtering is done.
-    :param post_filter: The post filter predicate.
-        If None (the default), no filtering is done.
     :return: The combinations, as a generator of tuples.
     """
 
@@ -832,8 +814,7 @@ def _filtered_combinations(value_generator, combo_size, pre_filter=None, post_fi
     elif combo_size == 1:
         # Each value is its own combo
         for value in value_generator:
-            if post_filter is None or post_filter(value):
-                yield (value,)
+            yield (value,)
         return
 
     # combo_size > 1
@@ -844,30 +825,77 @@ def _filtered_combinations(value_generator, combo_size, pre_filter=None, post_fi
         filtered_values = [
             candidate
             for candidate in generated_values
-            if pre_filter is None or pre_filter(candidate, next_value)
+            if _disjoint(candidate, next_value)
         ]
         sub_combos = _filtered_combinations_from_list(
             filtered_values,
             combo_size - 1,
-            pre_filter,
-            post_filter,
         )
-
-        for sub_combo in sub_combos:
-            if post_filter is None or post_filter(*(sub_combo + (next_value,))):
+        try:
+            for sub_combo in sub_combos:
                 yield sub_combo + (next_value,)
+        except NotEnoughValues:
+            pass
 
         generated_values.append(next_value)
 
 
-def _filtered_combinations_from_list(value_list, combo_size, pre_filter=None, post_filter=None):
+def _tuple_size(value):
+    """
+    return number of non-None elements
+    """
+    return sum(idx is not None for idx in value)
+
+
+def _ceildiv(a, b):
+    return -(-a // b)
+
+
+def _bound_largest_combination(value_list):
+    """
+    Returns an upper bound on the largest disjoint combination
+
+    Given a valid combination of disjoint tuples, replacing a tuple
+    with a sub-tuple (smaller and included) leads to a valid combination
+    of the same size. Thus we can bound size of largest possible combination
+    by considering small tuples first.
+
+    :param value_list: List of tuples of obs (internal) ids
+    """
+    if value_list == []:
+        return 0
+
+    # First get max tuple size
+    max_size = max(_tuple_size(value) for value in value_list)
+
+    # init array of sets of obs_idx
+    obs_idx = [set() for _ in range(max_size + 1)]
+    for value in value_list:
+        obs_idx[_tuple_size(value)] |= {idx for idx in value if idx is not None}
+
+    # build largest combination
+    # considering that all possible tuples are availables
+    consumed_idx = set()
+    combination_size = 0
+    for i in range(1, max_size):
+        available_idx = obs_idx[i] - consumed_idx
+        # each tuple consumes i idx
+        # (rounded up since we remove all idx from bigger tuples)
+        combination_size += _ceildiv(len(available_idx), i)
+        # update mark all idx as consumed
+        consumed_idx |= available_idx
+    # last size does not need rounding up
+    available_idx = obs_idx[max_size] - consumed_idx
+    combination_size += len(available_idx) // max_size
+    return combination_size
+
+
+def _filtered_combinations_from_list(value_list, combo_size):
     """
     _filtered_combinations that works on lists
 
     :param value_list: The sequence of values
     :param combo_size: The desired combination size (must be >= 1)
-    :param filter_pred: The filter predicate.  If None (the default), no
-        filtering is done.
     :return: The combinations, as a generator of tuples.
     """
 
@@ -876,27 +904,56 @@ def _filtered_combinations_from_list(value_list, combo_size, pre_filter=None, po
     elif combo_size == 1:
         # Each value is its own combo
         for value in value_list:
-            if post_filter is None or post_filter(value):
-                yield (value,)
+            yield (value,)
         return
+
+    bound = _bound_largest_combination(value_list)
+    if bound < combo_size:
+        # there is no way we can build a combination large enough
+        # `combo_size - bound` tuples are missing
+        raise NotEnoughValues(combo_size - bound)
 
     for i in range(len(value_list) + 1 - combo_size):
         filtered_values = [
             candidate
             for candidate in value_list[i + 1:]
-            if pre_filter is None or pre_filter(value_list[i], candidate)
+            if _disjoint(value_list[i], candidate)
         ]
 
         sub_combos = _filtered_combinations_from_list(
             filtered_values,
             combo_size - 1,
-            pre_filter,
-            post_filter,
         )
 
-        for sub_combo in sub_combos:
-            if post_filter is None or post_filter(value_list[i], *sub_combo):
+        yielded_combos = False
+        try:
+            for sub_combo in sub_combos:
                 yield (value_list[i],) + sub_combo
+                yielded_combos = True
+        except NotEnoughValues as e:
+            if yielded_combos:
+                continue
+            # retrieve number of missing values to build a combo of size `combo_size - 1`
+            # from `filtered_values` (value_list[i + 1:] disjoint value_list[i])
+            missing_values = e.args[0]
+            # Bound number of additional values we can expect if we do not remove
+            # those that intersect with value_list[i]
+            # - it is smaller than the number of values we removed
+            # - and smaller than `_tuple_size(value_list[i])` because they all intersect
+            #   value_list[i] and can not intersect each other to be in the same combo
+            max_add_values = min(
+                len(value_list[i + 1:]) - len(filtered_values),
+                _tuple_size(value_list[i]),
+            )
+            # +1 because we now want combo of size `combo_size` (not `combo_size - 1`)
+            expected_missing_values = missing_values + 1 - max_add_values
+            if expected_missing_values > 0:
+                # no need to inspect `value_list[i + 1:]` and others
+                # there is no way we can build a combo large enough
+                if i == 0:
+                    raise NotEnoughValues(expected_missing_values)
+                else:
+                    return
 
 
 def _compute_expected_binding_size(ctx):
@@ -1456,8 +1513,7 @@ class MatchListener(STIXPatternListener):
             filtered_bindings = bindings
         else:
             # A generator of tuples goes in (bindings)
-            filtered_bindings = _filtered_combinations(bindings, rep_count,
-                                                       pre_filter=_disjoint)
+            filtered_bindings = _filtered_combinations(bindings, rep_count)
             # ... and a generator of tuples of tuples comes out
             # (filtered_bindings).  The following flattens each outer
             # tuple.  I could have also written a generic flattener, but
