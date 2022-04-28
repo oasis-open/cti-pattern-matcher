@@ -295,7 +295,7 @@ def _process_prop_suffix(prop_name, value):
         value = binascii.a2b_hex(value)
     elif prop_name.endswith(u"_bin"):
         # binary type, expressed as base64
-        value = base64.standard_b64decode(value).decode("utf8")
+        value = base64.standard_b64decode(value)
 
     return value
 
@@ -1938,8 +1938,12 @@ class MatchListener(STIXPatternListener):
         regex = _like_to_regex(operand_str)
         # compile and cache this to improve performance
         compiled_re = re.compile(regex)
+        is_binary_convertible = all(ord(c) < 256 for c in regex)
 
         def like_pred(value):
+            if isinstance(value, six.binary_type) and is_binary_convertible:
+                value = value.decode('utf8')
+
             # non-strings can't match
             if isinstance(value, six.text_type):
                 value = unicodedata.normalize("NFC", value)
