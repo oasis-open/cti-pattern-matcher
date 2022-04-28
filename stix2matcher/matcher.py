@@ -295,7 +295,7 @@ def _process_prop_suffix(prop_name, value):
         value = binascii.a2b_hex(value)
     elif prop_name.endswith(u"_bin"):
         # binary type, expressed as base64
-        value = base64.standard_b64decode(value).decode("ascii")
+        value = base64.standard_b64decode(value).decode("utf8")
 
     return value
 
