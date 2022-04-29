@@ -1,6 +1,10 @@
 CHANGELOG
 =========
 
+2.0.2 - 2022-04-29
+
+* Fixes LIKE operator search for base64 encoded value
+
 2.0.1 - 2021-03-26
 
 * Fixes packaging bug
