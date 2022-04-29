@@ -46,6 +46,11 @@ _observations = [
     "[binary_test:name_bin NOT MATCHES '\\\\x62o[b\\\\x01]']",
     u"[binary_test:name_bin NOT MATCHES '\u0103lice']",
 
+    "[binary_test:name_bin LIKE '%alice%']",
+    "[binary_test:name_bin LIKE 'alice']",
+    "[binary_test:name_bin NOT LIKE '%\u0103lice%']",
+    "[binary_test:name_bin NOT LIKE '%aardvark%']",
+
     # some nonprintable binary data tests too.
     "[binary_test:bin_hex = h'01020304']",
     "[binary_test:bin_hex = b'AQIDBA==']",
@@ -64,6 +69,7 @@ def test_binary_match(pattern):
     u"[binary_test:name_bin = '\u0103lice']",
     u"[binary_test:name_bin > '\u0103lice']",
     u"[binary_test:name_bin < '\u0103lice']",
+    u"[binary_test:name_bin LIKE '\u0103lice']",
     u"[binary_test:name_bin MATCHES '\u0103lice']",
     u"[binary_test:name_hex = '\u0103lice']",
     u"[binary_test:name_hex > '\u0103lice']",
