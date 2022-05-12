@@ -1053,36 +1053,31 @@ class MatchListener(STIXPatternListener):
         """
         self.__observations = []
         self.__time_intervals = []  # 2-tuples of first,last timestamps
+        self.__number_observed = [] 
 
         for sdo in observed_data_sdos:
-
             if stix_version == '2.1':
-                sdo_to_insert = {
-                    "type": sdo['type'],
-                    "id": sdo['id'],
-                    "objects": {}
-                }
                 for obj in sdo["objects"]:
                     if obj['type'] == "observed-data":
-                        sdo_to_insert['number_observed'] = obj["number_observed"]
-                        sdo_to_insert['first_observed'] = obj["first_observed"]
-                        sdo_to_insert['last_observed']  = obj["last_observed"]
-                    
-                    sdo_to_insert["objects"][obj['id']] = obj
+                        number_observed = obj["number_observed"]
+                        first_observed = obj["first_observed"]
+                        last_observed  = obj["last_observed"]
+                        break
             else:
-                sdo_to_insert = sdo
+                number_observed = sdo["number_observed"]
+                first_observed = sdo["first_observed"]
+                last_observed  = sdo["last_observed"]
 
-            if sdo_to_insert['number_observed'] < 1:
+            if number_observed < 1:
                 raise MatcherException("SDO with invalid number_observed "
                                     "(must be >= 1): {}".format(
-                                        sdo_to_insert['number_observed']))
+                                        number_observed))
 
-            self.__observations.append(sdo_to_insert)
-
-            self.__time_intervals.append((_str_to_datetime(sdo_to_insert['first_observed']),
-                                        _str_to_datetime(sdo_to_insert['last_observed'])))
-                                        
-
+            self.__observations.append(sdo)
+            self.__time_intervals.append((_str_to_datetime(first_observed),
+                                        _str_to_datetime(last_observed)))
+            self.__number_observed.append(number_observed)
+ 
         self.__verbose = verbose
         self.__stix_version = stix_version
         # Holds intermediate results
@@ -1498,7 +1493,7 @@ class MatchListener(STIXPatternListener):
         # "Unpack" the instances of observables based on `number_observed`
         # field by creating complex instance_id
         obs_id_tuples = ((self.create_instance_id(obs_id, i),) for obs_id in obs_ids.keys()
-                         for i in range(0, self.__observations[obs_id]['number_observed']))
+                         for i in range(0, self.__number_observed[obs_id]))
 
         self.__push(obs_id_tuples, debug_label)
 
@@ -2155,7 +2150,9 @@ class MatchListener(STIXPatternListener):
                 continue
 
             objects_from_this_obs = {}
-            for obj_id, obj in six.iteritems(obs["objects"]):
+            iterator = self.__cyber_obs_obj_iterator(obs["objects"])
+
+            for obj_id, obj in iterator:
                 if u"type" in obj and obj[u"type"] == type_:
                     objects_from_this_obs[obj_id] = [obj]
 
@@ -2163,6 +2160,16 @@ class MatchListener(STIXPatternListener):
                 results[obs_idx] = objects_from_this_obs
 
         self.__push(results, u"exitObjectType ({})".format(type_))
+
+    def __cyber_obs_obj_iterator(self, objs):
+        if self.__stix_version == '2.1':
+            iter_objs = {v['id'] : v for v in objs}
+        else:
+            iter_objs = objs
+        
+        iterator = six.iteritems(iter_objs)
+
+        return iterator
 
     def __dereference_objects(self, prop_name, obs_map):
         """
@@ -2368,95 +2375,50 @@ class MatchListener(STIXPatternListener):
             s = set()
 
         self.__push(s, u"exitSetLiteral ({})".format(ctx.getText()))
-        
 
-class _Pattern20(Stix2Pattern20):
-    """
-    Represents a pattern in a "compiled" form, for more efficient reuse.
-    """
-
-    def __init__(self, pattern_str):
-        """
-        Compile a pattern.
-
-        :param pattern_str: The pattern to compile
-        :raises stix2patterns.pattern.ParseException: If there is a parse error
-        """
-        super(_Pattern20, self).__init__(pattern_str)
-
-    def match(self, observed_data_sdos, verbose=False):
-        """
-        Match this pattern against the given observations.  Returns matching
-        SDOs.  The matcher can find many bindings; this function returns the
-        SDOs corresponding to only the first binding found.
-
-        :param observed_data_sdos: A list of observed-data SDOs, as a list of
-            dicts.  STIX JSON should be parsed into native Python structures
-            before calling this method.
-        :param verbose: Whether to dump detailed info about matcher operation
-        :return: Matching SDOs if the pattern matched; an empty list if it
-            didn't match.
-        :raises MatcherException: If an error occurs during matching
-        """
-        matcher = MatchListener(observed_data_sdos, verbose, stix_version='2.0')
-        self.walk(matcher)
-
-        first_binding = next(matcher.matched(), [])
-        matching_sdos = matcher.get_sdos_from_binding(first_binding)
-
-        return matching_sdos
-
-
-class _Pattern21(Stix2Pattern21):
-    """
-    Represents a pattern in a "compiled" form, for more efficient reuse.
-    """
-
-    def __init__(self, pattern_str):
-        """
-        Compile a pattern.
-
-        :param pattern_str: The pattern to compile
-        :raises stix2patterns.pattern.ParseException: If there is a parse error
-        """
-        super(_Pattern21, self).__init__(pattern_str)
-
-    def match(self, observed_data_sdos, verbose=False):
-        """
-        Match this pattern against the given observations.  Returns matching
-        SDOs.  The matcher can find many bindings; this function returns the
-        SDOs corresponding to only the first binding found.
-
-        :param observed_data_sdos: A list of observed-data SDOs, as a list of
-            dicts.  STIX JSON should be parsed into native Python structures
-            before calling this method.
-        :param verbose: Whether to dump detailed info about matcher operation
-        :return: Matching SDOs if the pattern matched; an empty list if it
-            didn't match.
-        :raises MatcherException: If an error occurs during matching
-        """
-        matcher = MatchListener(observed_data_sdos, verbose, stix_version='2.1')
-        self.walk(matcher)
-
-        first_binding = next(matcher.matched(), [])
-        matching_sdos = matcher.get_sdos_from_binding(first_binding)
-
-        return matching_sdos
 
 class Pattern:
-    pattern = None
-
     def __init__(self, pattern_str, stix_version='2.0'):
-        if stix_version == '2.1':
-            self.pattern = _Pattern21(pattern_str)
+        """
+        Compile a pattern.
+
+        :param pattern_str: The pattern to compile
+        :param stix_version: The stix specification version
+        :raises stix2patterns.pattern.ParseException: If there is a parse error
+        """
+        self.__stix_version = stix_version
+        if self.__stix_version == '2.1':
+            self.__pattern = Stix2Pattern21(pattern_str)
         else:
-            self.pattern = _Pattern20(pattern_str)
+            self.__pattern = Stix2Pattern20(pattern_str)
 
     def __getattr__(self, name):
-        return self.pattern.__getattribute__(name)
+        return self.__pattern.__getattribute__(name)
+
+    def match(self, observed_data_sdos, verbose=False):
+        """
+        Match this pattern against the given observations.  Returns matching
+        SDOs.  The matcher can find many bindings; this function returns the
+        SDOs corresponding to only the first binding found.
+
+        :param observed_data_sdos: A list of observed-data SDOs, as a list of
+            dicts.  STIX JSON should be parsed into native Python structures
+            before calling this method.
+        :param verbose: Whether to dump detailed info about matcher operation
+        :return: Matching SDOs if the pattern matched; an empty list if it
+            didn't match.
+        :raises MatcherException: If an error occurs during matching
+        """
+        matcher = MatchListener(observed_data_sdos, verbose, stix_version=self.__stix_version)
+        self.__pattern.walk(matcher)
+
+        first_binding = next(matcher.matched(), [])
+        matching_sdos = matcher.get_sdos_from_binding(first_binding)
+
+        return matching_sdos
 
 
-def match(pattern, observed_data_sdos, verbose=False):
+def match(pattern, observed_data_sdos, verbose=False, stix_version='2.0'):
     """
     Match the given pattern against the given observations.  Returns matching
     SDOs.  The matcher can find many bindings; this function returns the SDOs
@@ -2473,7 +2435,7 @@ def match(pattern, observed_data_sdos, verbose=False):
     :raises MatcherException: If an error occurs during matching
     """
 
-    compiled_pattern = Pattern(pattern)
+    compiled_pattern = Pattern(pattern, stix_version)
     return compiled_pattern.match(observed_data_sdos, verbose)
 
 
@@ -2493,6 +2455,9 @@ def main():
     arg_parser.add_argument("-e", "--encoding", default="utf8", help="""
     Set encoding used for reading observation and pattern files.
     Must be an encoding name Python understands.  Default is utf8.
+    """)
+    arg_parser.add_argument("-s", "--stix_version", default="2.0", help="""
+    Stix specification version. Default is 2.0.
     """)
     arg_parser.add_argument("-v", "--verbose", action="store_true",
                             help="""Be verbose""")
@@ -2519,7 +2484,7 @@ def main():
                 if pattern[0] == u"#":
                     continue  # skip commented out lines
                 escaped_pattern = pattern.encode("unicode_escape").decode("ascii")
-                if match(pattern, observed_data_sdos, args.verbose):
+                if match(pattern, observed_data_sdos, args.verbose, args.stix_version):
                     if args.quiet < 1:
                         print(u"\nMATCH: ", escaped_pattern)
                 else:
