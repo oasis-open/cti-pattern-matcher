@@ -1056,17 +1056,26 @@ class MatchListener(STIXPatternListener):
         self.__number_observed = [] 
 
         for sdo in observed_data_sdos:
+            number_observed = 0
             if stix_version == '2.1':
                 for obj in sdo["objects"]:
                     if obj['type'] == "observed-data":
-                        number_observed = obj["number_observed"]
-                        first_observed = obj["first_observed"]
-                        last_observed  = obj["last_observed"]
-                        break
+                        if all(key in obj for key in ('number_observed', 'first_observed', 'last_observed')): 
+                            number_observed = obj["number_observed"]
+                            first_observed = obj["first_observed"]
+                            last_observed  = obj["last_observed"]
+                            break
+                        else:
+                            raise MatcherException("observed-data object must have all following keys: "
+                                            "number_observed, first_observed, last_observed.")
             else:
-                number_observed = sdo["number_observed"]
-                first_observed = sdo["first_observed"]
-                last_observed  = sdo["last_observed"]
+                if all(key in sdo for key in ('number_observed', 'first_observed', 'last_observed')): 
+                    number_observed = sdo["number_observed"]
+                    first_observed = sdo["first_observed"]
+                    last_observed  = sdo["last_observed"]
+                else:
+                    raise MatcherException("SDO must have all following keys: "
+                                    "number_observed, first_observed, last_observed.")
 
             if number_observed < 1:
                 raise MatcherException("SDO with invalid number_observed "
