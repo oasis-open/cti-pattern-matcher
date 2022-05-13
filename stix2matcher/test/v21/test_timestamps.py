@@ -3,29 +3,40 @@ from stix2patterns.pattern import ParseException
 
 from stix2matcher.matcher import MatcherException, match
 
-_stix_version = '2.0'
+_stix_version = '2.1'
 _observations = [
     {
-        "type": "observed-data",
-        "first_observed": "1983-04-21T15:31:06Z",
-        "last_observed": "1983-04-21T15:31:06Z",
-        "number_observed": 1,
-        "objects": {
-            "0": {
+        "type": "bundle",
+        "id": "bundle--de25dd14-209f-4d91-b645-c383b6422c10",
+        "objects": [
+            {
+                "id": "observed-data--770dcb90-43f7-4455-92fd-80409ad4ebf7",
+                "type": "observed-data",
+                "number_observed": 1,
+                "first_observed": "1983-04-21T15:31:06Z",
+                "last_observed": "1983-04-21T15:31:06Z",
+                "objects": {},
+                "object_refs": [
+                    "event--5ca25429-833b-4589-8350-e810db273d44"
+                ],
+                "spec_version": "2.1"
+            },
+            {
                 "type": "event",
-                "good_ts": u"2010-05-21T13:21:43Z",
-                "good_ts_frac": u"2010-05-21T13:21:43.1234Z",
-                "good_ts_frac_nano": u"2010-05-21T13:21:43.123456789Z",
+                "good_ts": "2010-05-21T13:21:43Z",
+                "good_ts_frac": "2010-05-21T13:21:43.1234Z",
+                "good_ts_frac_nano": "2010-05-21T13:21:43.123456789Z",
                 "bad_ts": [
-                    u"2010-05-21T13:21:43",
-                    u"2010-05-21T13:21:43z",
-                    u"2010-05-21t13:21:43Z",
-                    u"2010/05/21T13:21:43Z",
-                    u"2010-05-21T13:21:99Z",
-                    u"2010-05-21T13:21Z"
-                ]
+                    "2010-05-21T13:21:43",
+                    "2010-05-21T13:21:43z",
+                    "2010-05-21t13:21:43Z",
+                    "2010/05/21T13:21:43Z",
+                    "2010-05-21T13:21:99Z",
+                    "2010-05-21T13:21Z"
+                ],
+                "id": "event--5ca25429-833b-4589-8350-e810db273d44"
             }
-        }
+        ]
     }
 ]
 
@@ -75,7 +86,7 @@ def test_ts_pattern_error_parse(pattern):
 @pytest.mark.parametrize("pattern", [
     # auto-generate simple tests for all the bad timestamps
     "[event:bad_ts[{}] = t'1996-07-11T09:17:10Z']".format(i)
-    for i in range(len(_observations[0]["objects"]["0"]["bad_ts"]))
+    for i in range(len(_observations[0]["objects"][1]["bad_ts"]))
 ])
 def test_ts_json_error(pattern):
     with pytest.raises(MatcherException):

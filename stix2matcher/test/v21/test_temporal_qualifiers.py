@@ -9,43 +9,76 @@ from stix2matcher.matcher import (_OVERLAP, _OVERLAP_NONE,
                                   _OVERLAP_TOUCH_POINT, MatcherException,
                                   _overlap, _timestamp_intervals_within, match)
 
-_stix_version = '2.0'
+_stix_version = '2.1'
 _observations = [
     {
-        "type": "observed-data",
-        "first_observed": "1994-11-29T13:37:52Z",
-        "last_observed": "1994-11-29T13:37:52Z",
-        "number_observed": 1,
-        "objects": {
-            "0": {
-                "type": u"person",
-                "name": u"alice"
+        "type": "bundle",
+        "id": "bundle--c8657baf-0b0c-4314-9720-26979f7bf4cc",
+        "objects": [
+            {
+                "id": "observed-data--ad904346-d60e-45df-8812-c18392abdc5a",
+                "type": "observed-data",
+                "number_observed": 1,
+                "first_observed": "1994-11-29T13:37:52Z",
+                "last_observed": "1994-11-29T13:37:52Z",
+                "objects": {},
+                "object_refs": [
+                    "person--c32818e9-032c-4c6d-bfd1-104ff22a69ae"
+                ],
+                "spec_version": "2.1"
+            },
+            {
+                "type": "person",
+                "name": "alice",
+                "id": "person--c32818e9-032c-4c6d-bfd1-104ff22a69ae"
             }
-        }
+        ]
     },
     {
-        "type": "observed-data",
-        "first_observed": "1994-11-29T13:37:57Z",
-        "last_observed": "1994-11-29T13:37:57Z",
-        "number_observed": 1,
-        "objects": {
-            "0": {
-                "type": u"person",
-                "name": u"bob"
+        "type": "bundle",
+        "id": "bundle--12507ed6-22b3-4d82-82de-831bd6a749d5",
+        "objects": [
+            {
+                "id": "observed-data--872846e4-901f-4e24-b6a0-1cae8f50aa3f",
+                "type": "observed-data",
+                "number_observed": 1,
+                "first_observed": "1994-11-29T13:37:57Z",
+                "last_observed": "1994-11-29T13:37:57Z",
+                "objects": {},
+                "object_refs": [
+                    "person--d7524b5c-a41b-4452-bc7b-ec4d33148346"
+                ],
+                "spec_version": "2.1"
+            },
+            {
+                "type": "person",
+                "name": "bob",
+                "id": "person--d7524b5c-a41b-4452-bc7b-ec4d33148346"
             }
-        }
+        ]
     },
     {
-        "type": "observed-data",
-        "first_observed": "1994-11-29T13:38:02Z",
-        "last_observed": "1994-11-29T13:38:02Z",
-        "number_observed": 1,
-        "objects": {
-            "0": {
-                "type": u"person",
-                "name": u"carol"
+        "type": "bundle",
+        "id": "bundle--fac6972e-c928-423b-9868-265df30d7398",
+        "objects": [
+            {
+                "id": "observed-data--ad62cec1-6fc8-486b-b995-892362b37879",
+                "type": "observed-data",
+                "number_observed": 1,
+                "first_observed": "1994-11-29T13:38:02Z",
+                "last_observed": "1994-11-29T13:38:02Z",
+                "objects": {},
+                "object_refs": [
+                    "person--bc9adbb9-703c-4344-90e9-937c498ff91d"
+                ],
+                "spec_version": "2.1"
+            },
+            {
+                "type": "person",
+                "name": "carol",
+                "id": "person--bc9adbb9-703c-4344-90e9-937c498ff91d"
             }
-        }
+        ]
     }
 ]
 
@@ -60,12 +93,12 @@ _observations = [
     "([person:name = 'alice'] OR [person:name = 'darlene']) WITHIN 1 SECONDS",
 
     # START/STOP tests
-    "[person:name = 'bob'] START '1994-11-29T13:37:57Z' STOP '1994-11-29T13:37:58Z'",
-    "[person:name LIKE 'a%'] AND [person:name = 'bob'] START '1994-11-29T13:37:57Z' STOP '1994-11-29T13:37:58Z'",
-    "([person:name LIKE 'a%'] AND [person:name = 'bob']) START '1994-11-29T13:37:50Z' STOP '1994-11-29T13:37:58Z'",
-    "[person:name = 'alice'] OR [person:name = 'darlene'] START '1994-11-29T13:37:57Z' STOP '1994-11-29T13:37:58Z'",
-    "([person:name = 'alice'] OR [person:name = 'darlene']) START '1994-11-29T13:37:52Z' STOP '1994-11-29T13:37:58Z'",
-    "[person:name MATCHES ''] REPEATS 2 TIMES START '1994-11-29T13:37:50Z' STOP '1994-11-29T13:37:58Z'",
+    "[person:name = 'bob'] START t'1994-11-29T13:37:57Z' STOP t'1994-11-29T13:37:58Z'",
+    "[person:name LIKE 'a%'] AND [person:name = 'bob'] START t'1994-11-29T13:37:57Z' STOP t'1994-11-29T13:37:58Z'",
+    "([person:name LIKE 'a%'] AND [person:name = 'bob']) START t'1994-11-29T13:37:50Z' STOP t'1994-11-29T13:37:58Z'",
+    "[person:name = 'alice'] OR [person:name = 'darlene'] START t'1994-11-29T13:37:57Z' STOP t'1994-11-29T13:37:58Z'",
+    "([person:name = 'alice'] OR [person:name = 'darlene']) START t'1994-11-29T13:37:52Z' STOP t'1994-11-29T13:37:58Z'",
+    "[person:name MATCHES ''] REPEATS 2 TIMES START t'1994-11-29T13:37:50Z' STOP t'1994-11-29T13:37:58Z'",
 ])
 def test_temp_qual_match(pattern):
     assert match(pattern, _observations, stix_version=_stix_version)
@@ -79,13 +112,13 @@ def test_temp_qual_match(pattern):
     "([person:name < 'alice'] OR [person:name = 'darlene']) WITHIN 10 SECONDS",
 
     # START/STOP tests
-    "[person:name = 'bob'] START '1994-11-29T13:37:58Z' STOP '1994-11-29T13:37:58Z'",
-    "[person:name = 'bob'] START '1994-11-29T13:37:59Z' STOP '1994-11-29T13:37:58Z'",
-    "[person:name = 'bob'] START '1994-11-29T13:37:58Z' STOP '1994-11-29T13:37:59Z'",
-    "([person:name LIKE 'a%'] AND [person:name = 'bob']) START '1994-11-29T13:37:50Z' STOP '1994-11-29T13:37:57Z'",
-    "([person:name LIKE 'z%'] OR [person:name = 'darlene']) START '1994-11-29T13:37:50Z' STOP '1994-11-29T13:37:57Z'",
-    "[person:name MATCHES ''] REPEATS 3 TIMES START '1994-11-29T13:37:50Z' STOP '1994-11-29T13:37:58Z'",
-    "[person:name NOT LIKE 'foo'] START '1994-11-29T13:37:50Z' STOP '1994-11-29T13:37:57Z' REPEATS 3 TIMES",
+    "[person:name = 'bob'] START t'1994-11-29T13:37:58Z' STOP t'1994-11-29T13:37:58Z'",
+    "[person:name = 'bob'] START t'1994-11-29T13:37:59Z' STOP t'1994-11-29T13:37:58Z'",
+    "[person:name = 'bob'] START t'1994-11-29T13:37:58Z' STOP t'1994-11-29T13:37:59Z'",
+    "([person:name LIKE 'a%'] AND [person:name = 'bob']) START t'1994-11-29T13:37:50Z' STOP t'1994-11-29T13:37:57Z'",
+    "([person:name LIKE 'z%'] OR [person:name = 'darlene']) START t'1994-11-29T13:37:50Z' STOP t'1994-11-29T13:37:57Z'",
+    "[person:name MATCHES ''] REPEATS 3 TIMES START t'1994-11-29T13:37:50Z' STOP t'1994-11-29T13:37:58Z'",
+    "[person:name NOT LIKE 'foo'] START t'1994-11-29T13:37:50Z' STOP t'1994-11-29T13:37:57Z' REPEATS 3 TIMES",
 ])
 def test_temp_qual_nomatch(pattern):
     assert not match(pattern, _observations, stix_version=_stix_version)
@@ -94,12 +127,6 @@ def test_temp_qual_nomatch(pattern):
 @pytest.mark.parametrize("pattern", [
     # WITHIN tests
     "[person:name = 'alice'] WITHIN 0 SECONDS",
-
-    # START/STOP tests
-    "[person:name = 'hannah'] START '1994-11-29t13:37:58Z' STOP '1994-11-29T13:37:58Z'",
-    "[person:name = 'hannah'] START '1994-11-29T13:37:58Z' STOP '1994-11-29T13:37:58z'",
-    "[person:name = 'hannah'] START '1994-11-29t13:37:58Z' STOP '1994-11-29T13:37:58'",
-    "[person:name = 'hannah'] START '1994-11-29T13:37Z' STOP '1994-11-29T13:37:58Z'",
 ])
 def test_temp_qual_error_match(pattern):
     with pytest.raises(MatcherException):
@@ -112,7 +139,11 @@ def test_temp_qual_error_match(pattern):
     "[person:name = 'alice'] WITHIN -123.367 SECONDS",
 
     # START/STOP tests
-    "[person:name = 'hannah'] START '1994-11-29T13:37:58Z'",
+    "[person:name = 'hannah'] START t'1994-11-29T13:37:58Z'",
+    "[person:name = 'hannah'] START t'1994-11-29t13:37:58Z' STOP t'1994-11-29T13:37:58Z'",
+    "[person:name = 'hannah'] START t'1994-11-29T13:37:58Z' STOP t'1994-11-29T13:37:58z'",
+    "[person:name = 'hannah'] START t'1994-11-29t13:37:58Z' STOP t'1994-11-29T13:37:58'",
+    "[person:name = 'hannah'] START t'1994-11-29T13:37Z' STOP t'1994-11-29T13:37:58Z'",
 ])
 def test_temp_qual_error_parse(pattern):
     with pytest.raises(ParseException):
@@ -196,11 +227,11 @@ _5 = "2000-01-01T00:00:04Z"
 ])
 def test_within_match(interval1, interval2, duration):
 
-    _observations[0]["first_observed"] = interval1[0]
-    _observations[0]["last_observed"] = interval1[1]
+    _observations[0]["objects"][0]["first_observed"] = interval1[0]
+    _observations[0]["objects"][0]["last_observed"] = interval1[1]
 
-    _observations[1]["first_observed"] = interval2[0]
-    _observations[1]["last_observed"] = interval2[1]
+    _observations[1]["objects"][0]["first_observed"] = interval2[0]
+    _observations[1]["objects"][0]["last_observed"] = interval2[1]
 
     pattern = "([person:name='alice'] AND [person:name='bob']) " \
               "WITHIN {0} SECONDS".format(duration)
@@ -214,11 +245,11 @@ def test_within_match(interval1, interval2, duration):
 ])
 def test_within_nomatch(interval1, interval2, duration):
 
-    _observations[0]["first_observed"] = interval1[0]
-    _observations[0]["last_observed"] = interval1[1]
+    _observations[0]["objects"][0]["first_observed"] = interval1[0]
+    _observations[0]["objects"][0]["last_observed"] = interval1[1]
 
-    _observations[1]["first_observed"] = interval2[0]
-    _observations[1]["last_observed"] = interval2[1]
+    _observations[1]["objects"][0]["first_observed"] = interval2[0]
+    _observations[1]["objects"][0]["last_observed"] = interval2[1]
 
     pattern = "([person:name='alice'] AND [person:name='bob']) " \
               "WITHIN {0} SECONDS".format(duration)

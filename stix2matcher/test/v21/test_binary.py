@@ -2,23 +2,34 @@ import pytest
 
 from stix2matcher.matcher import match
 
-_stix_version = '2.0'
+_stix_version = '2.1'
 _observations = [
     {
-        "type": "observed-data",
-        "number_observed": 1,
-        "first_observed": "2011-12-03T21:34:41Z",
-        "last_observed": "2011-12-03T21:34:41Z",
-        "objects": {
-            "0": {
-                "type": u"binary_test",
-                "name": u"alice",
-                "name_u": u"\u0103lice",
-                "name_hex": u"616c696365",
-                "name_bin": u"YWxpY2U=",
-                "bin_hex": u"01020304"
+        "type": "bundle",
+        "id": "bundle--d33ba274-6623-4ff9-af64-0e2d17de9bbe",
+        "objects": [
+            {
+                "id": "observed-data--0eae5c46-70ee-4bee-8d3d-48aa8cb610a4",
+                "type": "observed-data",
+                "number_observed": 1,
+                "first_observed": "2011-12-03T21:34:41Z",
+                "last_observed": "2011-12-03T21:34:41Z",
+                "objects": {},
+                "object_refs": [
+                    "binary_test--d4a7a685-e929-4eec-a746-4196e447d33d"
+                ],
+                "spec_version": "2.1"
+            },
+            {
+                "type": "binary_test",
+                "name": "alice",
+                "name_u": "\u0103lice",
+                "name_hex": "616c696365",
+                "name_bin": "YWxpY2U=",
+                "bin_hex": "01020304",
+                "id": "binary_test--d4a7a685-e929-4eec-a746-4196e447d33d"
             }
-        }
+        ]
     }
 ]
 

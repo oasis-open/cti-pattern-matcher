@@ -3,6 +3,7 @@ import six
 
 from stix2matcher.matcher import match
 
+_stix_version = '2.0'
 _observations = [
     {
         "id": "observed-data--a49751b8-b041-4c00-96c2-76af472bfbbe",
@@ -59,7 +60,7 @@ _observations = [
      "observed-data--52a5bab7-2cfd-40c6-a35a-b5bcb8afb11b")
 ])
 def test_matching_sdos(pattern, expected_ids):
-    sdos = match(pattern, _observations)
+    sdos = match(pattern, _observations, stix_version=_stix_version)
 #    import pprint
 #    pprint.pprint(sdos)
     sdo_ids = [sdo["id"] for sdo in sdos]

@@ -2,6 +2,7 @@ import pytest
 
 from stix2matcher.matcher import match
 
+_stix_version = '2.0'
 _observations = [
     {
         "type": "observed-data",
@@ -32,7 +33,7 @@ _observations = [
     "[(person:name = 'darlene' OR person:name = 'carol') AND person:age < 0 OR person:age > 5]"
 ])
 def test_comparison_and_or_match(pattern):
-    assert match(pattern, _observations)
+    assert match(pattern, _observations, stix_version=_stix_version)
 
 
 @pytest.mark.parametrize("pattern", [
@@ -42,4 +43,4 @@ def test_comparison_and_or_match(pattern):
     "[(person:name = 'darlene' OR person:name = 'carol') AND (person:age < 0 OR person:age > 5)]"
 ])
 def test_comparison_and_or_nomatch(pattern):
-    assert not match(pattern, _observations)
+    assert not match(pattern, _observations, stix_version=_stix_version)

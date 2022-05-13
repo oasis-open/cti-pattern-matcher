@@ -1060,31 +1060,30 @@ class MatchListener(STIXPatternListener):
             if stix_version == '2.1':
                 for obj in sdo["objects"]:
                     if obj['type'] == "observed-data":
-                        if all(key in obj for key in ('number_observed', 'first_observed', 'last_observed')): 
+                        if all(key in obj for key in ('number_observed', 'first_observed', 'last_observed')):
                             number_observed = obj["number_observed"]
                             first_observed = obj["first_observed"]
-                            last_observed  = obj["last_observed"]
+                            last_observed = obj["last_observed"]
                             break
                         else:
-                            raise MatcherException("observed-data object must have all following keys: "
-                                            "number_observed, first_observed, last_observed.")
+                            raise MatcherException("STIX v2.1 observed-data object must have all the following keys: "
+                                "number_observed, first_observed, last_observed.")
             else:
                 if all(key in sdo for key in ('number_observed', 'first_observed', 'last_observed')): 
                     number_observed = sdo["number_observed"]
                     first_observed = sdo["first_observed"]
-                    last_observed  = sdo["last_observed"]
+                    last_observed = sdo["last_observed"]
                 else:
-                    raise MatcherException("SDO must have all following keys: "
-                                    "number_observed, first_observed, last_observed.")
+                    raise MatcherException("STIX v2.0 SDO must have all the following keys: "
+                        "number_observed, first_observed, last_observed.")
 
             if number_observed < 1:
                 raise MatcherException("SDO with invalid number_observed "
-                                    "(must be >= 1): {}".format(
-                                        number_observed))
+                    "(must be >= 1): {}".format(number_observed))
 
             self.__observations.append(sdo)
             self.__time_intervals.append((_str_to_datetime(first_observed),
-                                        _str_to_datetime(last_observed)))
+                _str_to_datetime(last_observed)))
             self.__number_observed.append(number_observed)
  
         self.__verbose = verbose
@@ -1624,16 +1623,20 @@ class MatchListener(STIXPatternListener):
           times.
         """
 
-        start_str = _literal_terminal_to_python_val(ctx.StringLiteral(0))
-        stop_str = _literal_terminal_to_python_val(ctx.StringLiteral(1))
+        if self.__stix_version == '2.1':
+            start_dt = _literal_terminal_to_python_val(ctx.TimestampLiteral(0))
+            stop_dt = _literal_terminal_to_python_val(ctx.TimestampLiteral(1))
+        else:
+            start_str = _literal_terminal_to_python_val(ctx.StringLiteral(0))
+            stop_str = _literal_terminal_to_python_val(ctx.StringLiteral(1))
 
-        # If the language used timestamp literals here, this could go away...
-        try:
-            start_dt = _str_to_datetime(start_str)
-            stop_dt = _str_to_datetime(stop_str)
-        except ValueError as e:
-            # re-raise as MatcherException.
-            raise six.raise_from(MatcherException(*e.args), e)
+            # If the language used timestamp literals here, this could go away...
+            try:
+                start_dt = _str_to_datetime(start_str)
+                stop_dt = _str_to_datetime(stop_str)
+            except ValueError as e:
+                # re-raise as MatcherException.
+                raise six.raise_from(MatcherException(*e.args), e)
 
         self.__push((start_dt, stop_dt), u"exitStartStopQualifier")
 
@@ -2172,7 +2175,7 @@ class MatchListener(STIXPatternListener):
 
     def __cyber_obs_obj_iterator(self, objs):
         if self.__stix_version == '2.1':
-            iter_objs = {v['id'] : v for v in objs}
+            iter_objs = {v['id']: v for v in objs}
         else:
             iter_objs = objs
         

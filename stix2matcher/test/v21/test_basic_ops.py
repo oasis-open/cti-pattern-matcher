@@ -2,25 +2,36 @@ import pytest
 
 from stix2matcher.matcher import MatcherException, match
 
-_stix_version = '2.0'
+_stix_version = '2.1'
 _observations = [
     {
-        "type": "observed-data",
-        "number_observed": 1,
-        "first_observed": "2014-04-19T06:51:26Z",
-        "last_observed": "2014-04-19T06:51:26Z",
-        "objects": {
-            "0": {
+        "type": "bundle",
+        "id": "bundle--c2a23389-17c9-4247-8aa2-d2ffde3de334",
+        "objects": [
+            {
+                "id": "observed-data--647947aa-4cc3-43a3-a42f-2c670986d777",
+                "type": "observed-data",
+                "number_observed": 1,
+                "first_observed": "2014-04-19T06:51:26Z",
+                "last_observed": "2014-04-19T06:51:26Z",
+                "objects": {},
+                "object_refs": [
+                    "test--9c61d8ff-21ca-489a-accd-7356c2ea0a7b"
+                ],
+                "spec_version": "2.1"
+            },
+            {
                 "type": "test",
                 "int": 5,
                 "float": 12.658,
                 "float_int": 12.0,
                 "bool": True,
-                "string": u"hello",
-                "ip": u"11.22.33.44",
-                "cidr": u"11.22.33.44/20"
+                "string": "hello",
+                "ip": "11.22.33.44",
+                "cidr": "11.22.33.44/20",
+                "id": "test--9c61d8ff-21ca-489a-accd-7356c2ea0a7b"
             }
-        }
+        ]
     }
 ]
 
@@ -241,7 +252,7 @@ def test_basic_ops_string_nomatch(pattern):
 ])
 def test_basic_ops_string_err(pattern):
     with pytest.raises(MatcherException):
-        match(pattern, _observations, stix_version=_stix_version)
+        assert match(pattern, _observations, stix_version=_stix_version)
 
 
 @pytest.mark.parametrize("pattern", [
@@ -302,4 +313,4 @@ def test_basic_ops_emptyset_nomatch(pattern):
 ])
 def test_basic_ops_set_err(pattern):
     with pytest.raises(MatcherException):
-        match(pattern, _observations, stix_version=_stix_version)
+        assert match(pattern, _observations, stix_version=_stix_version)

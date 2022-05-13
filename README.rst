@@ -68,6 +68,7 @@ Installing the package creates a ``stix2-matcher`` script:
                             understands.
                             Default is utf8.
       -v, --verbose         Be verbose
+      -s, --stix_version    Stix specification version. Default is 2.0
 
 Testing
 -------

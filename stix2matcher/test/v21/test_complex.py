@@ -4,46 +4,79 @@ import pytest
 
 from stix2matcher.matcher import match
 
-_stix_version = '2.0'
+_stix_version = '2.1'
 _observations = [
     {
-        "type": "observed-data",
-        "first_observed": "2004-10-11T21:44:58Z",
-        "last_observed": "2004-10-11T21:44:58Z",
-        "number_observed": 2,
-        "objects": {
-            "a0": {
-                "type": u"person",
-                "name": u"alice",
-                "age": 10
+        "type": "bundle",
+        "id": "bundle--c7011d7f-cda7-4990-85c6-cc232d3c5d00",
+        "objects": [
+            {
+                "id": "observed-data--c15497e0-5436-40bd-b990-52d77300f6b8",
+                "type": "observed-data",
+                "number_observed": 2,
+                "first_observed": "2004-10-11T21:44:58Z",
+                "last_observed": "2004-10-11T21:44:58Z",
+                "objects": {},
+                "object_refs": [
+                    "person--3b0c887a-1aac-4514-b3a5-1911622f52f7"
+                ],
+                "spec_version": "2.1"
+            },
+            {
+                "type": "person",
+                "name": "alice",
+                "age": 10,
+                "id": "person--3b0c887a-1aac-4514-b3a5-1911622f52f7"
             }
-        }
+        ]
     },
     {
-        "type": "observed-data",
-        "first_observed": "2004-10-11T21:45:01Z",
-        "last_observed": "2004-10-11T21:45:01Z",
-        "number_observed": 3,
-        "objects": {
-            "b0": {
-                "type": u"person",
-                "name": u"bob",
-                "age": 17
+        "type": "bundle",
+        "id": "bundle--9461ed04-4358-4646-954f-4c1290857f8d",
+        "objects": [
+            {
+                "id": "observed-data--3ecdd013-ffe5-4aae-b973-ab4cf41eaf1d",
+                "type": "observed-data",
+                "number_observed": 3,
+                "first_observed": "2004-10-11T21:45:01Z",
+                "last_observed": "2004-10-11T21:45:01Z",
+                "objects": {},
+                "object_refs": [
+                    "person--2e048392-6aac-49b3-aba4-21e4a6de6e10"
+                ],
+                "spec_version": "2.1"
+            },
+            {
+                "type": "person",
+                "name": "bob",
+                "age": 17,
+                "id": "person--2e048392-6aac-49b3-aba4-21e4a6de6e10"
             }
-        }
+        ]
     },
     {
-        "type": "observed-data",
-        "first_observed": "2004-10-11T21:45:02Z",
-        "last_observed": "2004-10-11T21:45:02Z",
-        "number_observed": 2,
-        "objects": {
-            "c0": {
-                "type": u"person",
-                "name": u"carol",
-                "age": 22
+        "type": "bundle",
+        "id": "bundle--c21c91b4-b316-41db-92f9-fa8c17e42d62",
+        "objects": [
+            {
+                "id": "observed-data--8f405559-9f1d-4e14-9411-3787c22b9690",
+                "type": "observed-data",
+                "number_observed": 2,
+                "first_observed": "2004-10-11T21:45:02Z",
+                "last_observed": "2004-10-11T21:45:02Z",
+                "objects": {},
+                "object_refs": [
+                    "person--16170c30-f1e2-4453-bb3f-686830198acf"
+                ],
+                "spec_version": "2.1"
+            },
+            {
+                "type": "person",
+                "name": "carol",
+                "age": 22,
+                "id": "person--16170c30-f1e2-4453-bb3f-686830198acf"
             }
-        }
+        ]
     }
 ]
 

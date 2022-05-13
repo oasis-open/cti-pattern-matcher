@@ -3,19 +3,30 @@ from stix2patterns.pattern import ParseException
 
 from stix2matcher.matcher import match
 
-_stix_version = '2.0'
+_stix_version = '2.1'
 _observations = [
     {
-        "type": "observed-data",
-        "first_observed": "2005-10-09T21:44:58Z",
-        "last_observed": "2005-10-09T21:44:58Z",
-        "number_observed": 1,
-        "objects": {
-            "0": {
+        "type": "bundle",
+        "id": "bundle--cecd810c-b940-4a19-863f-ee9e21da128f",
+        "objects": [
+            {
+                "id": "observed-data--3498efa3-b21c-4ecd-b8ff-1b034048e340",
+                "type": "observed-data",
+                "number_observed": 1,
+                "first_observed": "2005-10-09T21:44:58Z",
+                "last_observed": "2005-10-09T21:44:58Z",
+                "objects": {},
+                "object_refs": [
+                    "null_test--9ec1884e-0f69-4b3c-84e1-5e10de68fe44"
+                ],
+                "spec_version": "2.1"
+            },
+            {
                 "type": "null_test",
-                "name": None
+                "name": None,
+                "id": "null_test--9ec1884e-0f69-4b3c-84e1-5e10de68fe44"
             }
-        }
+        ]
     }
 ]
 
