@@ -745,7 +745,7 @@ def _dereference_cyber_obs_objs(cyber_obs_objs, cyber_obs_obj_references, ref_pr
             if ref_obj:
                 dereferenced_cyber_obs_objs.extend(ref_obj)
         else:
-            if referenced_obj_id in cyber_obs_objs: 
+            if referenced_obj_id in cyber_obs_objs:
                 dereferenced_cyber_obs_objs.append(cyber_obs_objs[referenced_obj_id])
 
     return dereferenced_cyber_obs_objs
@@ -1057,7 +1057,7 @@ class MatchListener(STIXPatternListener):
         """
         self.__observations = []
         self.__time_intervals = []  # 2-tuples of first,last timestamps
-        self.__number_observed = [] 
+        self.__number_observed = []
 
         for sdo in observed_data_sdos:
             number_observed = 0
@@ -1074,7 +1074,7 @@ class MatchListener(STIXPatternListener):
                                 "STIX v2.1 observed-data object must have all the following keys: "
                                 "number_observed, first_observed, last_observed.")
             else:
-                if all(key in sdo for key in ('number_observed', 'first_observed', 'last_observed')): 
+                if all(key in sdo for key in ('number_observed', 'first_observed', 'last_observed')):
                     number_observed = sdo["number_observed"]
                     first_observed = sdo["first_observed"]
                     last_observed = sdo["last_observed"]
@@ -1092,7 +1092,7 @@ class MatchListener(STIXPatternListener):
             self.__time_intervals.append((_str_to_datetime(first_observed),
                                           _str_to_datetime(last_observed)))
             self.__number_observed.append(number_observed)
- 
+
         self.__verbose = verbose
         self.__stix_version = stix_version
         # Holds intermediate results
@@ -2185,7 +2185,6 @@ class MatchListener(STIXPatternListener):
             iter_objs = {v['id']: v for v in objs}
         else:
             iter_objs = objs
-        
         iterator = six.iteritems(iter_objs)
 
         return iterator
