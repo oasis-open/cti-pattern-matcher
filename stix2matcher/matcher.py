@@ -1090,7 +1090,7 @@ class MatchListener(STIXPatternListener):
 
             self.__observations.append(sdo)
             self.__time_intervals.append((_str_to_datetime(first_observed),
-                _str_to_datetime(last_observed)))
+                                          _str_to_datetime(last_observed)))
             self.__number_observed.append(number_observed)
  
         self.__verbose = verbose
