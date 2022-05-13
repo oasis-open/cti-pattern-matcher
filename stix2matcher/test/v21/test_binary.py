@@ -14,7 +14,6 @@ _observations = [
                 "number_observed": 1,
                 "first_observed": "2011-12-03T21:34:41Z",
                 "last_observed": "2011-12-03T21:34:41Z",
-                "objects": {},
                 "object_refs": [
                     "binary_test--d4a7a685-e929-4eec-a746-4196e447d33d"
                 ],

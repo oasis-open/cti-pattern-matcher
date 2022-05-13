@@ -14,7 +14,6 @@ _observations = [
                 "number_observed": 1,
                 "first_observed": "2004-10-11T21:44:58Z",
                 "last_observed": "2004-10-11T21:44:58Z",
-                "objects": {},
                 "object_refs": [
                     "person--8d3c710f-6890-4fe0-912c-6413ecf7a69f"
                 ],
@@ -38,7 +37,6 @@ _observations = [
                 "number_observed": 1,
                 "first_observed": "2008-05-09T01:21:58.6Z",
                 "last_observed": "2008-05-09T01:21:58.6Z",
-                "objects": {},
                 "object_refs": [
                     "person--0e6f880c-6db6-4bba-887b-8125fde272ce"
                 ],
@@ -62,7 +60,6 @@ _observations = [
                 "number_observed": 1,
                 "first_observed": "2006-11-03T07:42:18.96Z",
                 "last_observed": "2006-11-03T07:42:18.96Z",
-                "objects": {},
                 "object_refs": [
                     "person--82a1b41b-e162-47ab-bb83-2136293f12b5"
                 ],

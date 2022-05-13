@@ -14,7 +14,6 @@ _observations = [
                 "number_observed": 1,
                 "first_observed": "1984-06-26T13:53:04Z",
                 "last_observed": "1984-06-26T13:53:04Z",
-                "objects": {},
                 "object_refs": [
                     "person--34e341a3-3e90-45e5-8b0f-aef8042e3e90",
                     "person--3fa2f82d-dd0f-4411-a221-7c75312b01bb",
@@ -52,4 +51,20 @@ _observations = [
 ]
 
 
+@pytest.mark.parametrize("pattern", [
+    "[person:knows_ref.name = 'bob']",
+    "[person:knows_refs[*].name = 'alice' OR person:knows_ref.name = 'darlene']",
+    "[person:knows_refs[*].name = 'carol' AND person:knows_refs[*].name = 'bob']",
+    "[person:knows_refs[*].knows_refs[*].name = 'alice']"
+])
+def test_references_match(pattern):
+    assert match(pattern, _observations, stix_version=_stix_version)
 
+
+@pytest.mark.parametrize("pattern", [
+    "[person:knows_ref.name = 'erin']",
+    "[person:knows_refs[*].name = 'alice' AND person:knows_ref.name = 'darlene']",
+    "[person:knows_refs[*].name = 'erin' OR person:knows_refs[*].name = 'darlene']"
+])
+def test_references_nomatch(pattern):
+    assert not match(pattern, _observations, stix_version=_stix_version)

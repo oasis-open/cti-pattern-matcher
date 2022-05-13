@@ -713,7 +713,7 @@ def _timestamp_intervals_within(timestamp_intervals, duration):
     return result
 
 
-def _dereference_cyber_obs_objs(cyber_obs_objs, cyber_obs_obj_references, ref_prop_name):
+def _dereference_cyber_obs_objs(cyber_obs_objs, cyber_obs_obj_references, ref_prop_name, stix_version='2.0'):
     """
     Dereferences a sequence of Cyber Observable object references.  Returns a list of
     the referenced objects.  If a reference does not resolve, it is not
@@ -740,9 +740,13 @@ def _dereference_cyber_obs_objs(cyber_obs_objs, cyber_obs_obj_references, ref_pr
                     u"A" if ref_prop_name.endswith(u"_refs") else u"The",
                     ref_prop_name, referenced_obj_id
                 ))
-
-        if referenced_obj_id in cyber_obs_objs:
-            dereferenced_cyber_obs_objs.append(cyber_obs_objs[referenced_obj_id])
+        if stix_version == '2.1':
+            ref_obj = [d for d in cyber_obs_objs if d['id'] == referenced_obj_id]
+            if ref_obj:
+                dereferenced_cyber_obs_objs.extend(ref_obj)
+        else:
+            if referenced_obj_id in cyber_obs_objs: 
+                dereferenced_cyber_obs_objs.append(cyber_obs_objs[referenced_obj_id])
 
     return dereferenced_cyber_obs_objs
 
@@ -1066,7 +1070,8 @@ class MatchListener(STIXPatternListener):
                             last_observed = obj["last_observed"]
                             break
                         else:
-                            raise MatcherException("STIX v2.1 observed-data object must have all the following keys: "
+                            raise MatcherException(
+                                "STIX v2.1 observed-data object must have all the following keys: "
                                 "number_observed, first_observed, last_observed.")
             else:
                 if all(key in sdo for key in ('number_observed', 'first_observed', 'last_observed')): 
@@ -1074,11 +1079,13 @@ class MatchListener(STIXPatternListener):
                     first_observed = sdo["first_observed"]
                     last_observed = sdo["last_observed"]
                 else:
-                    raise MatcherException("STIX v2.0 SDO must have all the following keys: "
+                    raise MatcherException(
+                        "STIX v2.0 SDO must have all the following keys: "
                         "number_observed, first_observed, last_observed.")
 
             if number_observed < 1:
-                raise MatcherException("SDO with invalid number_observed "
+                raise MatcherException(
+                    "SDO with invalid number_observed "
                     "(must be >= 1): {}".format(number_observed))
 
             self.__observations.append(sdo)
@@ -2215,7 +2222,8 @@ class MatchListener(STIXPatternListener):
                     dereferenced_cyber_obs_objs = _dereference_cyber_obs_objs(
                         self.__observations[obs_idx]["objects"],
                         references,
-                        prop_name
+                        prop_name,
+                        self.__stix_version
                     )
 
                     if len(dereferenced_cyber_obs_objs) > 0:
@@ -2246,7 +2254,8 @@ class MatchListener(STIXPatternListener):
                         dereferenced_cyber_obs_objs = _dereference_cyber_obs_objs(
                             self.__observations[obs_idx]["objects"],
                             reference_list,
-                            prop_name
+                            prop_name,
+                            self.__stix_version
                         )
 
                         if len(dereferenced_cyber_obs_objs) > 0:
