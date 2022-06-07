@@ -21,6 +21,7 @@ import antlr4.error.Errors
 import dateutil.relativedelta
 import dateutil.tz
 import six
+from stix2matcher import DEFAULT_VERSION
 from stix2patterns.grammars.STIXPatternListener import STIXPatternListener
 from stix2patterns.grammars.STIXPatternParser import STIXPatternParser
 from stix2patterns.v20.pattern import Pattern as Stix2Pattern20
@@ -713,7 +714,7 @@ def _timestamp_intervals_within(timestamp_intervals, duration):
     return result
 
 
-def _dereference_cyber_obs_objs(cyber_obs_objs, cyber_obs_obj_references, ref_prop_name, stix_version='2.0'):
+def _dereference_cyber_obs_objs(cyber_obs_objs, cyber_obs_obj_references, ref_prop_name, stix_version=DEFAULT_VERSION):
     """
     Dereferences a sequence of Cyber Observable object references.  Returns a list of
     the referenced objects.  If a reference does not resolve, it is not
@@ -1046,7 +1047,7 @@ class MatchListener(STIXPatternListener):
     affecting correctness.
     """
 
-    def __init__(self, observed_data_sdos, verbose=False, stix_version='2.0'):
+    def __init__(self, observed_data_sdos, verbose=False, stix_version=DEFAULT_VERSION):
         """
         Initialize this match listener.
 
@@ -2398,7 +2399,7 @@ class MatchListener(STIXPatternListener):
 
 
 class Pattern:
-    def __init__(self, pattern_str, stix_version='2.0'):
+    def __init__(self, pattern_str, stix_version=DEFAULT_VERSION):
         """
         Compile a pattern.
 
@@ -2438,7 +2439,7 @@ class Pattern:
         return matching_sdos
 
 
-def match(pattern, observed_data_sdos, verbose=False, stix_version='2.0'):
+def match(pattern, observed_data_sdos, verbose=False, stix_version=DEFAULT_VERSION):
     """
     Match the given pattern against the given observations.  Returns matching
     SDOs.  The matcher can find many bindings; this function returns the SDOs
@@ -2476,7 +2477,7 @@ def main():
     Set encoding used for reading observation and pattern files.
     Must be an encoding name Python understands.  Default is utf8.
     """)
-    arg_parser.add_argument("-s", "--stix_version", default="2.0", help="""
+    arg_parser.add_argument("-s", "--stix_version", default=DEFAULT_VERSION, help="""
     Stix specification version. Default is 2.0.
     """)
     arg_parser.add_argument("-v", "--verbose", action="store_true",
