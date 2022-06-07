@@ -21,6 +21,7 @@ import antlr4.error.Errors
 import dateutil.relativedelta
 import dateutil.tz
 import six
+
 from stix2matcher import DEFAULT_VERSION
 from stix2patterns.grammars.STIXPatternListener import STIXPatternListener
 from stix2patterns.grammars.STIXPatternParser import STIXPatternParser
