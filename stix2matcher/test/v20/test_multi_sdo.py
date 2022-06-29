@@ -40,5 +40,3 @@ def test_multy_sdo_match(pattern):
     assert res
     assert len(res) == 1
     assert res[0]["first_observed"] == "1000-12-03T21:34:41Z"
-
-

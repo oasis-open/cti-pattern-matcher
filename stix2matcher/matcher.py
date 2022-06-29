@@ -1122,7 +1122,8 @@ class MatchListener(STIXPatternListener):
                     new_observed_data_scos = [observed_data]
                     observed_scos = self.__extract_referenced_scos_for_observed_data(observed_data['object_refs'], sco_data_map)
                     new_observed_data_scos.extend(observed_scos)
-                    new_bundle = bundle.copy() # make a shallow copy
+                    # make a shallow copy
+                    new_bundle = bundle.copy()
                     new_bundle['objects'] = new_observed_data_scos
                     new_bundles.append(new_bundle)
 
@@ -2200,7 +2201,6 @@ class MatchListener(STIXPatternListener):
         """
         type_token = ctx.IdentifierWithoutHyphen() or ctx.IdentifierWithHyphen()
         type_ = type_token.getText()
-
 
         results = {}
         if not (self.__stix_version == VARSION_2_1 and type_ in ['observed-data', 'identity']):

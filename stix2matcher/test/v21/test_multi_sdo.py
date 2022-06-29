@@ -91,6 +91,7 @@ def test_multy_sdo_match(pattern):
     assert len(res) == 1
     assert res[0]['objects'][0]['id'] == 'observed-data--1209f166-bba6-4307-a566-60e3a6c39cd2'
 
+
 @pytest.mark.parametrize("pattern", [
     "[observed-data:number_observed = 1]",
     "[identity:identity_class = 'events']",
@@ -99,4 +100,3 @@ def test_multy_sdo_match(pattern):
 def test_match_referenced_sco_only(pattern):
     res = match(pattern, _observations, stix_version=_stix_version)
     assert not res
-
