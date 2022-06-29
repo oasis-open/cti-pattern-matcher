@@ -22,11 +22,12 @@ import dateutil.relativedelta
 import dateutil.tz
 import six
 
-from stix2matcher import DEFAULT_VERSION
 from stix2patterns.grammars.STIXPatternListener import STIXPatternListener
 from stix2patterns.grammars.STIXPatternParser import STIXPatternParser
 from stix2patterns.v20.pattern import Pattern as Stix2Pattern20
 from stix2patterns.v21.pattern import Pattern as Stix2Pattern21
+
+from stix2matcher import DEFAULT_VERSION, VARSION_2_1
 
 # Example observed-data SDO.  This represents N observations, where N is
 # the value of the "number_observed" property (in this case, 5).
@@ -742,7 +743,7 @@ def _dereference_cyber_obs_objs(cyber_obs_objs, cyber_obs_obj_references, ref_pr
                     u"A" if ref_prop_name.endswith(u"_refs") else u"The",
                     ref_prop_name, referenced_obj_id
                 ))
-        if stix_version == '2.1':
+        if stix_version == VARSION_2_1:
             ref_obj = [d for d in cyber_obs_objs if d['id'] == referenced_obj_id]
             if ref_obj:
                 dereferenced_cyber_obs_objs.extend(ref_obj)
@@ -1061,9 +1062,12 @@ class MatchListener(STIXPatternListener):
         self.__time_intervals = []  # 2-tuples of first,last timestamps
         self.__number_observed = []
 
+        if stix_version == VARSION_2_1:
+            observed_data_sdos = self.__split_multi_observed_data(observed_data_sdos)
+
         for sdo in observed_data_sdos:
             number_observed = 0
-            if stix_version == '2.1':
+            if stix_version == VARSION_2_1:
                 for obj in sdo["objects"]:
                     if obj['type'] == "observed-data":
                         if all(key in obj for key in ('number_observed', 'first_observed', 'last_observed')):
@@ -1099,6 +1103,40 @@ class MatchListener(STIXPatternListener):
         self.__stix_version = stix_version
         # Holds intermediate results
         self.__compute_stack = []
+
+    def __split_multi_observed_data(self, observed_data_bundles):
+        new_bundles = []
+        for bundle in observed_data_bundles:
+            observed_data_list = []
+            sco_data_map = {}
+            for sco in bundle['objects']:
+                if sco['type'] == "observed-data":
+                    observed_data_list.append(sco)
+                else:
+                    sco_data_map[sco['id']] = sco
+
+            if len(observed_data_list) == 1:
+                new_bundles.append(bundle)
+            else:
+                new_observed_data_scos = []
+                for observed_data in observed_data_list:
+                    new_observed_data_scos = [observed_data]
+                    observed_scos = self.__extract_referenced_scos_for_observed_data(observed_data['object_refs'], sco_data_map)
+                    new_observed_data_scos.extend(observed_scos)
+                    new_bundle = bundle.copy() # make a shallow copy
+                    new_bundle['objects'] = new_observed_data_scos
+                    new_bundles.append(new_bundle)
+
+        return new_bundles
+
+    def __extract_referenced_scos_for_observed_data(self, object_refs, sco_data_map):
+        scos = []
+
+        for ref in object_refs:
+            if ref in sco_data_map:
+                scos.append(sco_data_map[ref])
+
+        return scos
 
     def __push(self, val, label=None):
         """Utility for pushing a value onto the compute stack.
@@ -1632,7 +1670,7 @@ class MatchListener(STIXPatternListener):
           times.
         """
 
-        if self.__stix_version == '2.1':
+        if self.__stix_version == VARSION_2_1:
             start_dt = _literal_terminal_to_python_val(ctx.TimestampLiteral(0))
             stop_dt = _literal_terminal_to_python_val(ctx.TimestampLiteral(1))
         else:
@@ -2164,26 +2202,28 @@ class MatchListener(STIXPatternListener):
         type_token = ctx.IdentifierWithoutHyphen() or ctx.IdentifierWithHyphen()
         type_ = type_token.getText()
 
+
         results = {}
-        for obs_idx, obs in enumerate(self.__observations):
+        if not (self.__stix_version == VARSION_2_1 and type_ in ['observed-data', 'identity']):
+            for obs_idx, obs in enumerate(self.__observations):
 
-            if "objects" not in obs:
-                continue
+                if "objects" not in obs:
+                    continue
 
-            objects_from_this_obs = {}
-            iterator = self.__cyber_obs_obj_iterator(obs["objects"])
+                objects_from_this_obs = {}
+                iterator = self.__cyber_obs_obj_iterator(obs["objects"])
 
-            for obj_id, obj in iterator:
-                if u"type" in obj and obj[u"type"] == type_:
-                    objects_from_this_obs[obj_id] = [obj]
+                for obj_id, obj in iterator:
+                    if u"type" in obj and obj[u"type"] == type_:
+                        objects_from_this_obs[obj_id] = [obj]
 
-            if len(objects_from_this_obs) > 0:
-                results[obs_idx] = objects_from_this_obs
+                if len(objects_from_this_obs) > 0:
+                    results[obs_idx] = objects_from_this_obs
 
         self.__push(results, u"exitObjectType ({})".format(type_))
 
     def __cyber_obs_obj_iterator(self, objs):
-        if self.__stix_version == '2.1':
+        if self.__stix_version == VARSION_2_1:
             iter_objs = {v['id']: v for v in objs}
         else:
             iter_objs = objs
@@ -2409,7 +2449,7 @@ class Pattern:
         :raises stix2patterns.pattern.ParseException: If there is a parse error
         """
         self.__stix_version = stix_version
-        if self.__stix_version == '2.1':
+        if self.__stix_version == VARSION_2_1:
             self.__pattern = Stix2Pattern21(pattern_str)
         else:
             self.__pattern = Stix2Pattern20(pattern_str)
