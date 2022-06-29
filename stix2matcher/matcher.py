@@ -21,7 +21,6 @@ import antlr4.error.Errors
 import dateutil.relativedelta
 import dateutil.tz
 import six
-
 from stix2patterns.grammars.STIXPatternListener import STIXPatternListener
 from stix2patterns.grammars.STIXPatternParser import STIXPatternParser
 from stix2patterns.v20.pattern import Pattern as Stix2Pattern20
