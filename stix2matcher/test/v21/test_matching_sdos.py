@@ -67,9 +67,20 @@ _observations = [
                 "spec_version": "2.1"
             },
             {
+                "type": "identity",
+                "id": "identity--3532c56d-ea72-48be-a2ad-1a53f4c9c6d3",
+                "identity_class": "events"
+            },
+            {
                 "type": "person",
                 "name": "carol",
                 "id": "person--799d758a-036a-4d35-8765-6a08a45b9152"
+            },
+            {
+                "type": "person",
+                "spec_version": "2.1",
+                "id": "person--4444444-1a40-4aa0-b440-555c495cc5a5",
+                "value": "tobbi"
             }
         ]
     }
@@ -98,3 +109,13 @@ def test_matching_sdos(pattern, expected_ids):
         assert sdo_ids == [expected_ids]
     else:
         assert sorted(sdo_ids) == sorted(expected_ids)
+
+
+@pytest.mark.parametrize("pattern", [
+    "[observed-data:number_observed = 1]",
+    "[identity:identity_class = 'events']",
+    "[person:value = 'tobbi']",
+])
+def test_match_referenced_sco_only(pattern):
+    res = match(pattern, _observations, stix_version=_stix_version)
+    assert not res

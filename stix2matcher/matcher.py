@@ -1108,24 +1108,30 @@ class MatchListener(STIXPatternListener):
         for bundle in observed_data_bundles:
             observed_data_list = []
             sco_data_map = {}
+            if 'objects' not in bundle:
+                raise MatcherException(
+                    "STIX v2.1 bundle object must have all the following keys: "
+                    "objects")
+
             for sco in bundle['objects']:
                 if sco['type'] == "observed-data":
                     observed_data_list.append(sco)
                 else:
                     sco_data_map[sco['id']] = sco
 
-            if len(observed_data_list) == 1:
-                new_bundles.append(bundle)
-            else:
-                new_observed_data_scos = []
-                for observed_data in observed_data_list:
-                    new_observed_data_scos = [observed_data]
-                    observed_scos = self.__extract_referenced_scos_for_observed_data(observed_data['object_refs'], sco_data_map)
-                    new_observed_data_scos.extend(observed_scos)
-                    # make a shallow copy
-                    new_bundle = bundle.copy()
-                    new_bundle['objects'] = new_observed_data_scos
-                    new_bundles.append(new_bundle)
+            new_observed_data_scos = []
+            for observed_data in observed_data_list:
+                new_observed_data_scos = [observed_data]
+                if 'object_refs' not in observed_data:
+                    raise MatcherException(
+                        "STIX v2.1 observed-data object must have all the following keys: "
+                        "object_refs")
+                observed_scos = self.__extract_referenced_scos_for_observed_data(observed_data['object_refs'], sco_data_map)
+                new_observed_data_scos.extend(observed_scos)
+                # make a shallow copy
+                new_bundle = bundle.copy()
+                new_bundle['objects'] = new_observed_data_scos
+                new_bundles.append(new_bundle)
 
         return new_bundles
 

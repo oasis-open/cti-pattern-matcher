@@ -9,11 +9,6 @@ _observations = [
         "id": "bundle--d33ba274-6623-4ff9-af64-0e2d17de9bbe",
         "objects": [
             {
-                "type": "identity",
-                "id": "identity--3532c56d-ea72-48be-a2ad-1a53f4c9c6d3",
-                "identity_class": "events"
-            },
-            {
                 "type": "observed-data",
                 "spec_version": "2.1",
                 "id": "observed-data--1209f166-bba6-4307-a566-60e3a6c39cd2",
@@ -69,12 +64,6 @@ _observations = [
                 "spec_version": "2.1",
                 "id": "ipv4-addr--11111111-1a40-4aa0-b440-555c495cc5a5",
                 "value": "127.0.0.200"
-            },
-            {
-                "type": "ipv4-addr",
-                "spec_version": "2.1",
-                "id": "ipv4-addr--4444444-1a40-4aa0-b440-555c495cc5a5",
-                "value": "0.0.0.0"
             }
         ]
     }
@@ -93,10 +82,9 @@ def test_multy_sdo_match(pattern):
 
 
 @pytest.mark.parametrize("pattern", [
-    "[observed-data:number_observed = 1]",
-    "[identity:identity_class = 'events']",
-    "[ipv4-addr:value = '0.0.0.0']",
+    "[ipv4-addr:value = '127.0.0.10'] REPEATS 2 TIMES",
 ])
-def test_match_referenced_sco_only(pattern):
+def test_multy_repeat_match(pattern):
     res = match(pattern, _observations, stix_version=_stix_version)
-    assert not res
+    assert res
+    assert len(res) == 2
