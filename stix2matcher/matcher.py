@@ -1110,8 +1110,7 @@ class MatchListener(STIXPatternListener):
             sco_data_map = {}
             if 'objects' not in bundle:
                 raise MatcherException(
-                    "STIX v2.1 bundle object must have all the following keys: "
-                    "objects")
+                    "STIX v2.1 bundle object must have 'objects' key")
 
             for sco in bundle['objects']:
                 if sco['type'] == "observed-data":
@@ -1124,8 +1123,7 @@ class MatchListener(STIXPatternListener):
                 new_observed_data_scos = [observed_data]
                 if 'object_refs' not in observed_data:
                     raise MatcherException(
-                        "STIX v2.1 observed-data object must have all the following keys: "
-                        "object_refs")
+                        "STIX v2.1 observed-data object must have 'object_refs' key")
                 observed_scos = self.__extract_referenced_scos_for_observed_data(observed_data['object_refs'], sco_data_map)
                 new_observed_data_scos.extend(observed_scos)
                 # make a shallow copy
