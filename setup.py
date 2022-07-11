@@ -20,6 +20,7 @@ setup(
         'python-dateutil',
         'six',
         'stix2-patterns>=1.0.0',
+        'deepmerge>=1.0.1',
     ],
     tests_require=[
         'pytest>=2.9.2'

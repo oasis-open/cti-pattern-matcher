@@ -21,12 +21,14 @@ import antlr4.error.Errors
 import dateutil.relativedelta
 import dateutil.tz
 import six
+from deepmerge import always_merger
 from stix2patterns.grammars.STIXPatternListener import STIXPatternListener
 from stix2patterns.grammars.STIXPatternParser import STIXPatternParser
 from stix2patterns.v20.pattern import Pattern as Stix2Pattern20
 from stix2patterns.v21.pattern import Pattern as Stix2Pattern21
 
 from stix2matcher import DEFAULT_VERSION, VARSION_2_1
+from stix2matcher.enums import TYPES_V21
 
 # Example observed-data SDO.  This represents N observations, where N is
 # the value of the "number_observed" property (in this case, 5).
@@ -1105,31 +1107,35 @@ class MatchListener(STIXPatternListener):
 
     def __split_multi_observed_data(self, observed_data_bundles):
         new_bundles = []
+        merged_bundle = {}
         for bundle in observed_data_bundles:
-            observed_data_list = []
-            sco_data_map = {}
-            if 'objects' not in bundle:
+            merged_bundle = always_merger.merge(merged_bundle, bundle)
+
+        observed_data_bundles = [merged_bundle]
+        observed_data_list = []
+        sco_data_map = {}
+        if 'objects' not in merged_bundle:
+            raise MatcherException(
+                "STIX v2.1 bundle object must have 'objects' key")
+
+        for sco in merged_bundle['objects']:
+            if sco['type'] == "observed-data":
+                observed_data_list.append(sco)
+            else:
+                sco_data_map[sco['id']] = sco
+
+        new_observed_data_scos = []
+        for observed_data in observed_data_list:
+            new_observed_data_scos = [observed_data]
+            if 'object_refs' not in observed_data:
                 raise MatcherException(
-                    "STIX v2.1 bundle object must have 'objects' key")
-
-            for sco in bundle['objects']:
-                if sco['type'] == "observed-data":
-                    observed_data_list.append(sco)
-                else:
-                    sco_data_map[sco['id']] = sco
-
-            new_observed_data_scos = []
-            for observed_data in observed_data_list:
-                new_observed_data_scos = [observed_data]
-                if 'object_refs' not in observed_data:
-                    raise MatcherException(
-                        "STIX v2.1 observed-data object must have 'object_refs' key")
-                observed_scos = self.__extract_referenced_scos_for_observed_data(observed_data['object_refs'], sco_data_map)
-                new_observed_data_scos.extend(observed_scos)
-                # make a shallow copy
-                new_bundle = bundle.copy()
-                new_bundle['objects'] = new_observed_data_scos
-                new_bundles.append(new_bundle)
+                    "STIX v2.1 observed-data object must have 'object_refs' key")
+            observed_scos = self.__extract_referenced_scos_for_observed_data(observed_data['object_refs'], sco_data_map)
+            new_observed_data_scos.extend(observed_scos)
+            # make a shallow copy
+            new_bundle = merged_bundle.copy()
+            new_bundle['objects'] = new_observed_data_scos
+            new_bundles.append(new_bundle)
 
         return new_bundles
 
@@ -2207,7 +2213,7 @@ class MatchListener(STIXPatternListener):
         type_ = type_token.getText()
 
         results = {}
-        if not (self.__stix_version == VARSION_2_1 and type_ in ['observed-data', 'identity']):
+        if not (self.__stix_version == VARSION_2_1 and type_ in TYPES_V21):
             for obs_idx, obs in enumerate(self.__observations):
 
                 if "objects" not in obs:
