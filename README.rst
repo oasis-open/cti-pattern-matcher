@@ -148,7 +148,6 @@ agreements`_.
 
 **Current Maintainers of this TC Open Repository**
 
--  `Chris Lenk`_; GitHub ID: https://github.com/clenk/; WWW: `MITRE`_
 -  `Jason Keirstead <mailto:Jason.Keirstead@ca.ibm.com>`__; GitHub ID:
    https://github.com/JasonKeirstead; WWW: `IBM <http://www.ibm.com/>`__
 -  `Md Azam <mailto:mdazam@ca.ibm.com>`__; GitHub ID:
