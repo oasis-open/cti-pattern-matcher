@@ -1,6 +1,10 @@
 CHANGELOG
 =========
 
+3.0.0 - 2022-07-19
+
+* Added STIX 2.1 support
+
 2.0.2 - 2022-04-29
 
 * Fixes LIKE operator search for base64 encoded value
