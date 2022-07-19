@@ -49,7 +49,7 @@ Installing the package creates a ``stix2-matcher`` script:
 ::
 
     $ stix2-matcher -h
-    usage: stix2-matcher [-h] -p PATTERNS -f FILE [-e ENCODING] [-v]
+    usage: stix2-matcher [-h] -p PATTERNS -f FILE [-e ENCODING] [-v] [-s STIX_VERSION]
 
     Match STIX Patterns to STIX Observed Data
 
@@ -68,6 +68,8 @@ Installing the package creates a ``stix2-matcher`` script:
                             understands.
                             Default is utf8.
       -v, --verbose         Be verbose
+      -s STIX_VERSION, --stix_version STIX_VERSION
+                           Stix specification version. Default is 2.0
 
 Testing
 -------

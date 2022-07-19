@@ -4,6 +4,7 @@ import pytest
 
 from stix2matcher.matcher import match
 
+_stix_version = '2.0'
 _observations = [
     {
         "type": "observed-data",
@@ -56,7 +57,7 @@ _observations = [
     "([person:age < 30] AND [person:name > 'aaron']) WITHIN 2 SECONDS REPEATS 3 TIMES",
 ])
 def test_complex_match(pattern):
-    assert match(pattern, _observations)
+    assert match(pattern, _observations, stix_version=_stix_version)
 
 
 @pytest.mark.parametrize("pattern", [
@@ -64,7 +65,7 @@ def test_complex_match(pattern):
     "[person:age < 20] REPEATS 2 TIMES REPEATS 3 TIMES"
 ])
 def test_complex_nomatch(pattern):
-    assert not match(pattern, _observations)
+    assert not match(pattern, _observations, stix_version=_stix_version)
 
 
 _observations_combinatorial_explosion = []

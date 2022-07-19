@@ -9,6 +9,7 @@ from stix2matcher.matcher import (_OVERLAP, _OVERLAP_NONE,
                                   _OVERLAP_TOUCH_POINT, MatcherException,
                                   _overlap, _timestamp_intervals_within, match)
 
+_stix_version = '2.0'
 _observations = [
     {
         "type": "observed-data",
@@ -67,7 +68,7 @@ _observations = [
     "[person:name MATCHES ''] REPEATS 2 TIMES START '1994-11-29T13:37:50Z' STOP '1994-11-29T13:37:58Z'",
 ])
 def test_temp_qual_match(pattern):
-    assert match(pattern, _observations)
+    assert match(pattern, _observations, stix_version=_stix_version)
 
 
 @pytest.mark.parametrize("pattern", [
@@ -87,7 +88,7 @@ def test_temp_qual_match(pattern):
     "[person:name NOT LIKE 'foo'] START '1994-11-29T13:37:50Z' STOP '1994-11-29T13:37:57Z' REPEATS 3 TIMES",
 ])
 def test_temp_qual_nomatch(pattern):
-    assert not match(pattern, _observations)
+    assert not match(pattern, _observations, stix_version=_stix_version)
 
 
 @pytest.mark.parametrize("pattern", [
@@ -102,7 +103,7 @@ def test_temp_qual_nomatch(pattern):
 ])
 def test_temp_qual_error_match(pattern):
     with pytest.raises(MatcherException):
-        match(pattern, _observations)
+        match(pattern, _observations, stix_version=_stix_version)
 
 
 @pytest.mark.parametrize("pattern", [
@@ -115,7 +116,7 @@ def test_temp_qual_error_match(pattern):
 ])
 def test_temp_qual_error_parse(pattern):
     with pytest.raises(ParseException):
-        match(pattern, _observations)
+        match(pattern, _observations, stix_version=_stix_version)
 
 # The below tests use ints instead of timestamps.  The code is generic enough
 # and it's much easier to test with simple ints.
@@ -203,7 +204,7 @@ def test_within_match(interval1, interval2, duration):
 
     pattern = "([person:name='alice'] AND [person:name='bob']) " \
               "WITHIN {0} SECONDS".format(duration)
-    assert match(pattern, _observations)
+    assert match(pattern, _observations, stix_version=_stix_version)
 
 
 @pytest.mark.parametrize("interval1,interval2,duration", [
@@ -221,4 +222,4 @@ def test_within_nomatch(interval1, interval2, duration):
 
     pattern = "([person:name='alice'] AND [person:name='bob']) " \
               "WITHIN {0} SECONDS".format(duration)
-    assert not match(pattern, _observations)
+    assert not match(pattern, _observations, stix_version=_stix_version)

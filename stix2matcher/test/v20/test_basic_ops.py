@@ -2,6 +2,7 @@ import pytest
 
 from stix2matcher.matcher import MatcherException, match
 
+_stix_version = '2.0'
 _observations = [
     {
         "type": "observed-data",
@@ -49,7 +50,7 @@ _observations = [
     "[test:int NOT LIKE 'he%']",
 ])
 def test_basic_ops_int_match(pattern):
-    assert match(pattern, _observations)
+    assert match(pattern, _observations, stix_version=_stix_version)
 
 
 @pytest.mark.parametrize("pattern", [
@@ -75,7 +76,7 @@ def test_basic_ops_int_match(pattern):
     "[test:int IN ('a', 'b', 'c')]"
 ])
 def test_basic_ops_int_nomatch(pattern):
-    assert not match(pattern, _observations)
+    assert not match(pattern, _observations, stix_version=_stix_version)
 
 
 @pytest.mark.parametrize("pattern", [
@@ -102,7 +103,7 @@ def test_basic_ops_int_nomatch(pattern):
     "[test:float NOT LIKE 'he%']",
 ])
 def test_basic_ops_float_match(pattern):
-    assert match(pattern, _observations)
+    assert match(pattern, _observations, stix_version=_stix_version)
 
 
 @pytest.mark.parametrize("pattern", [
@@ -130,7 +131,7 @@ def test_basic_ops_float_match(pattern):
     "[test:float IN ('a', 'b', 'c')]"
 ])
 def test_basic_ops_float_nomatch(pattern):
-    assert not match(pattern, _observations)
+    assert not match(pattern, _observations, stix_version=_stix_version)
 
 
 @pytest.mark.parametrize("pattern", [
@@ -150,7 +151,7 @@ def test_basic_ops_float_nomatch(pattern):
     "[test:bool NOT LIKE 'he%']",
 ])
 def test_basic_ops_bool_match(pattern):
-    assert match(pattern, _observations)
+    assert match(pattern, _observations, stix_version=_stix_version)
 
 
 @pytest.mark.parametrize("pattern", [
@@ -170,7 +171,7 @@ def test_basic_ops_bool_match(pattern):
     "[test:bool IN ('a', 'b', 'c')]"
 ])
 def test_basic_ops_bool_nomatch(pattern):
-    assert not match(pattern, _observations)
+    assert not match(pattern, _observations, stix_version=_stix_version)
 
 
 @pytest.mark.parametrize("pattern", [
@@ -196,7 +197,7 @@ def test_basic_ops_bool_nomatch(pattern):
     "[test:string NOT IN (1, 2, 3)]"
 ])
 def test_basic_ops_string_match(pattern):
-    assert match(pattern, _observations)
+    assert match(pattern, _observations, stix_version=_stix_version)
 
 
 @pytest.mark.parametrize("pattern", [
@@ -222,7 +223,7 @@ def test_basic_ops_string_match(pattern):
     "[test:string IN (1, 2, 3)]"
 ])
 def test_basic_ops_string_nomatch(pattern):
-    assert not match(pattern, _observations)
+    assert not match(pattern, _observations, stix_version=_stix_version)
 
 
 @pytest.mark.parametrize("pattern", [
@@ -240,7 +241,7 @@ def test_basic_ops_string_nomatch(pattern):
 ])
 def test_basic_ops_string_err(pattern):
     with pytest.raises(MatcherException):
-        match(pattern, _observations)
+        match(pattern, _observations, stix_version=_stix_version)
 
 
 @pytest.mark.parametrize("pattern", [
@@ -258,7 +259,7 @@ def test_basic_ops_string_err(pattern):
     "[test:bool NOT ISSUBSET '11.22.33.44']",
 ])
 def test_basic_ops_ip_match(pattern):
-    assert match(pattern, _observations)
+    assert match(pattern, _observations, stix_version=_stix_version)
 
 
 @pytest.mark.parametrize("pattern", [
@@ -276,21 +277,21 @@ def test_basic_ops_ip_match(pattern):
     "[test:bool ISSUBSET '11.22.33.44']",
 ])
 def test_basic_ops_ip_nomatch(pattern):
-    assert not match(pattern, _observations)
+    assert not match(pattern, _observations, stix_version=_stix_version)
 
 
 @pytest.mark.parametrize("pattern", [
     "[test:string NOT IN ()]"
 ])
 def test_basic_ops_emptyset_match(pattern):
-    assert match(pattern, _observations)
+    assert match(pattern, _observations, stix_version=_stix_version)
 
 
 @pytest.mark.parametrize("pattern", [
     "[test:string IN ()]"
 ])
 def test_basic_ops_emptyset_nomatch(pattern):
-    assert not match(pattern, _observations)
+    assert not match(pattern, _observations, stix_version=_stix_version)
 
 
 @pytest.mark.parametrize("pattern", [
@@ -301,4 +302,4 @@ def test_basic_ops_emptyset_nomatch(pattern):
 ])
 def test_basic_ops_set_err(pattern):
     with pytest.raises(MatcherException):
-        match(pattern, _observations)
+        match(pattern, _observations, stix_version=_stix_version)

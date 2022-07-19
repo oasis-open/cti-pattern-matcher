@@ -3,6 +3,7 @@ from stix2patterns.pattern import ParseException
 
 from stix2matcher.matcher import MatcherException, match
 
+_stix_version = '2.0'
 _observations = [
     {
         "type": "observed-data",
@@ -40,7 +41,7 @@ _observations = [
     "[event:good_ts NOT IN (t'1953-11-26T14:25:33Z', t'1985-07-25T20:27:52Z', t'2000-06-17T17:25:51.44Z')]"
 ])
 def test_ts_match(pattern):
-    assert match(pattern, _observations)
+    assert match(pattern, _observations, stix_version=_stix_version)
 
 
 @pytest.mark.parametrize("pattern", [
@@ -55,7 +56,7 @@ def test_ts_match(pattern):
     "[event:good_ts IN (t'1953-11-26T14:25:33Z', t'1985-07-25T20:27:52Z', t'2000-06-17T17:25:51.44Z')]"
 ])
 def test_ts_nomatch(pattern):
-    assert not match(pattern, _observations)
+    assert not match(pattern, _observations, stix_version=_stix_version)
 
 
 @pytest.mark.parametrize("pattern", [
@@ -68,7 +69,7 @@ def test_ts_nomatch(pattern):
 ])
 def test_ts_pattern_error_parse(pattern):
     with pytest.raises(ParseException):
-        match(pattern, _observations)
+        match(pattern, _observations, stix_version=_stix_version)
 
 
 @pytest.mark.parametrize("pattern", [
@@ -78,4 +79,4 @@ def test_ts_pattern_error_parse(pattern):
 ])
 def test_ts_json_error(pattern):
     with pytest.raises(MatcherException):
-        match(pattern, _observations)
+        match(pattern, _observations, stix_version=_stix_version)

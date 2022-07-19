@@ -20,10 +20,15 @@ import antlr4.error.ErrorListener
 import antlr4.error.Errors
 import dateutil.relativedelta
 import dateutil.tz
+from deepmerge import always_merger
 import six
 from stix2patterns.grammars.STIXPatternListener import STIXPatternListener
 from stix2patterns.grammars.STIXPatternParser import STIXPatternParser
-import stix2patterns.pattern
+from stix2patterns.v20.pattern import Pattern as Stix2Pattern20
+from stix2patterns.v21.pattern import Pattern as Stix2Pattern21
+
+from stix2matcher import DEFAULT_VERSION, VARSION_2_1
+from stix2matcher.enums import TYPES_V21
 
 # Example observed-data SDO.  This represents N observations, where N is
 # the value of the "number_observed" property (in this case, 5).
@@ -712,7 +717,7 @@ def _timestamp_intervals_within(timestamp_intervals, duration):
     return result
 
 
-def _dereference_cyber_obs_objs(cyber_obs_objs, cyber_obs_obj_references, ref_prop_name):
+def _dereference_cyber_obs_objs(cyber_obs_objs, cyber_obs_obj_references, ref_prop_name, stix_version=DEFAULT_VERSION):
     """
     Dereferences a sequence of Cyber Observable object references.  Returns a list of
     the referenced objects.  If a reference does not resolve, it is not
@@ -739,9 +744,13 @@ def _dereference_cyber_obs_objs(cyber_obs_objs, cyber_obs_obj_references, ref_pr
                     u"A" if ref_prop_name.endswith(u"_refs") else u"The",
                     ref_prop_name, referenced_obj_id
                 ))
-
-        if referenced_obj_id in cyber_obs_objs:
-            dereferenced_cyber_obs_objs.append(cyber_obs_objs[referenced_obj_id])
+        if stix_version == VARSION_2_1:
+            ref_obj = [d for d in cyber_obs_objs if d['id'] == referenced_obj_id]
+            if ref_obj:
+                dereferenced_cyber_obs_objs.extend(ref_obj)
+        else:
+            if referenced_obj_id in cyber_obs_objs:
+                dereferenced_cyber_obs_objs.append(cyber_obs_objs[referenced_obj_id])
 
     return dereferenced_cyber_obs_objs
 
@@ -1041,7 +1050,7 @@ class MatchListener(STIXPatternListener):
     affecting correctness.
     """
 
-    def __init__(self, observed_data_sdos, verbose=False):
+    def __init__(self, observed_data_sdos, verbose=False, stix_version=DEFAULT_VERSION):
         """
         Initialize this match listener.
 
@@ -1052,22 +1061,92 @@ class MatchListener(STIXPatternListener):
         """
         self.__observations = []
         self.__time_intervals = []  # 2-tuples of first,last timestamps
-        for sdo in observed_data_sdos:
+        self.__number_observed = []
 
-            number_observed = sdo["number_observed"]
+        if stix_version == VARSION_2_1:
+            observed_data_sdos = self.__split_multi_observed_data(observed_data_sdos)
+
+        for sdo in observed_data_sdos:
+            number_observed = 0
+            if stix_version == VARSION_2_1:
+                for obj in sdo["objects"]:
+                    if obj['type'] == "observed-data":
+                        if all(key in obj for key in ('number_observed', 'first_observed', 'last_observed')):
+                            number_observed = obj["number_observed"]
+                            first_observed = obj["first_observed"]
+                            last_observed = obj["last_observed"]
+                            break
+                        else:
+                            raise MatcherException(
+                                "STIX v2.1 observed-data object must have all the following keys: "
+                                "number_observed, first_observed, last_observed.")
+            else:
+                if all(key in sdo for key in ('number_observed', 'first_observed', 'last_observed')):
+                    number_observed = sdo["number_observed"]
+                    first_observed = sdo["first_observed"]
+                    last_observed = sdo["last_observed"]
+                else:
+                    raise MatcherException(
+                        "STIX v2.0 SDO must have all the following keys: "
+                        "number_observed, first_observed, last_observed.")
+
             if number_observed < 1:
-                raise MatcherException("SDO with invalid number_observed "
-                                       "(must be >= 1): {}".format(
-                                        number_observed))
+                raise MatcherException(
+                    "SDO with invalid number_observed "
+                    "(must be >= 1): {}".format(number_observed))
 
             self.__observations.append(sdo)
-
-            self.__time_intervals.append((_str_to_datetime(sdo["first_observed"]),
-                                          _str_to_datetime(sdo["last_observed"])))
+            self.__time_intervals.append((_str_to_datetime(first_observed),
+                                          _str_to_datetime(last_observed)))
+            self.__number_observed.append(number_observed)
 
         self.__verbose = verbose
+        self.__stix_version = stix_version
         # Holds intermediate results
         self.__compute_stack = []
+
+    def __split_multi_observed_data(self, observed_data_bundles):
+        new_bundles = []
+        merged_bundle = {}
+        for bundle in observed_data_bundles:
+            merged_bundle = always_merger.merge(merged_bundle, bundle)
+
+        observed_data_bundles = [merged_bundle]
+        observed_data_list = []
+        sco_data_map = {}
+        if 'objects' not in merged_bundle:
+            raise MatcherException(
+                "STIX v2.1 bundle object must have 'objects' key")
+
+        for sco in merged_bundle['objects']:
+            if sco['type'] == "observed-data":
+                observed_data_list.append(sco)
+            else:
+                sco_data_map[sco['id']] = sco
+
+        new_observed_data_scos = []
+        for observed_data in observed_data_list:
+            new_observed_data_scos = [observed_data]
+            if 'object_refs' not in observed_data:
+                raise MatcherException(
+                    "STIX v2.1 observed-data object must have 'object_refs' key")
+            observed_scos = self.__extract_referenced_scos_for_observed_data(observed_data['object_refs'], sco_data_map)
+            new_observed_data_scos.extend(observed_scos)
+            # make a shallow copy
+            new_bundle = merged_bundle.copy()
+            new_bundle['objects'] = new_observed_data_scos
+            new_bundles.append(new_bundle)
+
+        return new_bundles
+
+    def __extract_referenced_scos_for_observed_data(self, object_refs, sco_data_map):
+        scos = []
+
+        for ref in object_refs:
+            if ref in sco_data_map:
+                scos.append(sco_data_map[ref])
+
+        return scos
 
     def __push(self, val, label=None):
         """Utility for pushing a value onto the compute stack.
@@ -1479,7 +1558,7 @@ class MatchListener(STIXPatternListener):
         # "Unpack" the instances of observables based on `number_observed`
         # field by creating complex instance_id
         obs_id_tuples = ((self.create_instance_id(obs_id, i),) for obs_id in obs_ids.keys()
-                         for i in range(0, self.__observations[obs_id]['number_observed']))
+                         for i in range(0, self.__number_observed[obs_id]))
 
         self.__push(obs_id_tuples, debug_label)
 
@@ -1601,16 +1680,20 @@ class MatchListener(STIXPatternListener):
           times.
         """
 
-        start_str = _literal_terminal_to_python_val(ctx.StringLiteral(0))
-        stop_str = _literal_terminal_to_python_val(ctx.StringLiteral(1))
+        if self.__stix_version == VARSION_2_1:
+            start_dt = _literal_terminal_to_python_val(ctx.TimestampLiteral(0))
+            stop_dt = _literal_terminal_to_python_val(ctx.TimestampLiteral(1))
+        else:
+            start_str = _literal_terminal_to_python_val(ctx.StringLiteral(0))
+            stop_str = _literal_terminal_to_python_val(ctx.StringLiteral(1))
 
-        # If the language used timestamp literals here, this could go away...
-        try:
-            start_dt = _str_to_datetime(start_str)
-            stop_dt = _str_to_datetime(stop_str)
-        except ValueError as e:
-            # re-raise as MatcherException.
-            raise six.raise_from(MatcherException(*e.args), e)
+            # If the language used timestamp literals here, this could go away...
+            try:
+                start_dt = _str_to_datetime(start_str)
+                stop_dt = _str_to_datetime(stop_str)
+            except ValueError as e:
+                # re-raise as MatcherException.
+                raise six.raise_from(MatcherException(*e.args), e)
 
         self.__push((start_dt, stop_dt), u"exitStartStopQualifier")
 
@@ -2130,20 +2213,32 @@ class MatchListener(STIXPatternListener):
         type_ = type_token.getText()
 
         results = {}
-        for obs_idx, obs in enumerate(self.__observations):
+        if not (self.__stix_version == VARSION_2_1 and type_ in TYPES_V21):
+            for obs_idx, obs in enumerate(self.__observations):
 
-            if "objects" not in obs:
-                continue
+                if "objects" not in obs:
+                    continue
 
-            objects_from_this_obs = {}
-            for obj_id, obj in six.iteritems(obs["objects"]):
-                if u"type" in obj and obj[u"type"] == type_:
-                    objects_from_this_obs[obj_id] = [obj]
+                objects_from_this_obs = {}
+                iterator = self.__cyber_obs_obj_iterator(obs["objects"])
 
-            if len(objects_from_this_obs) > 0:
-                results[obs_idx] = objects_from_this_obs
+                for obj_id, obj in iterator:
+                    if u"type" in obj and obj[u"type"] == type_:
+                        objects_from_this_obs[obj_id] = [obj]
+
+                if len(objects_from_this_obs) > 0:
+                    results[obs_idx] = objects_from_this_obs
 
         self.__push(results, u"exitObjectType ({})".format(type_))
+
+    def __cyber_obs_obj_iterator(self, objs):
+        if self.__stix_version == VARSION_2_1:
+            iter_objs = {v['id']: v for v in objs}
+        else:
+            iter_objs = objs
+        iterator = six.iteritems(iter_objs)
+
+        return iterator
 
     def __dereference_objects(self, prop_name, obs_map):
         """
@@ -2177,7 +2272,8 @@ class MatchListener(STIXPatternListener):
                     dereferenced_cyber_obs_objs = _dereference_cyber_obs_objs(
                         self.__observations[obs_idx]["objects"],
                         references,
-                        prop_name
+                        prop_name,
+                        self.__stix_version
                     )
 
                     if len(dereferenced_cyber_obs_objs) > 0:
@@ -2208,7 +2304,8 @@ class MatchListener(STIXPatternListener):
                         dereferenced_cyber_obs_objs = _dereference_cyber_obs_objs(
                             self.__observations[obs_idx]["objects"],
                             reference_list,
-                            prop_name
+                            prop_name,
+                            self.__stix_version
                         )
 
                         if len(dereferenced_cyber_obs_objs) > 0:
@@ -2351,19 +2448,23 @@ class MatchListener(STIXPatternListener):
         self.__push(s, u"exitSetLiteral ({})".format(ctx.getText()))
 
 
-class Pattern(stix2patterns.pattern.Pattern):
-    """
-    Represents a pattern in a "compiled" form, for more efficient reuse.
-    """
-
-    def __init__(self, pattern_str):
+class Pattern:
+    def __init__(self, pattern_str, stix_version=DEFAULT_VERSION):
         """
         Compile a pattern.
 
         :param pattern_str: The pattern to compile
+        :param stix_version: The stix specification version
         :raises stix2patterns.pattern.ParseException: If there is a parse error
         """
-        super(Pattern, self).__init__(pattern_str)
+        self.__stix_version = stix_version
+        if self.__stix_version == VARSION_2_1:
+            self.__pattern = Stix2Pattern21(pattern_str)
+        else:
+            self.__pattern = Stix2Pattern20(pattern_str)
+
+    def __getattr__(self, name):
+        return self.__pattern.__getattribute__(name)
 
     def match(self, observed_data_sdos, verbose=False):
         """
@@ -2379,8 +2480,8 @@ class Pattern(stix2patterns.pattern.Pattern):
             didn't match.
         :raises MatcherException: If an error occurs during matching
         """
-        matcher = MatchListener(observed_data_sdos, verbose)
-        self.walk(matcher)
+        matcher = MatchListener(observed_data_sdos, verbose, stix_version=self.__stix_version)
+        self.__pattern.walk(matcher)
 
         first_binding = next(matcher.matched(), [])
         matching_sdos = matcher.get_sdos_from_binding(first_binding)
@@ -2388,7 +2489,7 @@ class Pattern(stix2patterns.pattern.Pattern):
         return matching_sdos
 
 
-def match(pattern, observed_data_sdos, verbose=False):
+def match(pattern, observed_data_sdos, verbose=False, stix_version=DEFAULT_VERSION):
     """
     Match the given pattern against the given observations.  Returns matching
     SDOs.  The matcher can find many bindings; this function returns the SDOs
@@ -2405,7 +2506,7 @@ def match(pattern, observed_data_sdos, verbose=False):
     :raises MatcherException: If an error occurs during matching
     """
 
-    compiled_pattern = Pattern(pattern)
+    compiled_pattern = Pattern(pattern, stix_version)
     return compiled_pattern.match(observed_data_sdos, verbose)
 
 
@@ -2425,6 +2526,9 @@ def main():
     arg_parser.add_argument("-e", "--encoding", default="utf8", help="""
     Set encoding used for reading observation and pattern files.
     Must be an encoding name Python understands.  Default is utf8.
+    """)
+    arg_parser.add_argument("-s", "--stix_version", default=DEFAULT_VERSION, help="""
+    Stix specification version. Default is 2.0.
     """)
     arg_parser.add_argument("-v", "--verbose", action="store_true",
                             help="""Be verbose""")
@@ -2451,7 +2555,7 @@ def main():
                 if pattern[0] == u"#":
                     continue  # skip commented out lines
                 escaped_pattern = pattern.encode("unicode_escape").decode("ascii")
-                if match(pattern, observed_data_sdos, args.verbose):
+                if match(pattern, observed_data_sdos, args.verbose, args.stix_version):
                     if args.quiet < 1:
                         print(u"\nMATCH: ", escaped_pattern)
                 else:

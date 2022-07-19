@@ -3,6 +3,7 @@ from stix2patterns.pattern import ParseException
 
 from stix2matcher.matcher import match
 
+_stix_version = '2.0'
 _observations = [
     {
         "type": "observed-data",
@@ -27,7 +28,7 @@ _observations = [
     "[some-type:'has-hyphen.dot' = 3]"
 ])
 def test_quoting(pattern):
-    assert match(pattern, _observations)
+    assert match(pattern, _observations, stix_version=_stix_version)
 
 
 @pytest.mark.parametrize("pattern", [
@@ -35,4 +36,4 @@ def test_quoting(pattern):
 ])
 def test_quoting_error(pattern):
     with pytest.raises(ParseException):
-        match(pattern, _observations)
+        match(pattern, _observations, stix_version=_stix_version)

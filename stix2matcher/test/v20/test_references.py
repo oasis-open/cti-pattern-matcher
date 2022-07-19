@@ -2,6 +2,7 @@ import pytest
 
 from stix2matcher.matcher import match
 
+_stix_version = '2.0'
 _observations = [
     {
         "type": "observed-data",
@@ -36,7 +37,7 @@ _observations = [
     "[person:knows_refs[*].knows_refs[*].name = 'alice']"
 ])
 def test_references_match(pattern):
-    assert match(pattern, _observations)
+    assert match(pattern, _observations, stix_version=_stix_version)
 
 
 @pytest.mark.parametrize("pattern", [
@@ -45,4 +46,4 @@ def test_references_match(pattern):
     "[person:knows_refs[*].name = 'erin' OR person:knows_refs[*].name = 'darlene']"
 ])
 def test_references_nomatch(pattern):
-    assert not match(pattern, _observations)
+    assert not match(pattern, _observations, stix_version=_stix_version)
