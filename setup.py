@@ -11,7 +11,7 @@ def get_long_description():
 
 setup(
     name='stix2-matcher',
-    version='2.0.1',
+    version='3.0.0',
     packages=find_packages(),
     long_description=get_long_description(),
     description='Match STIX content against STIX patterns',
